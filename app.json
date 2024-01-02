@@ -1,0 +1,36 @@
+{
+  "id": "c1aea910-0615-45ab-b6dd-efe5b715c40b",
+  "name": "ALTranDevelopment",
+  "publisher": "SCO",
+  "version": "1.0.0.113",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "9cf9feca-8d2d-49f3-a03d-6ae05f910b2c",
+      "name": "Abakion App Manager Core",
+      "publisher": "Abakion",
+      "version": "1.0.0.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "22.0.0.0",
+  "idRanges": [
+    {
+      "from": 50000,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": false,
+    "includeSourceInSymbolFile": false
+  },
+  "runtime": "11.0"  
+}
