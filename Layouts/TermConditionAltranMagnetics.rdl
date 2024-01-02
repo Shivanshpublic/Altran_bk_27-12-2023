@@ -1390,7 +1390,7 @@ Altran Magnetics Customer Service to obtain an RMA number. Issuance of an RMA nu
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
-              <Top>1.04587in</Top>
+              <Top>1.05171in</Top>
               <Height>0.23622in</Height>
               <Width>7.45358in</Width>
               <ZIndex>2</ZIndex>
@@ -1398,7 +1398,7 @@ Altran Magnetics Customer Service to obtain an RMA number. Issuance of an RMA nu
                 <Border>
                   <Style>None</Style>
                 </Border>
-                <BackgroundColor>LightBlue</BackgroundColor>
+                <BackgroundColor>Gold</BackgroundColor>
                 <PaddingLeft>2pt</PaddingLeft>
                 <PaddingRight>2pt</PaddingRight>
                 <PaddingTop>2pt</PaddingTop>

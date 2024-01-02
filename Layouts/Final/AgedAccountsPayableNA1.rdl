@@ -49,7 +49,7 @@
                   <Width>0.78125in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.47244in</Width>
+                  <Width>0.83702in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -3114,7 +3114,7 @@
             <DataSetName>DataSet_Result</DataSetName>
             <Top>0.74991in</Top>
             <Height>2.8624in</Height>
-            <Width>8.51749in</Width>
+            <Width>8.88207in</Width>
             <DataElementOutput>NoOutput</DataElementOutput>
             <Style />
           </Tablix>
@@ -3277,7 +3277,7 @@
                   <Width>0.78125in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.47244in</Width>
+                  <Width>0.83702in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -4455,7 +4455,7 @@
             </TablixRowHierarchy>
             <Top>3.62in</Top>
             <Height>0.8327in</Height>
-            <Width>8.51749in</Width>
+            <Width>8.88207in</Width>
             <ZIndex>6</ZIndex>
             <Style />
           </Tablix>
@@ -4463,7 +4463,7 @@
         <Height>4.4527in</Height>
         <Style />
       </Body>
-      <Width>8.51749in</Width>
+      <Width>8.88207in</Width>
       <Page>
         <PageHeader>
           <Height>0.66614in</Height>
@@ -4488,7 +4488,7 @@
                 </Paragraph>
               </Paragraphs>
               <Top>0.16654in</Top>
-              <Left>7.26378in</Left>
+              <Left>8.26378in</Left>
               <Height>0.16654in</Height>
               <Width>0.29528in</Width>
               <Style>
@@ -4582,7 +4582,7 @@
                   </Style>
                 </Paragraph>
               </Paragraphs>
-              <Left>5.70866in</Left>
+              <Left>6.70866in</Left>
               <Height>0.16654in</Height>
               <Width>2.02756in</Width>
               <ZIndex>4</ZIndex>
@@ -4609,7 +4609,7 @@
                 </Paragraph>
               </Paragraphs>
               <Top>0.33307in</Top>
-              <Left>5.70866in</Left>
+              <Left>6.70866in</Left>
               <Height>0.16654in</Height>
               <Width>2.02756in</Width>
               <ZIndex>5</ZIndex>
@@ -4635,7 +4635,7 @@
                 </Paragraph>
               </Paragraphs>
               <Top>0.16654in</Top>
-              <Left>7.55906in</Left>
+              <Left>8.55906in</Left>
               <Height>0.16654in</Height>
               <Width>0.17716in</Width>
               <ZIndex>6</ZIndex>
@@ -4648,8 +4648,8 @@
         </PageHeader>
         <PageHeight>8.5in</PageHeight>
         <PageWidth>11in</PageWidth>
-        <LeftMargin>0.49213in</LeftMargin>
-        <RightMargin>0.3937in</RightMargin>
+        <LeftMargin>2cm</LeftMargin>
+        <RightMargin>2cm</RightMargin>
         <TopMargin>0.25in</TopMargin>
         <Style />
       </Page>
