@@ -329,27 +329,25 @@ codeunit 50003 CustomEvents
         SalesShptLine: Record "Sales Shipment Line";
         ReturnRcptLine: Record "Return Receipt Line";
     begin
-        if PurchLine."Assigned By" <> PurchLine."Assigned By"::" " then begin
-            with TempItemChargeAssgntPurch do
-                case "Applies-to Doc. Type" of
-                    "Applies-to Doc. Type"::Order,
-                    "Applies-to Doc. Type"::Invoice,
-                    "Applies-to Doc. Type"::"Return Order",
-                    "Applies-to Doc. Type"::"Credit Memo":
-                        begin
-                            PurchLine.Get("Applies-to Doc. Type", "Applies-to Doc. No.", "Applies-to Doc. Line No.");
-                            DecimalArray[1] := PurchLine.Quantity;
-                            if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total CBM" then
-                                DecimalArray[2] := PurchLine."Total CBM"
+        with TempItemChargeAssgntPurch do
+            case "Applies-to Doc. Type" of
+                "Applies-to Doc. Type"::Order,
+                "Applies-to Doc. Type"::Invoice,
+                "Applies-to Doc. Type"::"Return Order",
+                "Applies-to Doc. Type"::"Credit Memo":
+                    begin
+                        PurchLine.Get("Applies-to Doc. Type", "Applies-to Doc. No.", "Applies-to Doc. Line No.");
+                        DecimalArray[1] := PurchLine.Quantity;
+                        if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total CBM" then
+                            DecimalArray[2] := PurchLine."Total CBM"
+                        else
+                            if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total Gross (KG)" then
+                                DecimalArray[2] := PurchLine."Total Gross (KG)"
                             else
-                                if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total Gross (KG)" then
-                                    DecimalArray[2] := PurchLine."Total Gross (KG)"
-                                else
-                                    DecimalArray[2] := PurchLine."Gross Weight";
-                            DecimalArray[3] := PurchLine."Unit Volume";
-                        end;
-                end;
-        end;
+                                DecimalArray[2] := PurchLine."Gross Weight";
+                        DecimalArray[3] := PurchLine."Unit Volume";
+                    end;
+            end;
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Item Charge Assgnt. (Purch.)", 'OnSuggestAssgntOnAfterItemChargeAssgntPurchSetFilters', '', false, false)]

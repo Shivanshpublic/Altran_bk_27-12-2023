@@ -988,7 +988,7 @@ report 50085 "Aged Accounts Payable NA1"
     begin
         Clear(PercentString);
         if Total <> 0 then
-            for i := 1 to 4 do begin
+            for i := 1 to 5 do begin
                 Percent := Amounts[i] / Total * 100.0;
                 if StrLen(Format(Round(Percent))) + 4 > MaxStrLen(PercentString[1]) then
                     PercentString[i] := PadStr(PercentString[i], MaxStrLen(PercentString[i]), '*')

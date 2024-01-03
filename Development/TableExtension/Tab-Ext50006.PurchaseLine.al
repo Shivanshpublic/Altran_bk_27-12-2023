@@ -185,6 +185,23 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
         }
         field(50112; "Assigned By"; Enum ItemChargeAssnOption)
         {
+            trigger OnValidate()
+            var
+                ItemChargeAssgntPurch: Record "Item Charge Assignment (Purch)";
+            begin
+                if (xRec."Assigned By" <> Rec."Assigned By") then begin
+                    ItemChargeAssgntPurch.SetRange("Document Type", "Document Type");
+                    ItemChargeAssgntPurch.SetRange("Document No.", "Document No.");
+                    ItemChargeAssgntPurch.SetRange("Document Line No.", "Line No.");
+
+                    if not ItemChargeAssgntPurch.IsEmpty() then begin
+                        ItemChargeAssgntPurch.ModifyAll("Amount to Assign", 0);
+                        ItemChargeAssgntPurch.ModifyAll("Qty. to Assign", 0);
+                        ItemChargeAssgntPurch.ModifyAll("Amount to Handle", 0);
+                        ItemChargeAssgntPurch.ModifyAll("Qty. to Handle", 0);
+                    end;
+                end;
+            end;
         }
         field(55400; "Lot No."; Code[50])
         {

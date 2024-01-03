@@ -17,15 +17,18 @@ pageextension 50041 ItemSurchargePurch extends "Item Charge Assignment (Purch)"
             field("Assigned By"; Rec."Assigned By")
             {
                 ApplicationArea = All;
+                Editable = false;
             }
             field("Total CBM"; Rec."Total CBM")
             {
                 ApplicationArea = All;
+                Editable = false;
                 Visible = CBMVisible;
             }
             field("Total Gross (KG)"; Rec."Total Gross (KG)")
             {
                 ApplicationArea = All;
+                Editable = false;
                 Visible = GrossKGVisible;
             }
         }
@@ -40,6 +43,7 @@ pageextension 50041 ItemSurchargePurch extends "Item Charge Assignment (Purch)"
         CBMVisible := true;
         GrossKGVisible := true;
         PalletQtyVisible := true;
+
         if Rec."Assigned By" = Rec."Assigned By"::"Total CBM" then begin
             CBMVisible := true;
             GrossKGVisible := false;
@@ -55,29 +59,8 @@ pageextension 50041 ItemSurchargePurch extends "Item Charge Assignment (Purch)"
             GrossKGVisible := false;
             PalletQtyVisible := true;
         end;
+
     end;
 
-    // local procedure SetControl()
-    // begin
-    //     CBMVisible := true;
-    //     GrossKGVisible := true;
-    //     PalletQtyVisible := true;
-    //     if Rec."Assigned By" = Rec."Assigned By"::"Total CBM" then begin
-    //         CBMVisible := true;
-    //         GrossKGVisible := false;
-    //         PalletQtyVisible := false;
-    //     end;
-    //     if Rec."Assigned By" = Rec."Assigned By"::"Total CBM" then begin
-    //         CBMVisible := false;
-    //         GrossKGVisible := true;
-    //         PalletQtyVisible := false;
-    //     end;
-    //     if Rec."Assigned By" = Rec."Assigned By"::" " then begin
-    //         CBMVisible := false;
-    //         GrossKGVisible := false;
-    //         PalletQtyVisible := true;
-    //     end;
-
-    // end;
 
 }
