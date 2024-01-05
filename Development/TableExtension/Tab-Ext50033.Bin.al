@@ -1,4 +1,4 @@
-tableextension 50030 BinContent extends "Bin Content"
+tableextension 50033 BinExt extends Bin
 {
     fields
     {
@@ -6,7 +6,7 @@ tableextension 50030 BinContent extends "Bin Content"
         {
             AccessByPermission = TableData "Sales Shipment Header" = R;
             AutoFormatType = 1;
-            CalcFormula = lookup(Customer.Name WHERE("No." = FIELD("Bin Code")));
+            CalcFormula = lookup(Customer.Name WHERE("No." = FIELD("Code")));
             Caption = 'Bin Description';
             Editable = false;
             FieldClass = FlowField;
@@ -16,5 +16,4 @@ tableextension 50030 BinContent extends "Bin Content"
     {
         addlast(DropDown; "Bin Description") { }
     }
-
 }
