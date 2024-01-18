@@ -660,9 +660,10 @@ report 50084 "Aged Accounts Receivable NA1"
         ColumnHead[3] :=
           Format(PeriodEndingDate[1] - PeriodEndingDate[3] + 1) + ' - ' + Format(PeriodEndingDate[1] - PeriodEndingDate[4]) + DaysLbl;
         ColumnHead[4] :=
-       Format(PeriodEndingDate[2] - PeriodEndingDate[4] + 1) + ' - ' + Format(PeriodEndingDate[2] - PeriodEndingDate[5]) + DaysLbl;
+       Format(PeriodEndingDate[2] - PeriodEndingDate[5] + 1) + ' - ' + Format(PeriodEndingDate[1] - PeriodEndingDate[5]) + DaysLbl;
+
         //ColumnHead[4] := OverLbl + ' ' + Format(PeriodEndingDate[1] - PeriodEndingDate[4]) + DaysLbl;
-        ColumnHead[5] := OverLbl + ' ' + Format(PeriodEndingDate[1] - PeriodEndingDate[4]) + DaysLbl;
+        ColumnHead[5] := OverLbl + ' ' + Format(PeriodEndingDate[1] - PeriodEndingDate[5]) + DaysLbl;
 
         if PrintToExcel then
             MakeExcelInfo();

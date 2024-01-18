@@ -136,7 +136,7 @@ report 50016 "Daily Import Report CSR"
         ShowOnlyRcvdnotInv: Boolean;
         lMBL: Text[200];
         lHBL: Text[200];
-        lRcptNo: Code[20];
+        lRcptNo: Code[250];
         lRcptLineNo: Integer;
 
     local procedure MakeHeader()
@@ -297,6 +297,12 @@ report 50016 "Daily Import Report CSR"
                                 S_SalesAmountActual += SalesILE."Sales Amount (Actual)";
                             until SalesILE.Next() = 0;
                     until PurchILE.Next() = 0;
+                if lRcptNo <> '' then
+                    lRcptNo += ', ' + PurchRcptLine."Document No."
+                else
+                    lRcptNo += PurchRcptLine."Document No.";
+                if lRcptLineNo = 0 then
+                    lRcptLineNo := PurchRcptLine."Line No.";
             until PurchRcptLine.Next() = 0;
         end;
 
@@ -317,15 +323,18 @@ report 50016 "Daily Import Report CSR"
             lBLAWB := ShipmentTrackingHeader."Freight Details";
             lContainer := ShipmentTrackingHeader."Container No.";
             lFreightRate := ShipmentTrackingHeader."Total Shipment Cost";
-            lETD := ShipmentTrackingLine."Date of Dispatch";
+            if ShipmentTrackingLine."Date of Dispatch" = 0D then
+                lETD := ShipmentTrackingHeader."Date of Dispatch"
+            else
+                lETD := ShipmentTrackingLine."Date of Dispatch";
             lETA := ShipmentTrackingLine."Date of Arrival";
             lForwarder := ShipmentTrackingHeader."Supplier No.";
             lVessel := ShipmentTrackingHeader."MMSI Code";
             lShipTrackingNo := ShipmentTrackingHeader.Code;
             lMBL := ShipmentTrackingHeader.MBL;
             lHBL := ShipmentTrackingHeader.HBL;
-            lRcptNo := ShipmentTrackingLine."Receipt No.";
-            lRcptLineNo := ShipmentTrackingLine."Receipt Line No.";
+            //lRcptNo := ShipmentTrackingLine."Receipt No.";
+            //lRcptLineNo := ShipmentTrackingLine."Receipt Line No.";
         end;
 
         lPODate := "Purchase Line"."Order Date";
