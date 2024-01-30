@@ -1,4 +1,4 @@
-pageextension 50003 "Purchase Order" extends "Purchase Order Subform"
+pageextension 50003 "PurchaseOrderSubform" extends "Purchase Order Subform"
 {
     layout
     {
