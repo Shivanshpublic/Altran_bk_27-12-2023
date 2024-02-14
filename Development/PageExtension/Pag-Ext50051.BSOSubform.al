@@ -7,7 +7,10 @@ pageextension 50051 BSOSubform extends "Blanket Sales Order Subform"
         }
         addlast(Control1)
         {
-
+            field("Assigned CSR"; Rec."Assigned CSR")
+            {
+                ApplicationArea = All;
+            }
         }
         addafter(Description)
         {

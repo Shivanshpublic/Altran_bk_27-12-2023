@@ -100,6 +100,10 @@ pageextension 50006 PSISubform extends "Posted Sales Invoice Subform"
                 ApplicationArea = All;
                 ToolTip = 'Specifies the value of the Surcharge Per Qty. field.';
             }
+            field("Assigned CSR"; Rec."Assigned CSR")
+            {
+                ApplicationArea = All;
+            }
         }
         addafter(Description)
         {

@@ -83,6 +83,13 @@ pageextension 50024 PPRSubform extends "Posted Purchase Rcpt. Subform"
             }
 
         }
+        addlast(Control1)
+        {
+            field("Order Note"; Rec."Order Note")
+            {
+                ApplicationArea = All;
+            }
+        }
         modify("Description 2")
         {
             Visible = true;

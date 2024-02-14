@@ -2,6 +2,10 @@ tableextension 50009 SalesShipment extends "Sales Shipment Line"
 {
     fields
     {
+        modify("Planned Delivery Date")
+        {
+            Caption = 'Customer Required Date';
+        }
         field(50000; "PO No."; code[20])
         {
             DataClassification = ToBeClassified;
@@ -129,6 +133,21 @@ tableextension 50009 SalesShipment extends "Sales Shipment Line"
                         Error('Type must not be equal to Inventory in Item: No.=%1.', Rec."No.");
                 end;
             end;
+        }
+        field(50030; "Assigned CSR"; Code[50])
+        {
+            Caption = 'Assigned CSR';
+            DataClassification = EndUserIdentifiableInformation;
+            TableRelation = "User Setup";
+            Editable = false;
+        }
+        field(50031; "External Document No."; Code[35])
+        {
+            Editable = false;
+        }
+        field(50032; "Sell-to Customer Name"; Text[50])
+        {
+            Editable = false;
         }
         //18-09-2023-end
         field(50111; "UL Certificate Available"; Boolean)

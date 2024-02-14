@@ -21,10 +21,41 @@ tableextension 50011 POheader extends "Purchase Header"
         {
             DataClassification = ToBeClassified;
             TableRelation = "Milestone Status";
+            Caption = 'Order Status';
+            trigger OnValidate()
+            var
+                PL: Record "Purchase Line";
+            begin
+                PL.Reset();
+                PL.SetRange("Document Type", "Document Type");
+                PL.SetRange("Document No.", "No.");
+                if PL.FindFirst() then begin
+                    PL.ModifyAll("Milestone Status", "Milestone Status");
+                end;
+            end;
         }
         field(50014; "VIA"; Code[20])
         {
             DataClassification = ToBeClassified;
+            trigger OnValidate()
+            var
+                PL: Record "Purchase Line";
+            begin
+                PL.Reset();
+                PL.SetRange("Document Type", "Document Type");
+                PL.SetRange("Document No.", "No.");
+                if PL.FindFirst() then begin
+                    PL.ModifyAll("VIA", "VIA");
+                end;
+            end;
+        }
+        modify("Promised Receipt Date")
+        {
+            Caption = 'Factory Ready Date';
+        }
+        modify("Expected Receipt Date")
+        {
+            Caption = 'Expected To Arrive';
         }
     }
     procedure AssignLotNo(PurchHead: Record "Purchase Header"; LineNo: Integer; LotNo: Code[50])

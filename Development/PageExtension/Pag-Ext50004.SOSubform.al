@@ -108,6 +108,10 @@ pageextension 50004 SOSubform extends "Sales Order Subform"
                 ApplicationArea = All;
                 ToolTip = 'Specifies the value of the Surcharge Per Qty. field.';
             }
+            field("Assigned CSR"; Rec."Assigned CSR")
+            {
+                ApplicationArea = All;
+            }
         }
         addafter(Description)
         {

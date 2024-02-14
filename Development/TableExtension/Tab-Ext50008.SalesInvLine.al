@@ -137,6 +137,21 @@ tableextension 50008 SalesInvLine extends "Sales Invoice Line"
                 end;
             end;
         }
+        field(50030; "Assigned CSR"; Code[50])
+        {
+            Caption = 'Assigned CSR';
+            DataClassification = EndUserIdentifiableInformation;
+            TableRelation = "User Setup";
+            Editable = false;
+        }
+        field(50031; "External Document No."; Code[35])
+        {
+            Editable = false;
+        }
+        field(50032; "Sell-to Customer Name"; Text[50])
+        {
+            Editable = false;
+        }
         //18-09-2023-end
         field(50111; "UL Certificate Available"; Boolean)
         {

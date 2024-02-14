@@ -206,6 +206,7 @@ TABLE 50002 "Tracking Shipment Log"
             DecimalPlaces = 0 : 3;
         }
     }
+
     KEYS
     {
         KEY(PK; "Entry No.")

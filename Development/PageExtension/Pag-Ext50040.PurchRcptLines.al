@@ -25,6 +25,14 @@ pageextension 50040 PurchRcptLines extends "Purch. Receipt Lines"
             {
                 ApplicationArea = all;
             }
+            field("Total CBM"; Rec."Total CBM")
+            {
+                ApplicationArea = all;
+            }
+            field("Total Gross (KG)"; Rec."Total Gross (KG)")
+            {
+                ApplicationArea = all;
+            }
             field("Line Amount"; Rec."Unit Cost" * Rec.Quantity)
             {
                 ApplicationArea = All;
@@ -50,6 +58,13 @@ pageextension 50040 PurchRcptLines extends "Purch. Receipt Lines"
                 ApplicationArea = All;
             }
 
+        }
+        addlast(Control1)
+        {
+            field("Order Note"; Rec."Order Note")
+            {
+                ApplicationArea = All;
+            }
         }
     }
 }

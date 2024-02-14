@@ -120,6 +120,19 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
         {
             Caption = 'Model No.';
         }
+        modify("Promised Receipt Date")
+        {
+            Caption = 'Factory Ready Date';
+        }
+        modify("Planned Receipt Date")
+        {
+            Caption = 'Booked Date';
+        }
+        modify("Expected Receipt Date")
+        {
+            Caption = 'Expected To Arrive';
+        }
+
         modify("No.")
         {
             trigger OnAfterValidate()
@@ -169,7 +182,8 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
         field(50110; "Expected Receipt Date1"; Date)
         {
             AccessByPermission = TableData "Purch. Rcpt. Header" = R;
-            Caption = 'Expected Receipt Date';
+            Caption = 'Expected to Arrive';
+
             trigger OnValidate()
             begin
                 "Expected Receipt Date" := "Expected Receipt Date1";
@@ -195,6 +209,7 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
                     ItemChargeAssgntPurch.SetRange("Document Line No.", "Line No.");
 
                     if not ItemChargeAssgntPurch.IsEmpty() then begin
+                        ItemChargeAssgntPurch.ModifyAll("Assigned By", "Assigned By");
                         ItemChargeAssgntPurch.ModifyAll("Amount to Assign", 0);
                         ItemChargeAssgntPurch.ModifyAll("Qty. to Assign", 0);
                         ItemChargeAssgntPurch.ModifyAll("Amount to Handle", 0);
@@ -203,6 +218,11 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
                 end;
             end;
         }
+        field(50113; "Order Note"; Text[250])
+        {
+            Caption = 'Order Note';
+        }
+
         field(55400; "Lot No."; Code[50])
         {
             Caption = 'Lot No.';
@@ -219,6 +239,7 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
                 end;
             end;
         }
+
     }
 
     trigger OnInsert()

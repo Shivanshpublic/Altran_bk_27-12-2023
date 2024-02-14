@@ -17,6 +17,13 @@ pageextension 50062 PostedPurchReceiptLines extends "Posted Purchase Receipt Lin
                 ApplicationArea = all;
             }
         }
+        addlast(Control1)
+        {
+            field("Order Note"; Rec."Order Note")
+            {
+                ApplicationArea = All;
+            }
+        }
     }
 
 }

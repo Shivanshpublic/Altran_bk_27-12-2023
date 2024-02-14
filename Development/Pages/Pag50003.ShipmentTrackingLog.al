@@ -50,6 +50,7 @@ PAGE 50003 "Shipment Tracking Log"
                 FIELD("Delivery Lead Time"; Rec."Delivery Lead Time")
                 {
                     ApplicationArea = All;
+                    Visible = false;
                 }
                 FIELD("Date of Arrival"; Rec."Date of Arrival")
                 {

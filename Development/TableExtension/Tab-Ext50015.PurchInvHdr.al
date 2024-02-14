@@ -21,11 +21,15 @@ tableextension 50015 PurchInvHdr extends "Purch. Inv. Header"
         {
             DataClassification = ToBeClassified;
             TableRelation = "Milestone Status";
+            Caption = 'Order Status';
         }
         field(50014; "VIA"; Code[20])
         {
             DataClassification = ToBeClassified;
         }
-
+        modify("Expected Receipt Date")
+        {
+            Caption = 'Expected To Arrive';
+        }
     }
 }

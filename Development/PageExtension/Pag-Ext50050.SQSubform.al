@@ -7,6 +7,10 @@ pageextension 50050 SQSubform extends "Sales Quote Subform"
         }
         addlast(Control1)
         {
+            field("Assigned CSR"; Rec."Assigned CSR")
+            {
+                ApplicationArea = All;
+            }
 
         }
         addafter(Description)

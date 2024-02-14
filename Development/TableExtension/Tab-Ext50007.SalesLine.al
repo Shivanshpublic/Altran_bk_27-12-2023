@@ -14,7 +14,10 @@ tableextension 50007 SalesLine extends "Sales Line"
                 end;
             end;
         }
-
+        modify("Planned Delivery Date")
+        {
+            Caption = 'Customer Required Date';
+        }
         field(50000; "PO No."; code[20])
         {
             DataClassification = ToBeClassified;
@@ -137,15 +140,30 @@ tableextension 50007 SalesLine extends "Sales Line"
             TableRelation = "Sales Line"."Line No." where("Document No." = field("Document No."), "Document Type" = field("Document Type"));
             trigger OnValidate()
             var
-                RecITem: Record Item;
+                RecItem: Record Item;
             begin
                 if (Rec."No." <> '') AND (Rec.Type = Rec.Type::Item) AND (Rec."Line No." <> 0) then begin
-                    RecITem.GET(Rec."No.");
-                    if RecITem.Type = RecITem.Type::Inventory then
+                    RecItem.GET(Rec."No.");
+                    if RecItem.Type = RecItem.Type::Inventory then
                         Error('Type must not be equal to Inventory in Item: No.=%1.', Rec."No.");
                 end;
             end;
             //TableRelation="Sales Line"."No." where("Document Type"=field("Document Type"),"Document No."=field("Document No."))
+        }
+        field(50030; "Assigned CSR"; Code[50])
+        {
+            Caption = 'Assigned CSR';
+            DataClassification = EndUserIdentifiableInformation;
+            TableRelation = "User Setup";
+            Editable = false;
+        }
+        field(50031; "External Document No."; Code[35])
+        {
+            Editable = false;
+        }
+        field(50032; "Sell-to Customer Name"; Text[50])
+        {
+            Editable = false;
         }
         field(50111; "UL Certificate Available"; Boolean)
         {
@@ -170,6 +188,9 @@ tableextension 50007 SalesLine extends "Sales Line"
             "Country of provenance" := RecHdr."Country of provenance";
         if "Milestone Status" = '' then
             "Milestone Status" := RecHdr."Milestone Status";
+        "Assigned CSR" := RecHdr."Assigned User ID";
+        "External Document No." := RecHdr."External Document No.";
+        "Sell-to Customer Name" := RecHdr."Sell-to Customer Name";
     end;
 
     trigger OnModify()
@@ -183,5 +204,8 @@ tableextension 50007 SalesLine extends "Sales Line"
             "Country of Acquisition" := RecHdr."Country of Acquisition";
         if "Country of provenance" = '' then
             "Country of provenance" := RecHdr."Country of provenance";
+        "Assigned CSR" := RecHdr."Assigned User ID";
+        "External Document No." := RecHdr."External Document No.";
+        "Sell-to Customer Name" := RecHdr."Sell-to Customer Name";
     end;
 }

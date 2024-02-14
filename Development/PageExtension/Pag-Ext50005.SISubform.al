@@ -103,6 +103,10 @@ pageextension 50005 SISubform extends "Sales Invoice Subform"
                 ApplicationArea = All;
                 ToolTip = 'Specifies the value of the Country of Acquisition field.';
             }
+            field("Assigned CSR"; Rec."Assigned CSR")
+            {
+                ApplicationArea = All;
+            }
         }
         addafter(Description)
         {

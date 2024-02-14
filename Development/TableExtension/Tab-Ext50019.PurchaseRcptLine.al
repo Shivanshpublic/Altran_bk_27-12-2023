@@ -110,5 +110,21 @@ tableextension 50019 PurchaseRcptLine extends "Purch. Rcpt. Line"
             begin
             end;
         }
+        field(50113; "Order Note"; Text[250])
+        {
+            Caption = 'Order Note';
+        }
+        modify("Promised Receipt Date")
+        {
+            Caption = 'Factory Ready Date';
+        }
+        modify("Planned Receipt Date")
+        {
+            Caption = 'Booked Date';
+        }
+        modify("Expected Receipt Date")
+        {
+            Caption = 'Expected To Arrive';
+        }
     }
 }

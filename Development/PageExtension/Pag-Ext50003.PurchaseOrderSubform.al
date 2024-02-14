@@ -77,6 +77,10 @@ pageextension 50003 "PurchaseOrderSubform" extends "Purchase Order Subform"
                 ApplicationArea = All;
                 ToolTip = 'Specifies the value of the Country of Acquisition field.';
             }
+            field("Order Note"; Rec."Order Note")
+            {
+                ApplicationArea = All;
+            }
         }
         addafter(Description)
         {

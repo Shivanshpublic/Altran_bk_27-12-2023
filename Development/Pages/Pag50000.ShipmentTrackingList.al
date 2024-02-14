@@ -24,6 +24,10 @@ PAGE 50000 "Shipment Tracking List"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("FCL/LCL"; Rec."FCL/LCL")
+                {
+                    ApplicationArea = All;
+                }
                 FIELD("Surcharge Allocated to SO"; Rec."Surcharge Allocated to SO")
                 {
                     ApplicationArea = All;
@@ -36,11 +40,28 @@ PAGE 50000 "Shipment Tracking List"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("Port of Load"; Rec."Port of Load")
+                {
+                    ApplicationArea = All;
+                }
+
                 FIELD("Date of Dispatch"; Rec."Date of Dispatch")
                 {
                     ApplicationArea = All;
                 }
                 FIELD("Freight Details"; Rec."Freight Details")
+                {
+                    ApplicationArea = All;
+                }
+                FIELD("Delivery Lead Time"; Rec."Delivery Lead Time")
+                {
+                    ApplicationArea = All;
+                }
+                FIELD("Total CBM"; Rec."Total CBM")
+                {
+                    ApplicationArea = All;
+                }
+                FIELD("Milestone Status"; Rec."Milestone Status")
                 {
                     ApplicationArea = All;
                 }

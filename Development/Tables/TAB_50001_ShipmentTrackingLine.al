@@ -197,10 +197,9 @@ TABLE 50001 "Tracking Shipment Line"
 
             end;
         }
-        FIELD(20; "Delivery Lead Time"; Integer)
+        FIELD(20; "Delivery Lead Time"; DateFormula)
         {
             DataClassification = ToBeClassified;
-            MinValue = 0;
             trigger OnValidate()
             begin
                 CalculateArrivalDate();
@@ -236,6 +235,17 @@ TABLE 50001 "Tracking Shipment Line"
                         ResetRcptLine(xRec."PO No.", "PO Line No.");
                         "Receipt Line No." := 0;
                     end;
+            end;
+        }
+        field(31; "Total CBM"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            DecimalPlaces = 0 : 3;
+            trigger OnValidate()
+            begin
+                TestStatusOpen();
+                if "Receipt Line No." <> 0 then
+                    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
             end;
         }
     }
@@ -340,6 +350,7 @@ TABLE 50001 "Tracking Shipment Line"
                 PurchRcptLine."Shipment Tracking Code" := '';
                 PurchRcptLine."Shipment Tracking Line No." := 0;
                 PurchRcptLine."Pallet Quantity" := 0;
+                PurchRcptLine."Total CBM" := 0;
                 PurchRcptLine.Modify()
             until PurchRcptLine.Next() = 0;
     end;
@@ -394,6 +405,7 @@ TABLE 50001 "Tracking Shipment Line"
                     "Item No." := PurchaseLine."No.";
                     Description := PurchaseLine.Description;
                     "PO Quantity" := PurchaseLine.Quantity;
+                    Validate("Date of Arrival", PurchaseLine."Expected Receipt Date1");
                 end;
             until PurchaseLine.Next() = 0;
     end;
@@ -401,6 +413,7 @@ TABLE 50001 "Tracking Shipment Line"
     local procedure UpdateRcptLine(RcptNo: Code[20]; RcptLineNo: integer; PONo: Code[20]; POLineNo: Integer)
     var
         PurchRcptLine: Record "Purch. Rcpt. Line";
+        TrackShptHeader: Record "Tracking Shipment Header";
     begin
         PurchRcptLine.SetRange("Document No.", RcptNo);
         PurchRcptLine.SetRange("Line No.", RcptLineNo);
@@ -412,7 +425,12 @@ TABLE 50001 "Tracking Shipment Line"
             //if POLineNo <> 0 then
             PurchRcptLine."Shipment Tracking Line No." := Rec."Line No.";
             PurchRcptLine."Pallet Quantity" := Rec."Pallet Quantity";
+            PurchRcptLine."Total CBM" := Rec."Total CBM";
             PurchRcptLine."Gross Weight" := Rec."Pallet Quantity";
+            if TrackShptHeader.Get(Rec."Tracking Code") then begin
+                PurchRcptLine."Milestone Status" := TrackShptHeader."Milestone Status";
+            end;
+
             if PurchRcptLine.Quantity <> 0 then
                 PurchRcptLine."Unit Volume" := rec."Pallet Quantity" / PurchRcptLine.Quantity;
             PurchRcptLine.Modify();
@@ -426,7 +444,8 @@ TABLE 50001 "Tracking Shipment Line"
     VAR
 
     BEGIN
-        "Date of Arrival" := CalcDate(FORMAT("Delivery Lead Time" + "Delayed by Days") + 'D', "Date of Dispatch")
+        //"Date of Arrival" := CalcDate(FORMAT("Delivery Lead Time" + "Delayed by Days") + 'D', "Date of Dispatch")
+        "Date of Arrival" := CalcDate("Delivery Lead Time", "Date of Dispatch")
     end;
 
     procedure TestStatusOpen()

@@ -34,6 +34,14 @@ pageextension 50049 GetPurchRcptLines extends "Get Receipt Lines"
                 ApplicationArea = Basic, Suite;
                 ToolTip = 'Specifies the VIA.';
             }
+            field("Total CBM"; Rec."Total CBM")
+            {
+                ApplicationArea = Basic, Suite;
+            }
+            field("Total Gross (KG)"; Rec."Total Gross (KG)")
+            {
+                ApplicationArea = Basic, Suite;
+            }
         }
         addafter("No.")
         {
@@ -56,6 +64,13 @@ pageextension 50049 GetPurchRcptLines extends "Get Receipt Lines"
             {
                 ApplicationArea = All;
                 Caption = 'Vendor Name';
+            }
+        }
+        addlast(Control1)
+        {
+            field("Order Note"; Rec."Order Note")
+            {
+                ApplicationArea = All;
             }
         }
     }

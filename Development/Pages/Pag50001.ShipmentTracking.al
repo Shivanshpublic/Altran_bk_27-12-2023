@@ -34,6 +34,10 @@ PAGE 50001 "Shipment Tracking Card"
 
                     end;
                 }
+                FIELD("FCL/LCL"; Rec."FCL/LCL")
+                {
+                    ApplicationArea = All;
+                }
                 FIELD("Container No."; Rec."Container No.")
                 {
                     ApplicationArea = All;
@@ -50,7 +54,15 @@ PAGE 50001 "Shipment Tracking Card"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("Port of Load"; Rec."Port of Load")
+                {
+                    ApplicationArea = All;
+                }
                 FIELD("Date of Dispatch"; Rec."Date of Dispatch")
+                {
+                    ApplicationArea = All;
+                }
+                FIELD("Delivery Lead Time"; Rec."Delivery Lead Time")
                 {
                     ApplicationArea = All;
                 }
@@ -86,6 +98,10 @@ PAGE 50001 "Shipment Tracking Card"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("Total CBM"; Rec."Total CBM")
+                {
+                    ApplicationArea = All;
+                }
                 field("Reference No."; Rec."Reference No.")
                 {
                     ApplicationArea = All;
@@ -111,6 +127,10 @@ PAGE 50001 "Shipment Tracking Card"
                     //Enabled = SurchargeCalculated;
                 }
                 FIELD("Surcharge Allocated to SO"; Rec."Surcharge Allocated to SO")
+                {
+                    ApplicationArea = All;
+                }
+                FIELD("Milestone Status"; Rec."Milestone Status")
                 {
                     ApplicationArea = All;
                 }
@@ -177,10 +197,12 @@ PAGE 50001 "Shipment Tracking Card"
                     if WfInitCode.CheckWorkflowNotEnabled(Rec) then begin
                         Error(ErrorWorkflowExist);
                     end;
+                    Rec.UpdateRcptLine();
                     IF UserSetup.GET(UserId) THEN BEGIN
                         Rec.Status := Rec.Status::Released;
                         Rec.Modify();
                     END;
+
                 END;
             }
 
@@ -508,7 +530,7 @@ PAGE 50001 "Shipment Tracking Card"
     trigger OnAfterGetRecord()
     begin
         SetControl();
-        Rec.CalcFields("Total Quantity", "Pallet Quantity")
+        Rec.CalcFields("Total Quantity", "Pallet Quantity", "Total CBM")
     end;
 
     trigger OnOpenPage()

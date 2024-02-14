@@ -14,6 +14,23 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
                 END;
             END;
         }
+        MODIFY("Assigned User ID")
+        {
+            TRIGGER OnAfterValidate()
+            var
+                SalesLine: Record "Sales Line";
+            begin
+                if xRec."Assigned User ID" <> Rec."Assigned User ID" then begin
+                    SalesLine.Reset();
+                    SalesLine.SetRange("Document Type", "Document Type");
+                    SalesLine.SetRange("Document No.", "No.");
+                    if SalesLine.FindFirst() then begin
+                        SalesLine.ModifyAll("Assigned CSR", "Assigned User ID");
+                    end;
+                end;
+            end;
+        }
+
         FIELD(50000; "Internal Team"; Code[20])
         {
             DataClassification = ToBeClassified;
@@ -147,6 +164,21 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
             DataClassification = ToBeClassified;
         }
     }
+
+    trigger OnModify()
+    var
+        SalesLine: Record "Sales Line";
+    begin
+        SalesLine.Reset();
+        SalesLine.SetRange("Document Type", "Document Type");
+        SalesLine.SetRange("Document No.", "No.");
+        if SalesLine.FindFirst() then
+            repeat
+                SalesLine."External Document No." := "External Document No.";
+                SalesLine.Modify();
+            until SalesLine.Next() = 0;
+    end;
+
     PROCEDURE LookupOnExternalRep()
     VAR
         SalesPersonList: Page "Salespersons/Purchasers";

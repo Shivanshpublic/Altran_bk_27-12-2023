@@ -98,5 +98,9 @@ tableextension 50020 PurchaseRetShptLine extends "Return Shipment Line"
             begin
             end;
         }
+        field(50113; "Order Note"; Text[250])
+        {
+            Caption = 'Order Note';
+        }
     }
 }

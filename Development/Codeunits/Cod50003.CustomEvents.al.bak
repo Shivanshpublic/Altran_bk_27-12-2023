@@ -348,20 +348,6 @@ codeunit 50003 CustomEvents
                                 DecimalArray[2] := PurchLine."Gross Weight";
                         DecimalArray[3] := PurchLine."Unit Volume";
                     end;
-                "Applies-to Doc. Type"::Receipt:
-                    begin
-                        PurchRcptLine.Get("Applies-to Doc. No.", "Applies-to Doc. Line No.");
-                        DecimalArray[1] := PurchRcptLine.Quantity;
-                        if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total CBM" then
-                            DecimalArray[2] := PurchRcptLine."Total CBM"
-                        else
-                            if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total Gross (KG)" then
-                                DecimalArray[2] := PurchRcptLine."Total Gross (KG)"
-                            else
-                                DecimalArray[2] := PurchRcptLine."Gross Weight";
-                        DecimalArray[3] := PurchRcptLine."Unit Volume";
-                    end;
-
             end;
     end;
 
@@ -454,11 +440,5 @@ codeunit 50003 CustomEvents
         TranLine.SetFilter(TranLine."Qty. to Receive", '<>%1', 0);
         if TranLine.FindFirst() then
             TransferHeader."Posting Date" := TranLine."Receipt Date";
-    end;
-
-    [EventSubscriber(ObjectType::Table, Database::"Transfer Header", 'OnUpdateTransLinesOnBeforeModifyTransferLine', '', false, false)]
-    local procedure OnUpdateTransLinesOnBeforeModifyTransferLine(TransferHeader: Record "Transfer Header"; var TransferLine: record "Transfer Line")
-    begin
-        TransferLine.Validate("Receipt Date", TransferHeader."Receipt Date");
     end;
 }

@@ -75,6 +75,13 @@ pageextension 50013 PPISubform extends "Posted Purch. Invoice Subform"
             }
 
         }
+        addlast(Control1)
+        {
+            field("Order Note"; Rec."Order Note")
+            {
+                ApplicationArea = All;
+            }
+        }
         modify("Description 2")
         {
             Visible = true;

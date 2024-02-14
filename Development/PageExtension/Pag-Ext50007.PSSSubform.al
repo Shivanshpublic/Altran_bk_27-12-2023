@@ -24,6 +24,10 @@ pageextension 50007 PSSSubform extends "Posted Sales Shpt. Subform"
                 Caption = 'Purchase Order Line No.';
                 Editable = false;
             }
+            field("Assigned CSR"; Rec."Assigned CSR")
+            {
+                ApplicationArea = All;
+            }
         }
         addafter(Description)
         {

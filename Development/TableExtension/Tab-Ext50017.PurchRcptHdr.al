@@ -21,11 +21,19 @@ tableextension 50017 PurchRcptHdr extends "Purch. Rcpt. Header"
         {
             DataClassification = ToBeClassified;
             TableRelation = "Milestone Status";
+            Caption = 'Order Status';
         }
         field(50014; "VIA"; Code[20])
         {
             DataClassification = ToBeClassified;
         }
-
+        modify("Promised Receipt Date")
+        {
+            Caption = 'Factory Ready Date';
+        }
+        modify("Expected Receipt Date")
+        {
+            Caption = 'Expected To Arrive';
+        }
     }
 }

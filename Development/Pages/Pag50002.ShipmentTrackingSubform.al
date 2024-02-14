@@ -62,6 +62,10 @@ PAGE 50002 "Shipment Tracking Subform"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Pallet Quantity field.';
                 }
+                FIELD("Total CBM"; Rec."Total CBM")
+                {
+                    ApplicationArea = All;
+                }
                 FIELD("Buy From Vendor No."; Rec."Buy From Vendor No.")
                 {
                     ApplicationArea = All;
@@ -79,6 +83,7 @@ PAGE 50002 "Shipment Tracking Subform"
                 FIELD("Delivery Lead Time"; Rec."Delivery Lead Time")
                 {
                     ApplicationArea = All;
+                    Visible = false;
                 }
                 FIELD("Date of Arrival"; Rec."Date of Arrival")
                 {

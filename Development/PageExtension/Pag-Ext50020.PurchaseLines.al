@@ -56,7 +56,10 @@ pageextension 50020 "Purchase Lines Ext" extends "Purchase Lines"
             {
                 ApplicationArea = All;
             }
-
+            field("Order Note"; Rec."Order Note")
+            {
+                ApplicationArea = All;
+            }
         }
         modify("Description 2")
         {

@@ -23,11 +23,25 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
             {
                 ApplicationArea = All;
             }
-
+            field("Assigned CSR"; Rec."Assigned CSR")
+            {
+                ApplicationArea = All;
+            }
         }
         addafter("No.")
         {
             field("Item Reference No."; Rec."Item Reference No.")
+            {
+                ApplicationArea = All;
+            }
+        }
+        addafter("Sell-to Customer No.")
+        {
+            field("Sell-to Customer Name"; Rec."Sell-to Customer Name")
+            {
+                ApplicationArea = All;
+            }
+            field("External Document No."; Rec."External Document No.")
             {
                 ApplicationArea = All;
             }

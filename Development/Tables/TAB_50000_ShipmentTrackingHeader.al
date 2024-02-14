@@ -1,6 +1,10 @@
 TABLE 50000 "Tracking Shipment Header"
 {
     DataClassification = ToBeClassified;
+    Permissions = TableData "Purch. Cr. Memo Line" = rm, TableData "Purch. Inv. Line" = rm,
+TableData "Return Shipment Line" = rm, TableData "Purch. Rcpt. Line" = rm,
+TableData "Sales Cr.Memo Line" = rm, TableData "Sales Shipment Line" = rm,
+TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
 
     FIELDS
     {
@@ -23,6 +27,19 @@ TABLE 50000 "Tracking Shipment Header"
         FIELD(5; "Date of Dispatch"; Date)
         {
             DataClassification = ToBeClassified;
+            Caption = 'Dispatch Date';
+            trigger OnValidate()
+            var
+                TrackingShipmentLine: Record "Tracking Shipment Line";
+            begin
+                TrackingShipmentLine.Reset();
+                TrackingShipmentLine.SetRange("Tracking Code", Rec.Code);
+                if TrackingShipmentLine.FindFirst() then
+                    repeat
+                        TrackingShipmentLine.Validate("Date Of Dispatch", "Date Of Dispatch");
+                        TrackingShipmentLine.Modify();
+                    until TrackingShipmentLine.Next() = 0;
+            end;
         }
         FIELD(6; Remarks; Text[250])
         {
@@ -141,6 +158,43 @@ TABLE 50000 "Tracking Shipment Header"
             Editable = false;
             FieldClass = FlowField;
 
+        }
+        FIELD(27; "Delivery Lead Time"; DateFormula)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            var
+                TrackingShipmentLine: Record "Tracking Shipment Line";
+            begin
+                TrackingShipmentLine.Reset();
+                TrackingShipmentLine.SetRange("Tracking Code", Rec.Code);
+                if TrackingShipmentLine.FindFirst() then
+                    repeat
+                        TrackingShipmentLine.Validate("Delivery Lead Time", "Delivery Lead Time");
+                        TrackingShipmentLine.Modify();
+                    until TrackingShipmentLine.Next() = 0;
+            end;
+        }
+        field(31; "Total CBM"; Decimal)
+        {
+            DecimalPlaces = 0 : 3;
+            CalcFormula = Sum("Tracking Shipment Line"."Total CBM" WHERE("Tracking Code" = FIELD(Code)));
+            Editable = false;
+            FieldClass = FlowField;
+        }
+        FIELD(32; "FCL/LCL"; Enum FCL_LCL_Option)
+        {
+            DataClassification = ToBeClassified;
+        }
+        FIELD(33; "Port of Load"; Text[50])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(35; "Milestone Status"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Order Status';
+            TableRelation = "Milestone Status";
         }
     }
 
@@ -407,5 +461,25 @@ TABLE 50000 "Tracking Shipment Header"
         SalesInvLine.SetFilter("Quantity", '<>%1', 0);
         if SalesInvLine.FindFirst() then
             Error(ErrInvLineExist, SalesInvLine."Document No.");
+    end;
+
+    procedure UpdateRcptLine()
+    var
+        PurchRcptLine: Record "Purch. Rcpt. Line";
+        TrackShptLine: Record "Tracking Shipment Line";
+    begin
+        TrackShptLine.Reset();
+        TrackShptLine.SetRange("Tracking Code", Rec.Code);
+        TrackShptLine.SetFilter("Receipt No.", '<>%1', '');
+        TrackShptLine.SetFilter("Receipt Line No.", '<>%1', 0);
+        if TrackShptLine.FindFirst() then
+            repeat
+                PurchRcptLine.SetRange("Document No.", TrackShptLine."Receipt No.");
+                PurchRcptLine.SetRange("Line No.", TrackShptLine."Receipt Line No.");
+                if PurchRcptLine.FindFirst() then begin
+                    PurchRcptLine."Milestone Status" := "Milestone Status";
+                    PurchRcptLine.Modify();
+                end;
+            until TrackShptLine.Next() = 0;
     end;
 }
