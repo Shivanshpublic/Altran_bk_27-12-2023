@@ -35,6 +35,22 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
                 ApplicationArea = All;
             }
         }
+        addafter("Outstanding Quantity")
+        {
+            field("Unit Price"; Rec."Unit Price")
+            {
+                ApplicationArea = All;
+            }
+            field("Quantity Shipped"; Rec."Quantity Shipped")
+            {
+                ApplicationArea = All;
+            }
+            field("QtyReceived$"; Rec."Quantity Shipped" * Rec."Unit Price")
+            {
+                ApplicationArea = All;
+                Caption = 'Quantity Shipped ($)';
+            }
+        }
         addafter("Sell-to Customer No.")
         {
             field("Sell-to Customer Name"; Rec."Sell-to Customer Name")
@@ -44,6 +60,43 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
             field("External Document No."; Rec."External Document No.")
             {
                 ApplicationArea = All;
+            }
+        }
+    }
+    actions
+    {
+        addfirst(processing)
+        {
+            action("Update Data")
+            {
+                ApplicationArea = All;
+                Image = Calculate;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                trigger OnAction()
+                var
+                    PurchHeader: Record "Purchase Header";
+                    SalesHeader: Record "Sales Header";
+                    Salesline: Record "Sales Line";
+                begin
+                    if PurchHeader.FindFirst() then
+                        repeat
+                            PurchHeader."Creation Date" := DT2Date(PurchHeader.SystemCreatedAt);
+                            PurchHeader.Modify();
+                        until PurchHeader.Next() = 0;
+                    if SalesHeader.FindFirst() then
+                        repeat
+                            Salesline.SetRange("Document Type", SalesHeader."Document Type");
+                            Salesline.SetRange("Document No.", SalesHeader."No.");
+                            if Salesline.FindFirst() then
+                                repeat
+                                    Salesline."Sell-to Customer Name" := SalesHeader."Sell-to Customer Name";
+                                    Salesline."External Document No." := SalesHeader."External Document No.";
+                                    Salesline.Modify();
+                                until Salesline.Next() = 0;
+                        until SalesHeader.Next() = 0;
+                end;
             }
         }
     }

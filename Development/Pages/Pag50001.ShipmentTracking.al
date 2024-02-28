@@ -197,6 +197,7 @@ PAGE 50001 "Shipment Tracking Card"
                     if WfInitCode.CheckWorkflowNotEnabled(Rec) then begin
                         Error(ErrorWorkflowExist);
                     end;
+                    Rec.UpdatePOLine();
                     Rec.UpdateRcptLine();
                     IF UserSetup.GET(UserId) THEN BEGIN
                         Rec.Status := Rec.Status::Released;

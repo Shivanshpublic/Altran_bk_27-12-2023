@@ -2,11 +2,11 @@ pageextension 50041 ItemSurchargePurch extends "Item Charge Assignment (Purch)"
 {
     layout
     {
-        modify("<Gross Weight>")
-        {
-            Caption = 'Pallet Quantity';
-            Visible = PalletQtyVisible;
-        }
+        // modify("<Gross Weight>")
+        // {
+        //     Caption = 'Pallet Quantity';
+        //     Visible = PalletQtyVisible;
+        // }
         modify("<Unit Volume>")
         {
             Caption = 'Quantity Per Pallet';

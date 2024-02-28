@@ -6,36 +6,23 @@ report 50016 "Daily Import Report CSR"
     ApplicationArea = all;
     dataset
     {
-        dataitem("Purchase Header"; "Purchase Header")
+        dataitem("Purchase Line"; "Purchase Line")
         {
-
-            dataitem("Purchase Line"; "Purchase Line")
-            {
-                DataItemLinkReference = "Purchase Header";
-                DataItemLink = "Document No." = FIELD("No.");
-
-                RequestFilterFields = Type, "No.", "Buy-from Vendor No.";
-                trigger OnPreDataItem()
-                begin
-                    if ShowOnlyRcvdnotInv then
-                        SetFilter("Qty. Rcd. Not Invoiced", '<>%1', 0);
-                    //IF (StartingDate <> 0D) AND (EndingDate <> 0D) then
-                    //SetRange("Order Date", StartingDate, EndingDate);
-                end;
-
-                trigger OnAfterGetRecord()
-                begin
-                    ExporttoExcel;
-                end;
-
-
-            }
+            RequestFilterFields = Type, "No.", "Buy-from Vendor No.";
             trigger OnPreDataItem()
             begin
-                SetRange("Document Type", "Document Type"::Order);
+                if ShowOnlyRcvdnotInv then
+                    SetFilter("Qty. Rcd. Not Invoiced", '<>%1', 0);
                 IF (StartingDate <> 0D) AND (EndingDate <> 0D) then
-                    SetRange("Creation Date", StartingDate, EndingDate);
+                    SetRange("Order Date", StartingDate, EndingDate);
             end;
+
+            trigger OnAfterGetRecord()
+            begin
+                ExporttoExcel;
+            end;
+
+
         }
     }
 
@@ -105,7 +92,6 @@ report 50016 "Daily Import Report CSR"
         PurchRcptLine: Record "Purch. Rcpt. Line";
         PurchILE: Record "Item Ledger Entry";
         SalesILE: Record "Item Ledger Entry";
-        ResEntry: Record "Reservation Entry";
         ShipmentTrackingHeader: Record "Tracking Shipment Header";
         ShipmentTrackingLine: Record "Tracking Shipment Line";
         Item: Record Item;
@@ -139,7 +125,6 @@ report 50016 "Daily Import Report CSR"
         lCustomerPO: Code[35];
         lVia: Code[20];
         lForwarder: Code[20];
-        lForwarderName: Text[100];
         lETD: Date;
         lETA: Date;
         lCBM: Decimal;
@@ -149,7 +134,6 @@ report 50016 "Daily Import Report CSR"
         lBLAWB: Text[250];
         lContainer: Text[50];
         lInvoiceNo: code[20];
-        lVendorInvoiceNo: code[35];
         lInvoiceReceived: Date;
         lFreightRate: Decimal;
         lShipTrackingNo: code[20];
@@ -171,7 +155,6 @@ report 50016 "Daily Import Report CSR"
         lExpArriveFGDropShip: Date;
         lBookedDate: Date;
         lFactoryReadyDate: Date;
-        Vendor: Record Vendor;
 
     local procedure MakeHeader()
     begin
@@ -216,7 +199,6 @@ report 50016 "Daily Import Report CSR"
         ExcelBuffer.AddColumn('KGS', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Invoice Number', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Invoice Received', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
-        ExcelBuffer.AddColumn('Vendor Invoice No', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('SO Order No', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Customer P.O.', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Customer', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -231,7 +213,7 @@ report 50016 "Daily Import Report CSR"
         ExcelBuffer.AddColumn('Shipment Date', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('SO Ship-To', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Shipment Tracking No.', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
-        ExcelBuffer.AddColumn('Forwarder Name', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn('Forwarder', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Container #', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Vessel', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('BL/AWB #', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -263,18 +245,6 @@ report 50016 "Daily Import Report CSR"
         SalesInvHeader.Reset();
         SalesInvLine.Reset();
         ShipmentTrackingHeader.Reset();
-        ResEntry.Reset();
-        ResEntry.Setrange("Source Type", 39);
-        ResEntry.Setrange("Source Subtype", 1);
-        ResEntry.Setrange("Source ID", "Purchase Line"."Document No.");
-        ResEntry.Setrange("Source Ref. No.", "Purchase Line"."Line No.");
-        if ResEntry.FindFirst() then
-            repeat
-                if LotInfo <> '' then
-                    LotInfo += ', ' + ResEntry."Lot No."
-                else
-                    LotInfo += ResEntry."Lot No.";
-            until ResEntry.Next() = 0;
 
         SalesLine.SetRange("Document Type", SalesLine."Document Type"::Order);
         SalesLine.SetRange(Type, SalesLine.Type::Item);
@@ -305,7 +275,6 @@ report 50016 "Daily Import Report CSR"
                 SalesInvHeader.Get(SalesInvLine."Document No.");
                 lInvoiceNo := SalesInvLine."Document No.";
                 lInvoiceReceived := SalesInvLine."Posting Date";
-                lVendorInvoiceNo := SalesInvHeader."External Document No.";
             end;
         end else begin
             SalesInvLine.SetRange("Order No.", SalesLine."Document No.");
@@ -323,7 +292,6 @@ report 50016 "Daily Import Report CSR"
                 lTotalSell := SalesInvLine."Line Amount";
                 lInvoiceNo := SalesInvLine."Document No.";
                 lInvoiceReceived := SalesInvLine."Posting Date";
-                lVendorInvoiceNo := SalesInvHeader."External Document No.";
             end;
         end;
 
@@ -347,7 +315,6 @@ report 50016 "Daily Import Report CSR"
         PurchRcptLine.SetRange(Type, PurchRcptLine.Type::Item);
         PurchRcptLine.SetRange("No.", "Purchase Line"."No.");
         if PurchRcptLine.FindFirst() then begin
-            Clear(LotInfo);
             repeat
                 if PurchRcptLine."Item Rcpt. Entry No." <> 0 then begin
                     PurchILE.SetRange("Entry No.", PurchRcptLine."Item Rcpt. Entry No.")
@@ -357,12 +324,6 @@ report 50016 "Daily Import Report CSR"
                 PurchILE.SetRange("Document No.", PurchRcptLine."Document No.");
                 IF PurchILE.FindFirst() then
                     repeat
-                        if PurchILE."Lot No." <> '' then
-                            if LotInfo <> '' then
-                                LotInfo += ', ' + PurchILE."Lot No."
-                            else
-                                LotInfo += PurchILE."Lot No.";
-
                         SalesILE.SetRange("Lot No.", PurchILE."Lot No.");
                         if SalesILE.FindFirst() then
                             repeat
@@ -409,8 +370,6 @@ report 50016 "Daily Import Report CSR"
                 lETD := ShipmentTrackingLine."Date of Dispatch";
             lETA := ShipmentTrackingLine."Date of Arrival";
             lForwarder := ShipmentTrackingHeader."Supplier No.";
-            if Vendor.Get(ShipmentTrackingHeader."Supplier No.") then
-                lForwarderName := Vendor.Name;
             lVessel := ShipmentTrackingHeader."MMSI Code";
             lShipTrackingNo := ShipmentTrackingHeader.Code;
             lMBL := ShipmentTrackingHeader.MBL;
@@ -420,16 +379,13 @@ report 50016 "Daily Import Report CSR"
             lPortOfDispatch := ShipmentTrackingHeader."Port of Dispatch";
             lPortOfLoad := ShipmentTrackingHeader."Port of Load";
             lFCLLCL := ShipmentTrackingHeader."FCL/LCL";
-            lShipmentStatus := ShipmentTrackingHeader."Milestone Status";
             //lRcptNo := ShipmentTrackingLine."Receipt No.";
             //lRcptLineNo := ShipmentTrackingLine."Receipt Line No.";
         end;
 
-        //lPODate := "Purchase Line"."Order Date";
-        lPODate := PurchHeader."Creation Date";
+        lPODate := "Purchase Line"."Order Date";
         lPONo := "Purchase Line"."Document No.";
-        if "Purchase Line".Quantity <> "Purchase Line"."Quantity Received" then
-            lShipmentStatus := "Purchase Line"."Milestone Status";
+        lShipmentStatus := "Purchase Line"."Milestone Status";
         lSupplier := PurchHeader."Buy-from Vendor Name";
         lPartNumber := "Purchase Line"."No.";
         lQuantity := "Purchase Line".Quantity;
@@ -443,16 +399,15 @@ report 50016 "Daily Import Report CSR"
         lCBM := "Purchase Line"."Total CBM";
         lCTNS := 0;
         lKG := "Purchase Line"."Total Gross (KG)";
-        //LotInfo := "Purchase Line"."Lot No.";
+        LotInfo := "Purchase Line"."Lot No.";
         lFactoryReadyDate := "Purchase Line"."Promised Receipt Date";
         lBookedDate := "Purchase Line"."Planned Receipt Date";
         lExpArriveFGDropShip := "Purchase Line"."Expected Receipt Date";
         lPurchNote := "Purchase Line"."Order Note";
         lSOOrderNo := "Purchase Line"."SO No.";
         lPOLLocationCode := "Purchase Line"."Location Code";
-        if "Purchase Line".Type = "Purchase Line".Type::Item then
-            If Item.Get("Purchase Line"."No.") then
-                lItemCategory := Item."Item Category Code";
+        If Item.Get() then
+            lItemCategory := Item."Item Category Code";
 
         ExcelBuffer.AddColumn(lPODate, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Date);
         ExcelBuffer.AddColumn(lPONo, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -481,7 +436,6 @@ report 50016 "Daily Import Report CSR"
         ExcelBuffer.AddColumn(lKG, FALSE, '', FALSE, FALSE, FALSE, '#,##0.00', ExcelBuffer."Cell Type"::Number);
         ExcelBuffer.AddColumn(lInvoiceNo, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lInvoiceReceived, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
-        ExcelBuffer.AddColumn(lVendorInvoiceNo, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lSOOrderNo, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lCustomerPO, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lCustomer, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -554,7 +508,6 @@ report 50016 "Daily Import Report CSR"
         Clear(lBLAWB);
         Clear(lContainer);
         Clear(lInvoiceNo);
-        Clear(lVendorInvoiceNo);
         Clear(lInvoiceReceived);
         Clear(lFreightRate);
         Clear(lShipTrackingNo);

@@ -461,4 +461,12 @@ codeunit 50003 CustomEvents
     begin
         TransferLine.Validate("Receipt Date", TransferHeader."Receipt Date");
     end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Purchase Header", 'OnBeforeUpdatePurchLinesByFieldNo', '', false, false)]
+    local procedure OnBeforeUpdatePurchLinesByFieldNo(var PurchaseHeader: Record "Purchase Header"; ChangedFieldNo: Integer; var AskQuestion: Boolean; var IsHandled: Boolean)
+    begin
+        if ChangedFieldNo = 5791 then
+            AskQuestion := false;
+    end;
+
 }

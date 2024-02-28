@@ -67,6 +67,7 @@ TABLE 50001 "Tracking Shipment Line"
                         ERROR('Date of dispatch should be before date of arrival');
 
                 CalculateArrivalDate();
+
             END;
         }
         FIELD(7; "Date of Arrival"; Date)
@@ -77,6 +78,7 @@ TABLE 50001 "Tracking Shipment Line"
             TRIGGER OnValidate()
             VAR
                 ShipmentTrackingHeader: Record "Tracking Shipment Header";
+                PurchLine: Record "Purchase Line";
             BEGIN
                 ShipmentTrackingHeader.GET(Rec."Tracking Code");
                 IF ShipmentTrackingHeader.Status = ShipmentTrackingHeader.Status::"Pending For Approval" THEN
@@ -101,6 +103,11 @@ TABLE 50001 "Tracking Shipment Line"
                     ShipmentTrackingHeader."Notification Sent" := FALSE;
                     ShipmentTrackingHeader.Status := ShipmentTrackingHeader.Status::Open;
                     ShipmentTrackingHeader.MODIFY;
+
+                    if PurchLine.Get(PurchLine."Document Type"::Order, "PO No.", "PO Line No.") then begin
+                        PurchLine.Validate("Expected Receipt Date1", "Date of Arrival");
+                        PurchLine.Modify();
+                    end;
                 END;
             END;
         }
@@ -309,16 +316,16 @@ TABLE 50001 "Tracking Shipment Line"
     var
         ShipmentTrackingLine: Record "Tracking Shipment Line";
         PurchRcptLine: Record "Purch. Rcpt. Line";
-        PurchaseRcptLineExists: TextConst ENU = 'Purchase Receipt %1 and Line %2 already selected';
+        PurchaseRcptLineExists: TextConst ENU = 'Purchase Receipt %1 and Line %2 already selected on Shipment Tracking %3.';
     begin
-        ShipmentTrackingLine.SetRange("Tracking Code", "Tracking Code");
-        ShipmentTrackingLine.SetRange("Line No.", "Line No.");
+        //ShipmentTrackingLine.SetRange("Tracking Code", "Tracking Code");
+        //ShipmentTrackingLine.SetRange("Line No.", "Line No.");
         ShipmentTrackingLine.SetRange("PO No.", PONo);
         ShipmentTrackingLine.SetRange("PO Line No.", POLineNo);
         ShipmentTrackingLine.SetRange("Receipt No.", RcptNo);
         ShipmentTrackingLine.SetRange("Receipt Line No.", RcptLineNo);
         if ShipmentTrackingLine.FindFirst() then
-            Error(PurchaseRcptLineExists, PONo, POLineNo);
+            Error(PurchaseRcptLineExists, PONo, POLineNo, ShipmentTrackingLine."Tracking Code");
     end;
 
     local procedure ResetPOLine(PONo: Code[20]; POLineNo: Integer)
@@ -400,12 +407,13 @@ TABLE 50001 "Tracking Shipment Line"
                 PurchaseLine."Shipment Tracking Code" := Rec."Tracking Code";
                 //if POLineNo <> 0 then
                 PurchaseLine."Shipment Tracking Line No." := Rec."Line No.";
+                PurchaseLine.Validate(PurchaseLine."Expected Receipt Date1", "Date of Arrival");
                 PurchaseLine.Modify();
                 if POLineNo <> 0 then begin
                     "Item No." := PurchaseLine."No.";
                     Description := PurchaseLine.Description;
                     "PO Quantity" := PurchaseLine.Quantity;
-                    Validate("Date of Arrival", PurchaseLine."Expected Receipt Date1");
+                    //Validate("Date of Arrival", PurchaseLine."Expected Receipt Date1");                    
                 end;
             until PurchaseLine.Next() = 0;
     end;

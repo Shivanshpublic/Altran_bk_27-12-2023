@@ -116,10 +116,6 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
             CalcFormula = lookup("Purchase Header"."Buy-from Vendor Name" where("Document Type" = field("Document Type"), "No." = field("Document No.")));
 
         }
-        field(50220; "Creation Date"; Date)
-        {
-            DataClassification = ToBeClassified;
-        }
         modify("Description 2")
         {
             Caption = 'Model No.';
@@ -250,7 +246,6 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
     var
         RecHdr: Record "Purchase Header";
     begin
-        "Creation Date" := Today;
         RecHdr := GetPurchHeader();
         /*
         if "Country of Origin" = '' then

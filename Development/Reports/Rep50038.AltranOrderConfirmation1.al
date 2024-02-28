@@ -266,7 +266,7 @@ report 50038 "Altran Sales - Order Conf.1"
             column(BilltoCustomerNo_Lbl; FieldCaption("Bill-to Customer No."))
             {
             }
-            column(DocumentDate; Format(Header."Posting Date", 0, '<Month,2>/<Day,2>/<Year4>'))
+            column(DocumentDate; Format(Header."Order Date", 0, '<Month,2>/<Day,2>/<Year4>'))
             {
             }
             column(DocumentDate_Lbl; FieldCaption("Document Date"))

@@ -66,7 +66,18 @@ pageextension 50020 "Purchase Lines Ext" extends "Purchase Lines"
             Visible = true;
             Caption = 'Model No.';
         }
-
+        addafter("Outstanding Quantity")
+        {
+            field("Quantity Received"; Rec."Quantity Received")
+            {
+                ApplicationArea = All;
+            }
+            field("QtyReceived$"; Rec."Quantity Received" * Rec."Direct Unit Cost")
+            {
+                ApplicationArea = All;
+                Caption = 'Quantity Received ($)';
+            }
+        }
     }
 
 }

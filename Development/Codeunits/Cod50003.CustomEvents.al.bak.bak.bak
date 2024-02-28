@@ -348,20 +348,6 @@ codeunit 50003 CustomEvents
                                 DecimalArray[2] := PurchLine."Gross Weight";
                         DecimalArray[3] := PurchLine."Unit Volume";
                     end;
-                "Applies-to Doc. Type"::Receipt:
-                    begin
-                        PurchRcptLine.Get("Applies-to Doc. No.", "Applies-to Doc. Line No.");
-                        DecimalArray[1] := PurchRcptLine.Quantity;
-                        if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total CBM" then
-                            DecimalArray[2] := PurchRcptLine."Total CBM"
-                        else
-                            if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total Gross (KG)" then
-                                DecimalArray[2] := PurchRcptLine."Total Gross (KG)"
-                            else
-                                DecimalArray[2] := PurchRcptLine."Gross Weight";
-                        DecimalArray[3] := PurchRcptLine."Unit Volume";
-                    end;
-
             end;
     end;
 

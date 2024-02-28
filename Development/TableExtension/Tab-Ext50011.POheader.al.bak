@@ -49,10 +49,6 @@ tableextension 50011 POheader extends "Purchase Header"
                 end;
             end;
         }
-        field(50020; "Creation Date"; Date)
-        {
-            DataClassification = ToBeClassified;
-        }
         modify("Promised Receipt Date")
         {
             Caption = 'Factory Ready Date';
@@ -62,11 +58,6 @@ tableextension 50011 POheader extends "Purchase Header"
             Caption = 'Expected To Arrive';
         }
     }
-    trigger OnInsert()
-    begin
-        "Creation Date" := Today;
-    end;
-
     procedure AssignLotNo(PurchHead: Record "Purchase Header"; LineNo: Integer; LotNo: Code[50])
     var
         CreateReservEntry: Codeunit "Create Reserv. Entry";

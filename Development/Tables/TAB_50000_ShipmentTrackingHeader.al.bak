@@ -463,27 +463,6 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
             Error(ErrInvLineExist, SalesInvLine."Document No.");
     end;
 
-    procedure UpdatePOLine()
-    var
-        PurchLine: Record "Purchase Line";
-        TrackShptLine: Record "Tracking Shipment Line";
-    begin
-        TrackShptLine.Reset();
-        TrackShptLine.SetRange("Tracking Code", Rec.Code);
-        TrackShptLine.SetFilter("PO No.", '<>%1', '');
-        TrackShptLine.SetFilter("PO Line No.", '<>%1', 0);
-        if TrackShptLine.FindFirst() then
-            repeat
-                PurchLine.SetRange("Document No.", TrackShptLine."PO No.");
-                PurchLine.SetRange("Line No.", TrackShptLine."PO Line No.");
-                if PurchLine.FindFirst() then begin
-                    PurchLine.Validate("Expected Receipt Date1", TrackShptLine."Date of Arrival");
-                    PurchLine.Modify();
-                end;
-            until TrackShptLine.Next() = 0;
-
-    end;
-
     procedure UpdateRcptLine()
     var
         PurchRcptLine: Record "Purch. Rcpt. Line";
