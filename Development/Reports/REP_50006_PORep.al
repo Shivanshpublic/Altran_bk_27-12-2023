@@ -21,7 +21,7 @@ REPORT 50006 "Purchase Order Report"
             column(SaleOrderNo; '')
             {
             }
-            column(Requested_Receipt_Date; Format(PurchaseHeader."Promised Receipt Date", 0, '<Month,2>/<Day,2>/<Year4>'))
+            column(Requested_Receipt_Date; Format(PurchaseHeader."Expected Receipt Date", 0, '<Month,2>/<Day,2>/<Year4>'))
             {
             }
             column(Currency_Code; GetCurrencyCode("Currency Code"))

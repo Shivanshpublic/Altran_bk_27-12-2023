@@ -28,6 +28,9 @@
                   <Width>0.62492in</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>1.54067in</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>0.64961in</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -43,10 +46,10 @@
                   <Width>0.64961in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.72835in</Width>
+                  <Width>0.64961in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.64961in</Width>
+                  <Width>0.75in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.62008in</Width>
@@ -134,6 +137,36 @@
                           <Visibility>
                             <Hidden>true</Hidden>
                           </Visibility>
+                          <Style>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>7pt</FontSize>
+                                    <Color>#ff0000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox3</rd:DefaultName>
                           <Style>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
@@ -331,6 +364,39 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Item_CategoryCaption2">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!ItemCategory_Caption.Value)</Value>
+                                  <Style>
+                                    <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>55</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Bottom</VerticalAlign>
+                            <PaddingLeft>0.02953in</PaddingLeft>
+                            <PaddingRight>0.02953in</PaddingRight>
+                            <PaddingBottom>8pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Item_InventoryCaption">
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -399,7 +465,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=First(Fields!QuantityOnPlanProdOrdCaption.Value)</Value>
+                                      <Value>=First(Fields!MaximumOQ_Caption.Value)</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
@@ -428,7 +494,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=First(Fields!QuantityOnRelProdOrdCaption.Value)</Value>
+                                      <Value>=First(Fields!MinimumOQ_Caption.Value)</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
@@ -449,38 +515,6 @@
                                 <PaddingLeft>0.02953in</PaddingLeft>
                                 <PaddingRight>0.02953in</PaddingRight>
                                 <PaddingBottom>8pt</PaddingBottom>
-                              </Style>
-                            </Textbox>
-                            <Textbox Name="Qty__on_Prod__Ord_Caption">
-                              <KeepTogether>true</KeepTogether>
-                              <Paragraphs>
-                                <Paragraph>
-                                  <TextRuns>
-                                    <TextRun>
-                                      <Value>=First(Fields!Qty__on_Prod__Ord_Caption.Value)</Value>
-                                      <Style>
-                                        <FontSize>7pt</FontSize>
-                                        <FontWeight>Bold</FontWeight>
-                                      </Style>
-                                    </TextRun>
-                                  </TextRuns>
-                                  <Style>
-                                    <TextAlign>Center</TextAlign>
-                                  </Style>
-                                </Paragraph>
-                              </Paragraphs>
-                              <Height>0.16656in</Height>
-                              <Width>1.39568in</Width>
-                              <ZIndex>2</ZIndex>
-                              <Style>
-                                <BottomBorder>
-                                  <Style>Dotted</Style>
-                                </BottomBorder>
-                                <VerticalAlign>Bottom</VerticalAlign>
-                                <PaddingLeft>0.02953in</PaddingLeft>
-                                <PaddingRight>0.02953in</PaddingRight>
-                                <PaddingTop>2pt</PaddingTop>
-                                <PaddingBottom>2pt</PaddingBottom>
                               </Style>
                             </Textbox>
                           </ReportItems>
@@ -523,13 +557,13 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Qty__on_Service_Order_Caption">
+                        <Textbox Name="QtyAvailableCaption">
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!Qty__on_Service_Order_Caption.Value)</Value>
+                                  <Value>=First(Fields!QtyAvailableCaption.Value)</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -541,7 +575,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <ZIndex>50</ZIndex>
+                          <ZIndex>49</ZIndex>
                           <Style>
                             <VerticalAlign>Bottom</VerticalAlign>
                             <PaddingLeft>0.02953in</PaddingLeft>
@@ -553,13 +587,13 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="QtyAvailableCaption">
+                        <Textbox Name="QtyAvailableCaption2">
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!QtyAvailableCaption.Value)</Value>
+                                  <Value>=First(Fields!ReOrderQty_Caption.Value)</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -705,7 +739,33 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox6</rd:DefaultName>
+                          <Style>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -775,9 +835,10 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>11</ColSpan>
+                        <ColSpan>12</ColSpan>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell />
                     <TablixCell />
                     <TablixCell />
                     <TablixCell />
@@ -812,7 +873,7 @@
                                   <Style />
                                 </Paragraph>
                               </Paragraphs>
-                              <Top>0.16654in</Top>
+                              <Top>0.16655in</Top>
                               <Height>0.16653in</Height>
                               <Width>2.95276in</Width>
                               <Style>
@@ -823,27 +884,32 @@
                                 <PaddingBottom>2pt</PaddingBottom>
                               </Style>
                             </Textbox>
-                            <Textbox Name="Item_Inventory">
+                            <Textbox Name="Item_Category">
                               <KeepTogether>true</KeepTogether>
                               <Paragraphs>
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!Item_Inventory.Value</Value>
+                                      <Value>=Fields!ItemCategory.Value</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
-                                        <Format>=Fields!Item_InventoryFormat.Value</Format>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
-                                  <Style />
+                                  <Style>
+                                    <TextAlign>Left</TextAlign>
+                                  </Style>
                                 </Paragraph>
                               </Paragraphs>
-                              <Left>2.33859in</Left>
+                              <Top>0.00001in</Top>
+                              <Left>2.39259in</Left>
                               <Height>0.16579in</Height>
-                              <Width>0.64913in</Width>
+                              <Width>1.4075in</Width>
                               <ZIndex>1</ZIndex>
                               <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>0.02953in</PaddingLeft>
                                 <PaddingRight>0.02953in</PaddingRight>
@@ -868,6 +934,7 @@
                                   </Style>
                                 </Paragraph>
                               </Paragraphs>
+                              <Top>0.00001in</Top>
                               <Left>1.69945in</Left>
                               <Height>0.16579in</Height>
                               <Width>0.6237in</Width>
@@ -897,6 +964,7 @@
                                   </Style>
                                 </Paragraph>
                               </Paragraphs>
+                              <Top>0.00001in</Top>
                               <Height>0.16578in</Height>
                               <Width>0.73828in</Width>
                               <ZIndex>3</ZIndex>
@@ -924,6 +992,7 @@
                                   </Style>
                                 </Paragraph>
                               </Paragraphs>
+                              <Top>0.00001in</Top>
                               <Left>2.03129cm</Left>
                               <Height>0.16578in</Height>
                               <Width>0.85806in</Width>
@@ -935,13 +1004,43 @@
                                 <PaddingBottom>2pt</PaddingBottom>
                               </Style>
                             </Textbox>
+                            <Textbox Name="Item_Inventory2">
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!Item_Inventory.Value</Value>
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                        <Format>=Fields!Item_InventoryFormat.Value</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.00001in</Top>
+                              <Left>3.86954in</Left>
+                              <Height>0.16579in</Height>
+                              <Width>0.64913in</Width>
+                              <ZIndex>5</ZIndex>
+                              <Style>
+                                <VerticalAlign>Middle</VerticalAlign>
+                                <PaddingLeft>0.02953in</PaddingLeft>
+                                <PaddingRight>0.02953in</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
                           </ReportItems>
                           <DataElementOutput>ContentsOnly</DataElementOutput>
                           <Style />
                         </Rectangle>
-                        <ColSpan>4</ColSpan>
+                        <ColSpan>5</ColSpan>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell />
                     <TablixCell />
                     <TablixCell />
                     <TablixCell />
@@ -991,7 +1090,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Code.BlankZero(Fields!QuantityOnRelProdOrd.Value)</Value>
+                                      <Value>=Fields!MinimumOQ.Value</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                         <Format>=Fields!QuantityOnRelProdOrdFormat.Value</Format>
@@ -1027,7 +1126,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Code.BlankZero(Fields!QuantityOnPlanProdOrd.Value)</Value>
+                                      <Value>=Fields!MaximumOQ.Value</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                         <Format>=Fields!QuantityOnPlanProdOrdFormat.Value</Format>
@@ -1091,18 +1190,18 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Rectangle Name="rectangle7">
+                        <Rectangle Name="rectangle8">
                           <ReportItems>
-                            <Textbox Name="Qty__on_Service_Order_">
+                            <Textbox Name="QtyAvailable">
                               <KeepTogether>true</KeepTogether>
                               <Paragraphs>
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Code.BlankZero(Fields!Qty__on_Service_Order_.Value)</Value>
+                                      <Value>=Fields!QtyAvailable.Value</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
-                                        <Format>=Fields!Qty__on_Service_Order_Format.Value</Format>
+                                        <Format>=Fields!QtyAvailableFormat.Value</Format>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1110,7 +1209,7 @@
                                 </Paragraph>
                               </Paragraphs>
                               <Height>0.16579in</Height>
-                              <Width>0.72835in</Width>
+                              <Width>0.64961in</Width>
                               <Style>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>0.02953in</PaddingLeft>
@@ -1127,15 +1226,15 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Rectangle Name="rectangle8">
+                        <Rectangle Name="rectangle10">
                           <ReportItems>
-                            <Textbox Name="QtyAvailable">
+                            <Textbox Name="QtyAvailable2">
                               <KeepTogether>true</KeepTogether>
                               <Paragraphs>
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!QtyAvailable.Value</Value>
+                                      <Value>=Fields!ReOrder_Qty.Value</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                         <Format>=Fields!QtyAvailableFormat.Value</Format>
@@ -1214,6 +1313,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1267,7 +1367,7 @@
             <DataSetName>DataSet_Result</DataSetName>
             <Top>0.16654in</Top>
             <Height>1.19701in</Height>
-            <Width>7.74887in</Width>
+            <Width>9.31119in</Width>
             <Style />
           </Tablix>
           <Textbox Name="Item_TABLECAPTION__________ItemFilter">
@@ -1302,7 +1402,7 @@
         <Height>1.36355in</Height>
         <Style />
       </Body>
-      <Width>7.74887in</Width>
+      <Width>9.31119in</Width>
       <Page>
         <PageHeader>
           <Height>0.66614in</Height>
@@ -1327,7 +1427,7 @@
                 </Paragraph>
               </Paragraphs>
               <Top>0.16654in</Top>
-              <Left>6.67323in</Left>
+              <Left>8.67323in</Left>
               <Height>0.16654in</Height>
               <Width>0.29528in</Width>
               <Style>
@@ -1398,7 +1498,7 @@
                   </Style>
                 </Paragraph>
               </Paragraphs>
-              <Left>5.11811in</Left>
+              <Left>7.11811in</Left>
               <Height>0.16654in</Height>
               <Width>2.02756in</Width>
               <ZIndex>3</ZIndex>
@@ -1425,7 +1525,7 @@
                 </Paragraph>
               </Paragraphs>
               <Top>0.33307in</Top>
-              <Left>5.11811in</Left>
+              <Left>7.11811in</Left>
               <Height>0.16654in</Height>
               <Width>2.02756in</Width>
               <ZIndex>4</ZIndex>
@@ -1451,7 +1551,7 @@
                 </Paragraph>
               </Paragraphs>
               <Top>0.16654in</Top>
-              <Left>6.9685in</Left>
+              <Left>8.9685in</Left>
               <Height>0.16654in</Height>
               <Width>0.17717in</Width>
               <ZIndex>5</ZIndex>
@@ -1462,9 +1562,8 @@
           </ReportItems>
           <Style />
         </PageHeader>
-        <LeftMargin>0.49213in</LeftMargin>
-        <TopMargin>0.3937in</TopMargin>
-        <BottomMargin>0.49213in</BottomMargin>
+        <PageHeight>8.5in</PageHeight>
+        <PageWidth>11in</PageWidth>
         <Style />
       </Page>
     </ReportSection>
@@ -1639,6 +1738,39 @@ End Function
         </Field>
         <Field Name="Description_2_Caption">
           <DataField>Description_2_Caption</DataField>
+        </Field>
+        <Field Name="ReOrder_Qty">
+          <DataField>ReOrder_Qty</DataField>
+        </Field>
+        <Field Name="ReOrder_QtyFormat">
+          <DataField>ReOrder_QtyFormat</DataField>
+        </Field>
+        <Field Name="ReOrderQty_Caption">
+          <DataField>ReOrderQty_Caption</DataField>
+        </Field>
+        <Field Name="ItemCategory">
+          <DataField>ItemCategory</DataField>
+        </Field>
+        <Field Name="ItemCategory_Caption">
+          <DataField>ItemCategory_Caption</DataField>
+        </Field>
+        <Field Name="MinimumOQ">
+          <DataField>MinimumOQ</DataField>
+        </Field>
+        <Field Name="MinimumOQFormat">
+          <DataField>MinimumOQFormat</DataField>
+        </Field>
+        <Field Name="MinimumOQ_Caption">
+          <DataField>MinimumOQ_Caption</DataField>
+        </Field>
+        <Field Name="MaximumOQ">
+          <DataField>MaximumOQ</DataField>
+        </Field>
+        <Field Name="MaximumOQFormat">
+          <DataField>MaximumOQFormat</DataField>
+        </Field>
+        <Field Name="MaximumOQ_Caption">
+          <DataField>MaximumOQ_Caption</DataField>
         </Field>
       </Fields>
       <Query>

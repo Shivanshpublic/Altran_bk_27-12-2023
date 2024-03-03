@@ -26,6 +26,10 @@ tableextension 50016 PurchCrMemo extends "Purch. Cr. Memo Hdr."
         {
             DataClassification = ToBeClassified;
         }
+        field(50139; "Prepmt. Posting Description"; Text[100])
+        {
+            Caption = 'Prepmt. Posting Description';
+        }
         modify("Expected Receipt Date")
         {
             Caption = 'Expected To Arrive';

@@ -28,6 +28,15 @@ pageextension 50023 PostedPurchCrMemo extends "Posted Purchase Credit Memo"
             {
                 ApplicationArea = All;
             }
+            field("Posting Description"; Rec."Posting Description")
+            {
+                ApplicationArea = All;
+            }
+            field("Prepmt. Posting Description"; Rec."Prepmt. Posting Description")
+            {
+                ApplicationArea = All;
+                Caption = 'Shipment Description';
+            }
         }
     }
 }

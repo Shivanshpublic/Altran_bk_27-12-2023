@@ -35,6 +35,37 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
         {
             DataClassification = ToBeClassified;
             TableRelation = "Salesperson/Purchaser";
+            trigger OnValidate()
+            var
+                SalesLine: Record "Sales Line";
+                Salesperson: Record "Salesperson/Purchaser";
+            begin
+                if SalesLine.Get("Document Type", "No.") then
+                    repeat
+                        if Salesperson.Get("Internal Team") then
+                            SalesLine."Internal Team Name" := Salesperson.Name
+                        else
+                            SalesLine."Internal Team Name" := '';
+                    until SalesLine.Next() = 0;
+                SalesLine.Modify();
+            end;
+        }
+        Modify("Salesperson Code")
+        {
+            trigger OnAfterValidate()
+            var
+                SalesLine: Record "Sales Line";
+                Salesperson: Record "Salesperson/Purchaser";
+            begin
+                if SalesLine.Get("Document Type", "No.") then
+                    repeat
+                        if Salesperson.Get("Salesperson Code") then
+                            SalesLine."Salesperson Name" := Salesperson.Name
+                        else
+                            SalesLine."Salesperson Name" := '';
+                        SalesLine.Modify();
+                    until SalesLine.Next() = 0;
+            end;
         }
         FIELD(50001; "External Rep"; Text[250])
         {

@@ -28,6 +28,11 @@ pageextension 50027 PostedPurchInvCard extends "Posted Purchase Invoice"
             {
                 ApplicationArea = All;
             }
+            field("Prepmt. Posting Description"; Rec."Prepmt. Posting Description")
+            {
+                ApplicationArea = all;
+                Caption = 'Shipment Description';
+            }
         }
     }
 }

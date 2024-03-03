@@ -255,6 +255,17 @@ TABLE 50001 "Tracking Shipment Line"
                     UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
             end;
         }
+        field(36; "Total Gross (KG)"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            DecimalPlaces = 0 : 3;
+            trigger OnValidate()
+            begin
+                TestStatusOpen();
+                if "Receipt Line No." <> 0 then
+                    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
+            end;
+        }
     }
 
     KEYS
@@ -358,6 +369,7 @@ TABLE 50001 "Tracking Shipment Line"
                 PurchRcptLine."Shipment Tracking Line No." := 0;
                 PurchRcptLine."Pallet Quantity" := 0;
                 PurchRcptLine."Total CBM" := 0;
+                PurchRcptLine."Total Gross (KG)" := 0;
                 PurchRcptLine.Modify()
             until PurchRcptLine.Next() = 0;
     end;
@@ -407,12 +419,16 @@ TABLE 50001 "Tracking Shipment Line"
                 PurchaseLine."Shipment Tracking Code" := Rec."Tracking Code";
                 //if POLineNo <> 0 then
                 PurchaseLine."Shipment Tracking Line No." := Rec."Line No.";
+                //PurchaseLine.Validate("Total Gross (KG)", "Total Gross (KG)");
+                //PurchaseLine.Validate("Total CBM", "Total CBM");
                 PurchaseLine.Validate(PurchaseLine."Expected Receipt Date1", "Date of Arrival");
                 PurchaseLine.Modify();
                 if POLineNo <> 0 then begin
                     "Item No." := PurchaseLine."No.";
                     Description := PurchaseLine.Description;
                     "PO Quantity" := PurchaseLine.Quantity;
+                    "Total CBM" := PurchaseLine."Total CBM";
+                    "Total Gross (KG)" := PurchaseLine."Total Gross (KG)";
                     //Validate("Date of Arrival", PurchaseLine."Expected Receipt Date1");                    
                 end;
             until PurchaseLine.Next() = 0;
@@ -434,6 +450,7 @@ TABLE 50001 "Tracking Shipment Line"
             PurchRcptLine."Shipment Tracking Line No." := Rec."Line No.";
             PurchRcptLine."Pallet Quantity" := Rec."Pallet Quantity";
             PurchRcptLine."Total CBM" := Rec."Total CBM";
+            PurchRcptLine."Total Gross (KG)" := Rec."Total Gross (KG)";
             PurchRcptLine."Gross Weight" := Rec."Pallet Quantity";
             if TrackShptHeader.Get(Rec."Tracking Code") then begin
                 PurchRcptLine."Milestone Status" := TrackShptHeader."Milestone Status";

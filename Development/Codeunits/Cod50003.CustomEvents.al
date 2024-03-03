@@ -469,4 +469,31 @@ codeunit 50003 CustomEvents
             AskQuestion := false;
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purchase-Post Prepayments", 'OnBeforePostVendorEntryProcedure', '', false, false)]
+    local procedure OnBeforePostVendorEntryProcedure(var PurchHeader: Record "Purchase Header"; TotalPrepmtInvLineBuffer: Record "Prepayment Inv. Line Buffer" temporary; TotalPrepmtInvLineBufferLCY: Record "Prepayment Inv. Line Buffer"; DocumentType: Option Invoice,"Credit Memo"; PostingDescription: Text[100]; DocType: Enum "Gen. Journal Document Type"; DocNo: Code[20]; ExtDocNo: Text[35]; SrcCode: Code[10]; PostingNoSeriesCode: Code[20]; CalcPmtDisc: Boolean; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line"; var IsHandled: Boolean)
+    begin
+        PostingDescription := PurchHeader."Posting Description";
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Purch. Inv. Line", 'OnAfterInitFromPurchLine', '', false, false)]
+
+    local procedure OnAfterInitFromPurchLine(PurchInvHeader: Record "Purch. Inv. Header"; PurchLine: Record "Purchase Line"; var PurchInvLine: Record "Purch. Inv. Line")
+    var
+        PurchHeader: Record "Purchase Header";
+    begin
+        if PurchHeader.Get(PurchLine."Document Type", PurchLine."Document No.") then begin
+            PurchInvHeader."Prepmt. Posting Description" := PurchHeader."Prepmt. Posting Description";
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Purch. Cr. Memo Line", 'OnAfterInitFromPurchLine', '', false, false)]
+
+    local procedure OnAfterInitFromPurchLine1(PurchCrMemoHdr: Record "Purch. Cr. Memo Hdr."; PurchLine: Record "Purchase Line"; var PurchCrMemoLine: Record "Purch. Cr. Memo Line")
+    var
+        PurchHeader: Record "Purchase Header";
+    begin
+        if PurchHeader.Get(PurchLine."Document Type", PurchLine."Document No.") then begin
+            PurchCrMemoHdr."Prepmt. Posting Description" := PurchHeader."Prepmt. Posting Description";
+        end;
+    end;
 }

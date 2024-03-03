@@ -165,6 +165,14 @@ tableextension 50007 SalesLine extends "Sales Line"
         {
             Editable = false;
         }
+        field(50033; "Salesperson Name"; Text[50])
+        {
+            Editable = false;
+        }
+        field(50034; "Internal Team Name"; Text[50])
+        {
+            Editable = false;
+        }
         field(50111; "UL Certificate Available"; Boolean)
         {
             DataClassification = ToBeClassified;
@@ -178,6 +186,7 @@ tableextension 50007 SalesLine extends "Sales Line"
     trigger OnInsert()
     var
         RecHdr: Record "Sales Header";
+        Salesperson: Record "Salesperson/Purchaser";
     begin
         RecHdr := GetSalesHeader();
         if "Country of Origin" = '' then
@@ -191,6 +200,10 @@ tableextension 50007 SalesLine extends "Sales Line"
         "Assigned CSR" := RecHdr."Assigned User ID";
         "External Document No." := RecHdr."External Document No.";
         "Sell-to Customer Name" := RecHdr."Sell-to Customer Name";
+        if Salesperson.Get(RecHdr."Internal Team") then
+            "Internal Team Name" := Salesperson.Name;
+        if Salesperson.Get(RecHdr."Salesperson Code") then
+            "Salesperson Name" := Salesperson.Name;
     end;
 
     trigger OnModify()

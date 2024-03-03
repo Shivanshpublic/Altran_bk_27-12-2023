@@ -844,7 +844,7 @@
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>7pt</FontSize>
-                                    <Format>'$'#,0.0000;-'$'#,0.0000;''</Format>
+                                    <Format>'$'#,0.00;-'$'#,0.00;''</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -881,7 +881,7 @@
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>8pt</FontSize>
-                                    <Format>'$'#,0.0000;-'$'#,0.0000;''</Format>
+                                    <Format>'$'#,0.00;-'$'#,0.00;''</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -996,7 +996,7 @@
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                    <Format>0.0000;(0.0000)</Format>
+                                    <Format>n2</Format>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
@@ -1005,7 +1005,7 @@
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                    <Format>0.0000;(0.0000)</Format>
+                                    <Format>n2</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1038,6 +1038,7 @@
                             <PaddingRight>2pt</PaddingRight>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>

@@ -152,6 +152,14 @@ tableextension 50008 SalesInvLine extends "Sales Invoice Line"
         {
             Editable = false;
         }
+        field(50033; "Salesperson Name"; Text[50])
+        {
+            Editable = false;
+        }
+        field(50034; "Internal Team Name"; Text[50])
+        {
+            Editable = false;
+        }
         //18-09-2023-end
         field(50111; "UL Certificate Available"; Boolean)
         {

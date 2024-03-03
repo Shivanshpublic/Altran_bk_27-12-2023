@@ -105,6 +105,7 @@ REPORT 50000 "Sales Invoice"
                         DataItemLinkReference = SalesInvoiceHeader;
                         DataItemLink = "Document No." = FIELD("No.");
                         COLUMN(ItemNo; "No.") { }
+                        COLUMN(ItemReferenceNo; "Item Reference No.") { }
                         COLUMN(Description; Description) { }
                         COLUMN(Description2; "Description 2") { }
                         COLUMN(UnitofMeasureCode; "Unit of Measure Code") { }

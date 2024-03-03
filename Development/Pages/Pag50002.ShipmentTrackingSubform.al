@@ -66,6 +66,10 @@ PAGE 50002 "Shipment Tracking Subform"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("Total Gross (KG)"; Rec."Total Gross (KG)")
+                {
+                    ApplicationArea = All;
+                }
                 FIELD("Buy From Vendor No."; Rec."Buy From Vendor No.")
                 {
                     ApplicationArea = All;

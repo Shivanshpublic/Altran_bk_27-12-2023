@@ -196,6 +196,13 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
             Caption = 'Order Status';
             TableRelation = "Milestone Status";
         }
+        field(36; "Total Gross (KG)"; Decimal)
+        {
+            DecimalPlaces = 0 : 3;
+            CalcFormula = Sum("Tracking Shipment Line"."Total Gross (KG)" WHERE("Tracking Code" = FIELD(Code)));
+            Editable = false;
+            FieldClass = FlowField;
+        }
     }
 
     KEYS
@@ -225,8 +232,17 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
     END;
 
     TRIGGER OnModify()
+    VAR
+        ShipmentTrackingLine: Record "Tracking Shipment Line";
     BEGIN
         TESTFIELD(Code);
+        // ShipmentTrackingLine.RESET;
+        // ShipmentTrackingLine.SETRANGE("Tracking Code", Rec.Code);
+        // IF ShipmentTrackingLine.FINDFIRST THEN
+        //     repeat
+
+        //         ShipmentTrackingLine.Modify();
+        //     until ShipmentTrackingLine.Next() = 0;
     END;
 
     TRIGGER OnDelete()
@@ -478,6 +494,8 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                 PurchLine.SetRange("Line No.", TrackShptLine."PO Line No.");
                 if PurchLine.FindFirst() then begin
                     PurchLine.Validate("Expected Receipt Date1", TrackShptLine."Date of Arrival");
+                    PurchLine.Validate("Total CBM", TrackShptLine."Total CBM");
+                    PurchLine.Validate("Total Gross (KG)", TrackShptLine."Total Gross (KG)");
                     PurchLine.Modify();
                 end;
             until TrackShptLine.Next() = 0;
@@ -499,6 +517,8 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                 PurchRcptLine.SetRange("Line No.", TrackShptLine."Receipt Line No.");
                 if PurchRcptLine.FindFirst() then begin
                     PurchRcptLine."Milestone Status" := "Milestone Status";
+                    PurchRcptLine.Validate("Total CBM", TrackShptLine."Total CBM");
+                    PurchRcptLine.Validate("Total Gross (KG)", TrackShptLine."Total Gross (KG)");
                     PurchRcptLine.Modify();
                 end;
             until TrackShptLine.Next() = 0;

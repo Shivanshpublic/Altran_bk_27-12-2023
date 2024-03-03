@@ -102,6 +102,10 @@ PAGE 50001 "Shipment Tracking Card"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("Total Gross (KG)"; Rec."Total Gross (KG)")
+                {
+                    ApplicationArea = All;
+                }
                 field("Reference No."; Rec."Reference No.")
                 {
                     ApplicationArea = All;
@@ -531,7 +535,7 @@ PAGE 50001 "Shipment Tracking Card"
     trigger OnAfterGetRecord()
     begin
         SetControl();
-        Rec.CalcFields("Total Quantity", "Pallet Quantity", "Total CBM")
+        Rec.CalcFields("Total Quantity", "Pallet Quantity", "Total CBM", "Total Gross (KG)")
     end;
 
     trigger OnOpenPage()

@@ -57,6 +57,14 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
             {
                 ApplicationArea = All;
             }
+            field("Salesperson Name"; Rec."Salesperson Name")
+            {
+                ApplicationArea = All;
+            }
+            field("Internal Team Name"; Rec."Internal Team Name")
+            {
+                ApplicationArea = All;
+            }
             field("External Document No."; Rec."External Document No.")
             {
                 ApplicationArea = All;
@@ -79,6 +87,7 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
                     PurchHeader: Record "Purchase Header";
                     SalesHeader: Record "Sales Header";
                     Salesline: Record "Sales Line";
+                    Salesperson: Record "Salesperson/Purchaser";
                 begin
                     if PurchHeader.FindFirst() then
                         repeat
@@ -93,6 +102,14 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
                                 repeat
                                     Salesline."Sell-to Customer Name" := SalesHeader."Sell-to Customer Name";
                                     Salesline."External Document No." := SalesHeader."External Document No.";
+                                    if Salesperson.Get(SalesHeader."Internal Team") then
+                                        Salesline."Internal Team Name" := Salesperson.Name
+                                    else
+                                        Salesline."Internal Team Name" := '';
+                                    if Salesperson.Get(SalesHeader."Salesperson Code") then
+                                        Salesline."Salesperson Name" := Salesperson.Name
+                                    else
+                                        Salesline."Salesperson Name" := '';
                                     Salesline.Modify();
                                 until Salesline.Next() = 0;
                         until SalesHeader.Next() = 0;
