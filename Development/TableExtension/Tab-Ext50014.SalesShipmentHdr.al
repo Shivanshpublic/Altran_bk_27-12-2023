@@ -2,9 +2,14 @@ tableextension 50014 SalesShipmentHdr extends "Sales Shipment Header"
 {
     fields
     {
+        modify("Salesperson Code")
+        {
+            Caption = 'Sales Director';
+        }
         FIELD(50000; "Internal Team"; Code[20])
         {
             DataClassification = ToBeClassified;
+            Caption = 'Regional Manager';
             TableRelation = "Salesperson/Purchaser";
         }
         FIELD(50001; "External Rep"; Text[250])

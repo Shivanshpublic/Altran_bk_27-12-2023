@@ -73,12 +73,96 @@ tableextension 50010 Item extends Item
                 ;
             end;
         }
+        modify("Item Category Code")
+        {
+            trigger OnAfterValidate()
+            var
+                ItemCategory: Record "Item Category";
+            begin
+                if (Type = Type::Inventory) AND (Blocked = false) AND ("Item Category Code" = '') then begin
+                    if ItemCategory.Get("Item Category Code") then begin
+                        "HS Code" := ItemCategory."HS Code";
+                        "HTS Code" := ItemCategory."HTS Code";
+                        Validate("Item Tracking Code", ItemCategory.Code);
+                        Validate("Lot Nos.", ItemCategory."Lot Nos.");
+                        Validate("Expiration Calculation", ItemCategory."Expiration Calculation");
+                    end;
+                end;
+            end;
+        }
+        modify("Vendor No.")
+        {
+            trigger OnAfterValidate()
+            var
+                Vendor: Record Vendor;
+            begin
+                if Vendor.Get("Vendor No.") then begin
+                    Validate("Vendor Name", Vendor.Name);
+                    Validate("Country of Origin", Vendor."Country/Region Code");
+                end else begin
+                    Validate("Vendor Name", '');
+                    Validate("Country of Origin", '');
+                end;
+            end;
+        }
         field(50010; "UL Certificate Available"; Boolean)
         {
             DataClassification = ToBeClassified;
             trigger OnValidate()
             begin
             end;
+        }
+        field(50011; "UL"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50012; "CUL"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50013; "TUV"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50014; "VDE"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50015; "SEMKO"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50016; "DEMKO"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50017; "ENEC"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50018; "CSA"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50019; "CE"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50020; "No of items/box"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50021; "Country of Origin"; code[10])
+        {
+            DataClassification = ToBeClassified;
+            TableRelation = "Country/Region";
+            Editable = false;
+        }
+        field(50022; "Vendor Name"; Text[100])
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Preferred Vendor Name';
+            Editable = false;
         }
     }
     fieldgroups

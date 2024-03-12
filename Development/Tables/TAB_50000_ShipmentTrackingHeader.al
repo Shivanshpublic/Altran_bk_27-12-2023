@@ -23,11 +23,12 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         FIELD(4; "Port of Dispatch"; Text[50])
         {
             DataClassification = ToBeClassified;
+            Caption = 'Port of Destination';
         }
         FIELD(5; "Date of Dispatch"; Date)
         {
             DataClassification = ToBeClassified;
-            Caption = 'Dispatch Date';
+            Caption = 'ETD';
             trigger OnValidate()
             var
                 TrackingShipmentLine: Record "Tracking Shipment Line";
@@ -202,6 +203,47 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
             CalcFormula = Sum("Tracking Shipment Line"."Total Gross (KG)" WHERE("Tracking Code" = FIELD(Code)));
             Editable = false;
             FieldClass = FlowField;
+        }
+        field(37; "Total Net (KG)"; Decimal)
+        {
+            DecimalPlaces = 0 : 3;
+            CalcFormula = Sum("Tracking Shipment Line"."Total Net (KG)" WHERE("Tracking Code" = FIELD(Code)));
+            Editable = false;
+            FieldClass = FlowField;
+        }
+        FIELD(38; "Date of Arrival"; Date)
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'ETA';
+
+            TRIGGER OnValidate()
+            VAR
+                TrackingShipmentLine: Record "Tracking Shipment Line";
+            BEGIN
+                IF Status = Status::"Pending For Approval" THEN
+                    ERROR('Document status should be open to modify the date of arrival');
+
+                IF "Date of Dispatch" <> 0D THEN
+                    IF "Date of Dispatch" > "Date of Arrival" THEN
+                        ERROR('Date of arrival should be after date of dispatch');
+
+                IF Status = Status::Released THEN BEGIN
+                    IF NOT CONFIRM('Date of Arrival is modified. Please get the approval for changes to be affected, Do you want to continue?', FALSE) THEN
+                        EXIT;
+
+                    IF "Date of Arrival" = 0D THEN
+                        ERROR('Date of Arrival should not be blank');
+                END;
+
+                TrackingShipmentLine.Reset();
+                TrackingShipmentLine.SetRange("Tracking Code", Rec.Code);
+                if TrackingShipmentLine.FindFirst() then
+                    repeat
+                        TrackingShipmentLine.Validate("Date Of Arrival", "Date Of Arrival");
+                        TrackingShipmentLine.Modify();
+                    until TrackingShipmentLine.Next() = 0;
+
+            END;
         }
     }
 
@@ -496,6 +538,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                     PurchLine.Validate("Expected Receipt Date1", TrackShptLine."Date of Arrival");
                     PurchLine.Validate("Total CBM", TrackShptLine."Total CBM");
                     PurchLine.Validate("Total Gross (KG)", TrackShptLine."Total Gross (KG)");
+                    PurchLine.Validate("Total Net (KG)", TrackShptLine."Total Net (KG)");
                     PurchLine.Modify();
                 end;
             until TrackShptLine.Next() = 0;
@@ -519,6 +562,8 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                     PurchRcptLine."Milestone Status" := "Milestone Status";
                     PurchRcptLine.Validate("Total CBM", TrackShptLine."Total CBM");
                     PurchRcptLine.Validate("Total Gross (KG)", TrackShptLine."Total Gross (KG)");
+                    PurchRcptLine.Validate("Total Net (KG)", TrackShptLine."Total Net (KG)");
+                    PurchRcptLine.Validate("Gross Weight", TrackShptLine."Pallet Quantity");
                     PurchRcptLine.Modify();
                 end;
             until TrackShptLine.Next() = 0;

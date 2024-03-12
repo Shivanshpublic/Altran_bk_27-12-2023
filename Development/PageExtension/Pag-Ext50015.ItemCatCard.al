@@ -27,5 +27,28 @@ pageextension 50015 ItemCatCard extends "Item Category Card"
             }
 
         }
+        addafter("Parent Category")
+        {
+            field("HS Code"; Rec."HS Code")
+            {
+                ApplicationArea = All;
+            }
+            field("HTS Code"; Rec."HTS Code")
+            {
+                ApplicationArea = All;
+            }
+            field("Item Tracking Code"; Rec."Item Tracking Code")
+            {
+                ApplicationArea = All;
+            }
+            field("Lot Nos."; Rec."Lot Nos.")
+            {
+                ApplicationArea = All;
+            }
+            field("Expiration Calculation"; Rec."Expiration Calculation")
+            {
+                ApplicationArea = All;
+            }
+        }
     }
 }

@@ -49,6 +49,10 @@ PAGE 50000 "Shipment Tracking List"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("Date of Arrival"; Rec."Date of Arrival")
+                {
+                    ApplicationArea = All;
+                }
                 FIELD("Freight Details"; Rec."Freight Details")
                 {
                     ApplicationArea = All;

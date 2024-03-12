@@ -708,7 +708,7 @@
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>7pt</FontSize>
-                                    <Format>'$'#,0.0000;-'$'#,0.0000;''</Format>
+                                    <Format>'$'#,0.000;-'$'#,0.000;''</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -730,6 +730,7 @@
                             <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -745,7 +746,7 @@
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>8pt</FontSize>
-                                    <Format>'$'#,0.0000;-'$'#,0.0000;''</Format>
+                                    <Format>'$'#,0.000;-'$'#,0.000;''</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -860,7 +861,7 @@
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                    <Format>0.0000;(0.0000)</Format>
+                                    <Format>n3</Format>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
@@ -869,7 +870,7 @@
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                    <Format>0.0000;(0.0000)</Format>
+                                    <Format>n3</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -885,24 +886,16 @@
                             </Border>
                             <TopBorder>
                               <Style>Solid</Style>
-                              <Width>1pt</Width>
                             </TopBorder>
                             <BottomBorder>
                               <Style>Solid</Style>
                               <Width>2pt</Width>
                             </BottomBorder>
-                            <LeftBorder>
-                              <Width>1pt</Width>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Width>1pt</Width>
-                            </RightBorder>
                             <VerticalAlign>Top</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>

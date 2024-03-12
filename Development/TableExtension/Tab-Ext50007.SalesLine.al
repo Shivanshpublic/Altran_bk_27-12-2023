@@ -167,10 +167,12 @@ tableextension 50007 SalesLine extends "Sales Line"
         }
         field(50033; "Salesperson Name"; Text[50])
         {
+            Caption = 'Sales Director Name';
             Editable = false;
         }
         field(50034; "Internal Team Name"; Text[50])
         {
+            Caption = 'Regional Manager Name';
             Editable = false;
         }
         field(50111; "UL Certificate Available"; Boolean)

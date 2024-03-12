@@ -39,6 +39,31 @@ tableextension 50013 "Item Categories" extends "Item Category"
         {
             DataClassification = ToBeClassified;
         }
+        field(50005; "HS Code"; Code[50])
+        {
+            Caption = 'HS Code';
+            DataClassification = ToBeClassified;
+        }
+        field(50006; "HTS Code"; Code[50])
+        {
+            Caption = 'HTS Code';
+            DataClassification = ToBeClassified;
+        }
+        field(50007; "Item Tracking Code"; Code[10])
+        {
+            Caption = 'Item Tracking Code';
+            TableRelation = "Item Tracking Code";
+        }
+        field(50008; "Lot Nos."; Code[20])
+        {
+            Caption = 'Lot Nos.';
+            TableRelation = "No. Series";
+
+        }
+        field(50009; "Expiration Calculation"; DateFormula)
+        {
+            Caption = 'Expiration Calculation';
+        }
     }
     local procedure CalcTotalDuties()
     begin

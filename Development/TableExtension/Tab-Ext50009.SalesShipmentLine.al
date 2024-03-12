@@ -151,10 +151,12 @@ tableextension 50009 SalesShipment extends "Sales Shipment Line"
         }
         field(50033; "Salesperson Name"; Text[50])
         {
+            Caption = 'Sales Director Name';
             Editable = false;
         }
         field(50034; "Internal Team Name"; Text[50])
         {
+            Caption = 'Regional Manager Name';
             Editable = false;
         }
         //18-09-2023-end

@@ -64,29 +64,4 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
             Until Item.Next() = 0;
         Message('Update Successfully');
     end;
-
-    procedure UpdateSalesInvoiceLine()
-    var
-        SalesInvHeader: Record "Sales Invoice Header";
-        SalesInvline: Record "Sales Invoice Line";
-        Salesperson: Record "Salesperson/Purchaser";
-    begin
-        if SalesInvHeader.FindFirst() then
-            repeat
-                SalesInvline.SetRange("Document No.", SalesInvHeader."No.");
-                if SalesInvline.FindFirst() then
-                    repeat
-                        SalesInvline."Sell-to Customer Name" := SalesInvHeader."Sell-to Customer Name";
-                        SalesInvline."External Document No." := SalesInvHeader."External Document No.";
-                        if Salesperson.Get(SalesInvHeader."Internal Team") then
-                            if SalesInvline."Internal Team Name" = '' then
-                                SalesInvline."Internal Team Name" := Salesperson.Name;
-                        if Salesperson.Get(SalesInvHeader."Salesperson Code") then
-                            if SalesInvline."Salesperson Name" = '' then
-                                SalesInvline."Salesperson Name" := Salesperson.Name;
-                        SalesInvline.Modify();
-                    until SalesInvline.Next() = 0;
-            until SalesInvHeader.Next() = 0;
-
-    end;
 }

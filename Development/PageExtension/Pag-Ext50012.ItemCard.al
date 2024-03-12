@@ -14,6 +14,17 @@ pageextension 50012 ItemCard extends "Item Card"
                 ApplicationArea = All;
             }
         }
+        addafter("Vendor No.")
+        {
+            field("Vendor Name"; Rec."Vendor Name")
+            {
+                ApplicationArea = All;
+            }
+            field("Country of Origin"; Rec."Country of Origin")
+            {
+                ApplicationArea = All;
+            }
+        }
         addlast(Item)
         {
             field("HS Code"; Rec."HS Code")
@@ -49,6 +60,46 @@ pageextension 50012 ItemCard extends "Item Card"
                 ApplicationArea = All;
                 Visible = false;
             }
+            field("UL"; Rec."UL")
+            {
+                ApplicationArea = All;
+            }
+            field("CUL"; Rec."CUL")
+            {
+                ApplicationArea = All;
+            }
+            field("TUV"; Rec."TUV")
+            {
+                ApplicationArea = All;
+            }
+            field("VDE"; Rec."VDE")
+            {
+                ApplicationArea = All;
+            }
+            field("SEMKO"; Rec."SEMKO")
+            {
+                ApplicationArea = All;
+            }
+            field("DEMKO"; Rec."DEMKO")
+            {
+                ApplicationArea = All;
+            }
+            field("ENEC"; Rec."ENEC")
+            {
+                ApplicationArea = All;
+            }
+            field("CSA"; Rec."CSA")
+            {
+                ApplicationArea = All;
+            }
+            field("CE"; Rec."CE")
+            {
+                ApplicationArea = All;
+            }
+            field("No of items/box"; Rec."No of items/box")
+            {
+                ApplicationArea = All;
+            }
         }
         modify("Unit Cost")
         {
@@ -59,6 +110,13 @@ pageextension 50012 ItemCard extends "Item Card"
         {
             Visible = EnableCost;
             Editable = EnableCost;
+        }
+        addafter(Planning)
+        {
+            group(Details)
+            {
+                Caption = 'Details';
+            }
         }
     }
 

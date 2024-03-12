@@ -1,5 +1,6 @@
 pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
 {
+
     layout
     {
         addlast(Control1)
@@ -88,6 +89,7 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
                     SalesHeader: Record "Sales Header";
                     Salesline: Record "Sales Line";
                     Salesperson: Record "Salesperson/Purchaser";
+                    UpdateCL: Codeunit UpdateULCertificate;
                 begin
                     if PurchHeader.FindFirst() then
                         repeat
@@ -113,6 +115,7 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
                                     Salesline.Modify();
                                 until Salesline.Next() = 0;
                         until SalesHeader.Next() = 0;
+                    UpdateCL.UpdateSalesInvoiceLine();
                 end;
             }
         }

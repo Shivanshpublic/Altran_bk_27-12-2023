@@ -56,6 +56,7 @@ TABLE 50001 "Tracking Shipment Line"
         FIELD(6; "Date of Dispatch"; Date)
         {
             DataClassification = ToBeClassified;
+            Caption = 'ETD';
             TRIGGER OnValidate()
             VAR
                 ShipmentTrackingHeader: Record "Tracking Shipment Header";
@@ -73,7 +74,7 @@ TABLE 50001 "Tracking Shipment Line"
         FIELD(7; "Date of Arrival"; Date)
         {
             DataClassification = ToBeClassified;
-
+            Caption = 'ETA';
 
             TRIGGER OnValidate()
             VAR
@@ -82,7 +83,7 @@ TABLE 50001 "Tracking Shipment Line"
             BEGIN
                 ShipmentTrackingHeader.GET(Rec."Tracking Code");
                 IF ShipmentTrackingHeader.Status = ShipmentTrackingHeader.Status::"Pending For Approval" THEN
-                    ERROR('Document status should be open to modify the date of delivery');
+                    ERROR('Document status should be open to modify the date of arrival');
 
                 IF "Date of Dispatch" <> 0D THEN
                     IF "Date of Dispatch" > "Date of Arrival" THEN
@@ -266,6 +267,17 @@ TABLE 50001 "Tracking Shipment Line"
                     UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
             end;
         }
+        field(37; "Total Net (KG)"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            DecimalPlaces = 0 : 3;
+            trigger OnValidate()
+            begin
+                TestStatusOpen();
+                if "Receipt Line No." <> 0 then
+                    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
+            end;
+        }
     }
 
     KEYS
@@ -370,6 +382,7 @@ TABLE 50001 "Tracking Shipment Line"
                 PurchRcptLine."Pallet Quantity" := 0;
                 PurchRcptLine."Total CBM" := 0;
                 PurchRcptLine."Total Gross (KG)" := 0;
+                PurchRcptLine."Total Net (KG)" := 0;
                 PurchRcptLine.Modify()
             until PurchRcptLine.Next() = 0;
     end;
@@ -429,6 +442,7 @@ TABLE 50001 "Tracking Shipment Line"
                     "PO Quantity" := PurchaseLine.Quantity;
                     "Total CBM" := PurchaseLine."Total CBM";
                     "Total Gross (KG)" := PurchaseLine."Total Gross (KG)";
+                    "Total Net (KG)" := PurchaseLine."Total Net (KG)";
                     //Validate("Date of Arrival", PurchaseLine."Expected Receipt Date1");                    
                 end;
             until PurchaseLine.Next() = 0;
@@ -448,10 +462,13 @@ TABLE 50001 "Tracking Shipment Line"
             PurchRcptLine."Shipment Tracking Code" := Rec."Tracking Code";
             //if POLineNo <> 0 then
             PurchRcptLine."Shipment Tracking Line No." := Rec."Line No.";
-            PurchRcptLine."Pallet Quantity" := Rec."Pallet Quantity";
-            PurchRcptLine."Total CBM" := Rec."Total CBM";
-            PurchRcptLine."Total Gross (KG)" := Rec."Total Gross (KG)";
-            PurchRcptLine."Gross Weight" := Rec."Pallet Quantity";
+            "Total CBM" := PurchRcptLine."Total CBM";
+            "Total Gross (KG)" := PurchRcptLine."Total Gross (KG)";
+            "Pallet Quantity" := PurchRcptLine."Gross Weight";
+            //"Pallet Quantity" := PurchRcptLine."Pallet Quantity";
+            "Total Net (KG)" := PurchRcptLine."Total Net (KG)";
+            "Buy From Vendor No." := PurchRcptLine."Buy-from Vendor No.";
+            "Buy From Vendor Name" := PurchRcptLine."Buy-from Vendor Name";
             if TrackShptHeader.Get(Rec."Tracking Code") then begin
                 PurchRcptLine."Milestone Status" := TrackShptHeader."Milestone Status";
             end;

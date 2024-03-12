@@ -34,30 +34,39 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
         FIELD(50000; "Internal Team"; Code[20])
         {
             DataClassification = ToBeClassified;
+            Caption = 'Regional Manager';
             TableRelation = "Salesperson/Purchaser";
             trigger OnValidate()
             var
                 SalesLine: Record "Sales Line";
                 Salesperson: Record "Salesperson/Purchaser";
             begin
-                if SalesLine.Get("Document Type", "No.") then
+                SalesLine.Reset();
+                SalesLine.SetRange("Document Type", "Document Type");
+                SalesLine.SetRange("Document No.", "No.");
+                if SalesLine.FindFirst() then
                     repeat
                         if Salesperson.Get("Internal Team") then
                             SalesLine."Internal Team Name" := Salesperson.Name
                         else
                             SalesLine."Internal Team Name" := '';
+                        SalesLine.Modify();
                     until SalesLine.Next() = 0;
-                SalesLine.Modify();
+
             end;
         }
         Modify("Salesperson Code")
         {
+            Caption = 'Sales Director';
             trigger OnAfterValidate()
             var
                 SalesLine: Record "Sales Line";
                 Salesperson: Record "Salesperson/Purchaser";
             begin
-                if SalesLine.Get("Document Type", "No.") then
+                SalesLine.Reset();
+                SalesLine.SetRange("Document Type", "Document Type");
+                SalesLine.SetRange("Document No.", "No.");
+                if SalesLine.FindFirst() then
                     repeat
                         if Salesperson.Get("Salesperson Code") then
                             SalesLine."Salesperson Name" := Salesperson.Name
