@@ -237,9 +237,9 @@ codeunit 50003 CustomEvents
     local procedure OnAfterUpdateQty(var ItemChargeAssignmentPurch: Record "Item Charge Assignment (Purch)"; var QtyToReceiveBase: Decimal; var QtyReceivedBase: Decimal; var QtyToShipBase: Decimal; var QtyShippedBase: Decimal; var GrossWeight: Decimal; var UnitVolume: Decimal)
     begin
         if ItemChargeAssignmentPurch."Assigned By" = ItemChargeAssignmentPurch."Assigned By"::"Total CBM" then
-            GrossWeight := ItemChargeAssignmentPurch."Total CBM";
+            GrossWeight := ItemChargeAssignmentPurch."Unit CBM";
         if ItemChargeAssignmentPurch."Assigned By" = ItemChargeAssignmentPurch."Assigned By"::"Total Gross (KG)" then
-            GrossWeight := ItemChargeAssignmentPurch."Total Gross (KG)";
+            GrossWeight := ItemChargeAssignmentPurch."Unit Gross (KG)";
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Purchase Line", 'OnShowItemChargeAssgntOnBeforeCalcItemCharge', '', false, false)]
@@ -278,8 +278,12 @@ codeunit 50003 CustomEvents
                             ItemChargeAssgntPurch.SetRange("Applies-to Doc. Line No.", FromPurchLine."Line No.");
                             if ItemChargeAssgntPurch.FindFirst() then begin
                                 ItemChargeAssgntPurch."Assigned By" := LastItemChargeAssgntPurch."Assigned By";
-                                ItemChargeAssgntPurch."Total CBM" := FromPurchLine."Total CBM";
-                                ItemChargeAssgntPurch."Total Gross (KG)" := FromPurchLine."Total Gross (KG)";
+                                if FromPurchLine.Quantity <> 0 then begin
+                                    ItemChargeAssgntPurch."Total CBM" := FromPurchLine."Total CBM";
+                                    ItemChargeAssgntPurch."Total Gross (KG)" := FromPurchLine."Total Gross (KG)";
+                                    ItemChargeAssgntPurch."Unit CBM" := FromPurchLine."Total CBM" / FromPurchLine.Quantity;
+                                    ItemChargeAssgntPurch."Unit Gross (KG)" := FromPurchLine."Total Gross (KG)" / FromPurchLine.Quantity;
+                                end;
                                 ItemChargeAssgntPurch.Modify();
                             end;
                         end;
@@ -310,6 +314,8 @@ codeunit 50003 CustomEvents
                                 ItemChargeAssgntPurch."Assigned By" := LastItemChargeAssgntPurch."Assigned By"::" ";
                                 ItemChargeAssgntPurch."Total CBM" := 0;
                                 ItemChargeAssgntPurch."Total Gross (KG)" := 0;
+                                ItemChargeAssgntPurch."Unit CBM" := 0;
+                                ItemChargeAssgntPurch."Unit Gross (KG)" := 0;
                                 ItemChargeAssgntPurch.Modify();
                             end;
                         end;
@@ -339,12 +345,18 @@ codeunit 50003 CustomEvents
                     begin
                         PurchLine.Get("Applies-to Doc. Type", "Applies-to Doc. No.", "Applies-to Doc. Line No.");
                         DecimalArray[1] := PurchLine.Quantity;
-                        if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total CBM" then
-                            DecimalArray[2] := PurchLine."Total CBM"
-                        else
-                            if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total Gross (KG)" then
-                                DecimalArray[2] := PurchLine."Total Gross (KG)"
+                        if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total CBM" then begin
+                            if PurchLine.Quantity <> 0 then
+                                DecimalArray[2] := PurchLine."Total CBM" / PurchLine.Quantity
                             else
+                                DecimalArray[2] := 0;
+                        end else
+                            if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total Gross (KG)" then begin
+                                if PurchLine.Quantity <> 0 then
+                                    DecimalArray[2] := PurchLine."Total Gross (KG)" / PurchLine.Quantity
+                                else
+                                    DecimalArray[2] := 0;
+                            end else
                                 DecimalArray[2] := PurchLine."Gross Weight";
                         DecimalArray[3] := PurchLine."Unit Volume";
                     end;
@@ -352,12 +364,18 @@ codeunit 50003 CustomEvents
                     begin
                         PurchRcptLine.Get("Applies-to Doc. No.", "Applies-to Doc. Line No.");
                         DecimalArray[1] := PurchRcptLine.Quantity;
-                        if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total CBM" then
-                            DecimalArray[2] := PurchRcptLine."Total CBM"
-                        else
-                            if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total Gross (KG)" then
-                                DecimalArray[2] := PurchRcptLine."Total Gross (KG)"
+                        if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total CBM" then begin
+                            if PurchRcptLine.Quantity <> 0 then
+                                DecimalArray[2] := PurchRcptLine."Total CBM" / PurchRcptLine.Quantity
                             else
+                                DecimalArray[2] := 0;
+                        end else
+                            if TempItemChargeAssgntPurch."Assigned By" = TempItemChargeAssgntPurch."Assigned By"::"Total Gross (KG)" then begin
+                                if PurchRcptLine.Quantity <> 0 then
+                                    DecimalArray[2] := PurchRcptLine."Total Gross (KG)" / PurchRcptLine.Quantity
+                                else
+                                    DecimalArray[2] := 0;
+                            end else
                                 DecimalArray[2] := PurchRcptLine."Gross Weight";
                         DecimalArray[3] := PurchRcptLine."Unit Volume";
                     end;
@@ -379,9 +397,13 @@ codeunit 50003 CustomEvents
     begin
         if ItemChargeAssgntPurch."Applies-to Doc. Type" = ItemChargeAssgntPurch."Applies-to Doc. Type"::Receipt then begin
             If PurchRcptLine.Get(ItemChargeAssgntPurch."Applies-to Doc. No.", ItemChargeAssgntPurch."Applies-to Doc. Line No.") then begin
-                ItemChargeAssgntPurch."Total CBM" := PurchRcptLine."Total CBM";
-                ItemChargeAssgntPurch."Total Gross (KG)" := PurchRcptLine."Total Gross (KG)";
-                ItemChargeAssgntPurch."Assigned By" := FromItemChargeAssgntPurch."Assigned By";
+                if PurchRcptLine.Quantity <> 0 then begin
+                    ItemChargeAssgntPurch."Total CBM" := PurchRcptLine."Total CBM";
+                    ItemChargeAssgntPurch."Unit CBM" := PurchRcptLine."Total CBM" / PurchRcptLine.Quantity;
+                    ItemChargeAssgntPurch."Total Gross (KG)" := PurchRcptLine."Total Gross (KG)";
+                    ItemChargeAssgntPurch."Unit Gross (KG)" := PurchRcptLine."Total Gross (KG)" / PurchRcptLine.Quantity;
+                    ItemChargeAssgntPurch."Assigned By" := FromItemChargeAssgntPurch."Assigned By";
+                end;
             end;
         end;
 

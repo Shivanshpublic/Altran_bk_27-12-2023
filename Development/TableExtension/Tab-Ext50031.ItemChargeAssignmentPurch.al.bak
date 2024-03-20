@@ -19,10 +19,12 @@ tableextension 50031 ItemChargeAssignmentPurch extends "Item Charge Assignment (
         field(50007; "Unit Gross (KG)"; Decimal)
         {
             DataClassification = ToBeClassified;
+            DecimalPlaces = 0 : 3;
         }
         field(50008; "Unit CBM"; Decimal)
         {
             DataClassification = ToBeClassified;
+            DecimalPlaces = 0 : 3;
         }
     }
 

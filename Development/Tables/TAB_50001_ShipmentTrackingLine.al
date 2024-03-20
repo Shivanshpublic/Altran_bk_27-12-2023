@@ -115,13 +115,13 @@ TABLE 50001 "Tracking Shipment Line"
         FIELD(8; "Delayed by Days"; Integer)
         {
             DataClassification = ToBeClassified;
-
+            MinValue = 1;
 
             TRIGGER OnValidate()
             VAR
                 ShipmentTrackingHeader: Record "Tracking Shipment Header";
             BEGIN
-
+                TestStatusOpen();
                 ShipmentTrackingHeader.GET(Rec."Tracking Code");
                 IF ShipmentTrackingHeader.Status = ShipmentTrackingHeader.Status::"Pending For Approval" THEN
                     ERROR('Document status pending for approval');
@@ -129,18 +129,19 @@ TABLE 50001 "Tracking Shipment Line"
                 IF "Delayed by Days" < 1 THEN
                     ERROR('Delayed days should be more than 1');
 
-                IF ShipmentTrackingHeader.Status = ShipmentTrackingHeader.Status::Released THEN BEGIN
-                    IF NOT CONFIRM('Shipment is delayed. Please get the approval for changes to be affected, Do you want to continue?', FALSE) THEN
-                        EXIT;
+                CalculateArrivalDate();
+                // IF ShipmentTrackingHeader.Status = ShipmentTrackingHeader.Status::Released THEN BEGIN
+                //     IF NOT CONFIRM('Shipment is delayed. Please get the approval for changes to be affected, Do you want to continue?', FALSE) THEN
+                //         EXIT;
 
-                    IF "Delayed by Days" < 1 THEN
-                        ERROR('Delayed by days should not be blank');
+                //     IF "Delayed by Days" < 1 THEN
+                //         ERROR('Delayed by days should not be blank');
 
-                    ShipmentTrackingHeader.Status := ShipmentTrackingHeader.Status::Open;
-                    CalculateArrivalDate();
-                    ShipmentTrackingHeader.MODIFY;
+                //     ShipmentTrackingHeader.Status := ShipmentTrackingHeader.Status::Open;
+                //     //PCalculateArrivalDate();
+                //     ShipmentTrackingHeader.MODIFY;
 
-                END;
+                // END;
             END;
 
         }
@@ -252,8 +253,8 @@ TABLE 50001 "Tracking Shipment Line"
             trigger OnValidate()
             begin
                 TestStatusOpen();
-                if "Receipt Line No." <> 0 then
-                    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
+                //if "Receipt Line No." <> 0 then
+                //    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
             end;
         }
         field(36; "Total Gross (KG)"; Decimal)
@@ -263,8 +264,8 @@ TABLE 50001 "Tracking Shipment Line"
             trigger OnValidate()
             begin
                 TestStatusOpen();
-                if "Receipt Line No." <> 0 then
-                    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
+                //if "Receipt Line No." <> 0 then
+                //    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
             end;
         }
         field(37; "Total Net (KG)"; Decimal)
@@ -274,8 +275,8 @@ TABLE 50001 "Tracking Shipment Line"
             trigger OnValidate()
             begin
                 TestStatusOpen();
-                if "Receipt Line No." <> 0 then
-                    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
+                //if "Receipt Line No." <> 0 then
+                //    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
             end;
         }
     }
@@ -364,9 +365,11 @@ TABLE 50001 "Tracking Shipment Line"
                 PurchaseLine."Shipment Tracking Line No." := 0;
                 PurchaseLine.Modify()
             until PurchaseLine.Next() = 0;
-        "Item No." := '';
-        Description := '';
-        "PO Quantity" := 0;
+        if ("Receipt Line No." = 0) then begin
+            "Item No." := '';
+            Description := '';
+            "PO Quantity" := 0;
+        end;
     end;
 
     local procedure ResetRcptLine(RcptNo: Code[20]; RcptLineNo: Integer)
@@ -462,6 +465,8 @@ TABLE 50001 "Tracking Shipment Line"
             PurchRcptLine."Shipment Tracking Code" := Rec."Tracking Code";
             //if POLineNo <> 0 then
             PurchRcptLine."Shipment Tracking Line No." := Rec."Line No.";
+            "Item No." := PurchRcptLine."No.";
+            Description := PurchRcptLine.Description;
             "Total CBM" := PurchRcptLine."Total CBM";
             "Total Gross (KG)" := PurchRcptLine."Total Gross (KG)";
             "Pallet Quantity" := PurchRcptLine."Gross Weight";
@@ -484,10 +489,16 @@ TABLE 50001 "Tracking Shipment Line"
 
     procedure CalculateArrivalDate()
     VAR
-
+        DelByDay: DateFormula;
+        Expr1: Text[30];
     BEGIN
-        //"Date of Arrival" := CalcDate(FORMAT("Delivery Lead Time" + "Delayed by Days") + 'D', "Date of Dispatch")
-        "Date of Arrival" := CalcDate("Delivery Lead Time", "Date of Dispatch")
+        Expr1 := FORMAT('<' + Format("Delivery Lead Time") + '+' + FORMAT("Delayed by Days") + 'D' + '>');
+        //"Date of Arrival" := CalcDate(FORMAT("Delivery Lead Time" + ("Delayed by Days" + 'D')), "Date of Dispatch");
+        if "Date of Dispatch" <> 0D then
+            "Date of Arrival" := CalcDate(Expr1, "Date of Dispatch")
+        else
+            "Date of Arrival" := 0D;
+        //"Date of Arrival" := CalcDate("Delivery Lead Time", "Date of Dispatch")
     end;
 
     procedure TestStatusOpen()

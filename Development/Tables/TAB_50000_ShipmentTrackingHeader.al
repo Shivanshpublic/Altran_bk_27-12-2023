@@ -33,11 +33,15 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
             var
                 TrackingShipmentLine: Record "Tracking Shipment Line";
             begin
+
                 TrackingShipmentLine.Reset();
                 TrackingShipmentLine.SetRange("Tracking Code", Rec.Code);
                 if TrackingShipmentLine.FindFirst() then
                     repeat
-                        TrackingShipmentLine.Validate("Date Of Dispatch", "Date Of Dispatch");
+                        if "Date of Dispatch" <> 0D then
+                            TrackingShipmentLine.Validate("Date Of Dispatch", "Date Of Dispatch")
+                        else
+                            TrackingShipmentLine.Validate("Date Of Dispatch", 0D);
                         TrackingShipmentLine.Modify();
                     until TrackingShipmentLine.Next() = 0;
             end;
@@ -166,7 +170,13 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
             trigger OnValidate()
             var
                 TrackingShipmentLine: Record "Tracking Shipment Line";
+                BlankLeadtime: DateFormula;
             begin
+                if "Date of Dispatch" <> 0D then begin
+                    if "Delivery Lead Time" <> BlankLeadtime then
+                        Validate("Date of Arrival", CalcDate("Delivery Lead Time", "Date of Dispatch"));
+                end;
+
                 TrackingShipmentLine.Reset();
                 TrackingShipmentLine.SetRange("Tracking Code", Rec.Code);
                 if TrackingShipmentLine.FindFirst() then
