@@ -58,11 +58,31 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
             {
                 ApplicationArea = All;
             }
+            field("Salesperson Code"; Rec."Salesperson Code")
+            {
+                ApplicationArea = All;
+                Visible = false;
+            }
+
             field("Salesperson Name"; Rec."Salesperson Name")
             {
                 ApplicationArea = All;
             }
+            field("Internal Team"; Rec."Internal Team")
+            {
+                ApplicationArea = All;
+                Visible = false;
+            }
             field("Internal Team Name"; Rec."Internal Team Name")
+            {
+                ApplicationArea = All;
+            }
+            field("External Rep"; Rec."External Rep")
+            {
+                ApplicationArea = All;
+                Visible = false;
+            }
+            field("External Team Name"; Rec."External Team Name")
             {
                 ApplicationArea = All;
             }
@@ -104,14 +124,36 @@ pageextension 50031 "Sales Lines Ext" extends "Sales Lines"
                                 repeat
                                     Salesline."Sell-to Customer Name" := SalesHeader."Sell-to Customer Name";
                                     Salesline."External Document No." := SalesHeader."External Document No.";
-                                    if Salesperson.Get(SalesHeader."Internal Team") then
-                                        Salesline."Internal Team Name" := Salesperson.Name
-                                    else
+
+                                    if Salesperson.Get(SalesHeader."Internal Team") then begin
+                                        if Salesline."Internal Team Name" = '' then begin
+                                            Salesline."Internal Team" := SalesHeader."Internal Team";
+                                            Salesline."Internal Team Name" := Salesperson.Name;
+                                        end;
+                                    end else begin
+                                        Salesline."Internal Team" := '';
                                         Salesline."Internal Team Name" := '';
-                                    if Salesperson.Get(SalesHeader."Salesperson Code") then
-                                        Salesline."Salesperson Name" := Salesperson.Name
-                                    else
+                                    end;
+
+                                    if Salesperson.Get(SalesHeader."Salesperson Code") then begin
+                                        if Salesline."Salesperson Name" = '' then begin
+                                            Salesline."Salesperson Code" := SalesHeader."Salesperson Code";
+                                            Salesline."Salesperson Name" := Salesperson.Name
+                                        end;
+                                    end else begin
+                                        Salesline."Salesperson Code" := '';
                                         Salesline."Salesperson Name" := '';
+                                    end;
+
+                                    if Salesperson.Get(SalesHeader."External Rep") then begin
+                                        if Salesline."External Team Name" = '' then begin
+                                            Salesline."External Rep" := SalesHeader."External Rep";
+                                            Salesline."External Team Name" := Salesperson.Name;
+                                        end;
+                                    end else begin
+                                        Salesline."External Rep" := '';
+                                        Salesline."External Team Name" := '';
+                                    end;
                                     Salesline.Modify();
                                 until Salesline.Next() = 0;
                         until SalesHeader.Next() = 0;

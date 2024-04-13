@@ -832,7 +832,6 @@
                             <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1030,7 +1029,7 @@
       <Width>19.74752cm</Width>
       <Page>
         <PageHeader>
-          <Height>9.55684cm</Height>
+          <Height>9.92726cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1471,7 +1470,7 @@
               </ReportItems>
               <KeepTogether>true</KeepTogether>
               <Top>6.79712cm</Top>
-              <Height>2.75972cm</Height>
+              <Height>2.95375cm</Height>
               <Width>9.80045cm</Width>
               <ZIndex>1</ZIndex>
               <Style>
@@ -1516,14 +1515,7 @@
                     <Paragraph>
                       <TextRuns>
                         <TextRun>
-                          <Value>` </Value>
-                          <Style>
-                            <FontFamily>Segoe UI</FontFamily>
-                            <FontSize>8pt</FontSize>
-                          </Style>
-                        </TextRun>
-                        <TextRun>
-                          <Value>=Fields!ShiptoAddress2.Value</Value>
+                          <Value>=Fields!ShiptoAddress.Value &amp; "  " &amp; Fields!ShiptoAddress2.Value</Value>
                           <Style>
                             <FontFamily>Segoe UI</FontFamily>
                             <FontSize>8pt</FontSize>
@@ -1556,11 +1548,35 @@
                       </TextRuns>
                       <Style />
                     </Paragraph>
+                    <Paragraph>
+                      <TextRuns>
+                        <TextRun>
+                          <Value>="Contact: " &amp; Fields!ShiptoContact.Value</Value>
+                          <Style>
+                            <FontFamily>Segoe UI</FontFamily>
+                            <FontSize>8pt</FontSize>
+                          </Style>
+                        </TextRun>
+                      </TextRuns>
+                      <Style />
+                    </Paragraph>
+                    <Paragraph>
+                      <TextRuns>
+                        <TextRun>
+                          <Value>="Phone: " &amp; Fields!ShiptoMobileNo.Value</Value>
+                          <Style>
+                            <FontFamily>Segoe UI</FontFamily>
+                            <FontSize>8pt</FontSize>
+                          </Style>
+                        </TextRun>
+                      </TextRuns>
+                      <Style />
+                    </Paragraph>
                   </Paragraphs>
                   <rd:DefaultName>Textbox111</rd:DefaultName>
-                  <Top>0.51255cm</Top>
+                  <Top>0.50328cm</Top>
                   <Left>2.6823cm</Left>
-                  <Height>1.90967cm</Height>
+                  <Height>2.4412cm</Height>
                   <Width>7.17396cm</Width>
                   <Style>
                     <Border>
@@ -1609,7 +1625,7 @@
               <KeepTogether>true</KeepTogether>
               <Top>6.79712cm</Top>
               <Left>9.80045cm</Left>
-              <Height>2.75972cm</Height>
+              <Height>2.95375cm</Height>
               <Width>9.89847cm</Width>
               <ZIndex>2</ZIndex>
               <Style>
@@ -2072,6 +2088,12 @@ rpv96rFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
         </Field>
         <Field Name="ShiptoCountryRegionCode">
           <DataField>ShiptoCountryRegionCode</DataField>
+        </Field>
+        <Field Name="ShiptoContact">
+          <DataField>ShiptoContact</DataField>
+        </Field>
+        <Field Name="ShiptoMobileNo">
+          <DataField>ShiptoMobileNo</DataField>
         </Field>
         <Field Name="SelltoCustomerName">
           <DataField>SelltoCustomerName</DataField>

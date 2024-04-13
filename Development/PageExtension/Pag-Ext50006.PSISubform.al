@@ -104,6 +104,31 @@ pageextension 50006 PSISubform extends "Posted Sales Invoice Subform"
             {
                 ApplicationArea = All;
             }
+            field("Salesperson Code"; Rec."Salesperson Code")
+            {
+                ApplicationArea = All;
+            }
+
+            field("Salesperson Name"; Rec."Salesperson Name")
+            {
+                ApplicationArea = All;
+            }
+            field("Internal Team"; Rec."Internal Team")
+            {
+                ApplicationArea = All;
+            }
+            field("Internal Team Name"; Rec."Internal Team Name")
+            {
+                ApplicationArea = All;
+            }
+            field("External Rep"; Rec."External Rep")
+            {
+                ApplicationArea = All;
+            }
+            field("External Team Name"; Rec."External Team Name")
+            {
+                ApplicationArea = All;
+            }
         }
         addafter(Description)
         {

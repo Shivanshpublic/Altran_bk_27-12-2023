@@ -130,5 +130,32 @@ PAGEEXTENSION 50011 "Ext. Sales Order" EXTENDS "Sales Order"
                 end;
             }
         }
+        addafter("Print Confirmation")
+        {
+            action(SaveConfirmationAsPdf)
+            {
+                Caption = 'Save Confirmation As Pdf';
+                ApplicationArea = All;
+                Image = Export;
+                Promoted = true;
+                PromotedCategory = Category8;
+                PromotedIsBig = true;
+
+                trigger OnAction()
+                var
+                    TempBlob: Codeunit "Temp Blob";
+                    FileManagement: Codeunit "File Management";
+                    OStream: OutStream;
+                    RecRef: RecordRef;
+                begin
+                    Clear(OStream);
+                    CurrPage.SetSelectionFilter(Rec);
+                    RecRef.GetTable(Rec);
+                    TempBlob.CreateOutStream(OStream);
+                    Report.SaveAs(Report::"Altran Sales - Order Conf.", '', ReportFormat::Pdf, OStream, RecRef);
+                    FileManagement.BLOBExport(TempBlob, 'Order Confirmation-' + Rec."No." + '-Customer ' + Rec."Sell-to Customer No." + '.pdf', true);
+                end;
+            }
+        }
     }
 }

@@ -79,11 +79,21 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                         SalesInvline."Sell-to Customer Name" := SalesInvHeader."Sell-to Customer Name";
                         SalesInvline."External Document No." := SalesInvHeader."External Document No.";
                         if Salesperson.Get(SalesInvHeader."Internal Team") then
-                            if SalesInvline."Internal Team Name" = '' then
+                            if SalesInvline."Internal Team Name" = '' then begin
+                                SalesInvline."Internal Team" := SalesInvHeader."Internal Team";
                                 SalesInvline."Internal Team Name" := Salesperson.Name;
+                            end;
                         if Salesperson.Get(SalesInvHeader."Salesperson Code") then
-                            if SalesInvline."Salesperson Name" = '' then
+                            if SalesInvline."Salesperson Name" = '' then begin
+                                SalesInvline."Salesperson Code" := SalesInvHeader."Salesperson Code";
                                 SalesInvline."Salesperson Name" := Salesperson.Name;
+                            end;
+
+                        if Salesperson.Get(SalesInvHeader."External Rep") then
+                            if SalesInvline."External Team Name" = '' then begin
+                                SalesInvline."External Rep" := SalesInvHeader."External Rep";
+                                SalesInvline."External Team Name" := Salesperson.Name;
+                            end;
                         SalesInvline.Modify();
                     until SalesInvline.Next() = 0;
             until SalesInvHeader.Next() = 0;

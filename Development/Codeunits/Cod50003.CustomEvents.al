@@ -491,11 +491,34 @@ codeunit 50003 CustomEvents
             AskQuestion := false;
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purchase-Post Prepayments", 'OnBeforePostVendorEntryProcedure', '', false, false)]
-    local procedure OnBeforePostVendorEntryProcedure(var PurchHeader: Record "Purchase Header"; TotalPrepmtInvLineBuffer: Record "Prepayment Inv. Line Buffer" temporary; TotalPrepmtInvLineBufferLCY: Record "Prepayment Inv. Line Buffer"; DocumentType: Option Invoice,"Credit Memo"; PostingDescription: Text[100]; DocType: Enum "Gen. Journal Document Type"; DocNo: Code[20]; ExtDocNo: Text[35]; SrcCode: Code[10]; PostingNoSeriesCode: Code[20]; CalcPmtDisc: Boolean; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line"; var IsHandled: Boolean)
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purchase-Post Prepayments", 'OnCodeOnBeforeWindowOpen', '', false, false)]
+    local procedure OnCodeOnBeforeWindowOpen(var PurchaseHeader: Record "Purchase Header"; DocumentType: Option Invoice,"Credit Memo")
+    var
+        PrepPostDesc: Text[100];
     begin
-        PostingDescription := PurchHeader."Posting Description";
+        PrepPostDesc := PurchaseHeader."Prepmt. Posting Description";
+        PurchaseHeader."Prepmt. Posting Description" := PurchaseHeader."Posting Description";
+        PurchaseHeader."Posting Description" := PrepPostDesc;
     end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purchase-Post Prepayments", 'OnAfterCreateLinesOnBeforeGLPosting', '', false, false)]
+    local procedure OnAfterCreateLinesOnBeforeGLPosting(var PurchaseHeader: Record "Purchase Header"; PurchInvHeader: Record "Purch. Inv. Header"; PurchCrMemoHeader: Record "Purch. Cr. Memo Hdr."; var TempPrepmtInvLineBuffer: Record "Prepayment Inv. Line Buffer" temporary; DocumentType: Option; var LastLineNo: Integer)
+    var
+        PostDesc: Text[100];
+        PurchSetup: Record "Purchases & Payables Setup";
+        RecordLinkManagement: Codeunit "Record Link Management";
+    begin
+        PostDesc := PurchaseHeader."Prepmt. Posting Description";
+        PurchaseHeader."Prepmt. Posting Description" := PurchaseHeader."Posting Description";
+        PurchaseHeader."Posting Description" := PostDesc;
+        Clear(RecordLinkManagement);
+        if PurchSetup."Copy Comments Order to Invoice" then begin
+            RecordLinkManagement.CopyLinks(PurchaseHeader, PurchInvHeader);
+        end;
+    end;
+
+
 
     [EventSubscriber(ObjectType::Table, Database::"Purch. Inv. Line", 'OnAfterInitFromPurchLine', '', false, false)]
 
@@ -518,4 +541,11 @@ codeunit 50003 CustomEvents
             PurchCrMemoHdr."Prepmt. Posting Description" := PurchHeader."Prepmt. Posting Description";
         end;
     end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Sales Header", 'OnValidateSellToCustomerNoOnBeforeValidateLocationCode', '', false, false)]
+    local procedure OnValidateSellToCustomerNoOnBeforeValidateLocationCode(var SalesHeader: Record "Sales Header"; var Cust: Record Customer; var IsHandled: Boolean)
+    begin
+        SalesHeader.Validate("Assigned User ID", Cust."Assigned User ID");
+    end;
+
 }

@@ -63,7 +63,7 @@ REPORT 50020 "Commercial Invoice"
                     COLUMN(ShiptoContact; ShiptoContact) { }
                     COLUMN(ShiptoMobileNo; ShiptoContactNo) { }
                     COLUMN(SelltoCustomerName; SalesInvoiceHeader."Sell-to Customer Name") { }
-                    COLUMN(SelltoAddress; SalesInvoiceHeader."Sell-to Address") { }
+                    COLUMN(SelltoAddress; FORMAT(SalesInvoiceHeader."Sell-to Address")) { }
                     COLUMN(SelltoAddress2; SalesInvoiceHeader."Sell-to Address 2") { }
                     COLUMN(SelltoPhoneNo; SalesInvoiceHeader."Sell-to Phone No.") { }
                     COLUMN(SellToCity; AddSpaceOrComma(SalesInvoiceHeader."Sell-to City", ', ') + AddSpaceOrComma(SalesInvoiceHeader."Sell-to County", ', ')) { }

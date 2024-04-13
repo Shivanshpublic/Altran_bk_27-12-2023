@@ -12,6 +12,10 @@ PAGEEXTENSION 50010 "Ext. Customer Card" EXTENDS "Customer Card"
             {
                 ApplicationArea = All;
             }
+            FIELD("Assigned User ID"; Rec."Assigned User ID")
+            {
+                ApplicationArea = All;
+            }
         }
     }
 }

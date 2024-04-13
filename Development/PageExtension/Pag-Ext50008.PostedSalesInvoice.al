@@ -136,6 +136,27 @@ pageextension 50008 PostedSalesInvoice extends "Posted Sales Invoice"
             {
                 Caption = 'Print';
 
+                action(SaveSalesInvAsPdf)
+                {
+                    Caption = 'Sales Invoice As Pdf';
+                    ApplicationArea = All;
+                    Image = Export;
+
+                    trigger OnAction()
+                    var
+                        TempBlob: Codeunit "Temp Blob";
+                        FileManagement: Codeunit "File Management";
+                        OStream: OutStream;
+                        RecRef: RecordRef;
+                    begin
+                        Clear(OStream);
+                        CurrPage.SetSelectionFilter(Rec);
+                        RecRef.GetTable(Rec);
+                        TempBlob.CreateOutStream(OStream);
+                        Report.SaveAs(Report::"Sales Invoice", '', ReportFormat::Pdf, OStream, RecRef);
+                        FileManagement.BLOBExport(TempBlob, 'Sales Invoice-' + Rec."No." + '-Customer ' + Rec."Sell-to Customer No." + '.pdf', true);
+                    end;
+                }
                 action("Print COO")
                 {
                     ApplicationArea = Basic, Suite;
@@ -224,6 +245,27 @@ pageextension 50008 PostedSalesInvoice extends "Posted Sales Invoice"
                         PackingList.Run();
                     end;
                 }
+                action(SavePackListDomAsPdf)
+                {
+                    Caption = 'Packing List (Domestic) As Pdf';
+                    ApplicationArea = All;
+                    Image = Export;
+
+                    trigger OnAction()
+                    var
+                        TempBlob: Codeunit "Temp Blob";
+                        FileManagement: Codeunit "File Management";
+                        OStream: OutStream;
+                        RecRef: RecordRef;
+                    begin
+                        Clear(OStream);
+                        CurrPage.SetSelectionFilter(Rec);
+                        RecRef.GetTable(Rec);
+                        TempBlob.CreateOutStream(OStream);
+                        Report.SaveAs(Report::"Packing List Report", '', ReportFormat::Pdf, OStream, RecRef);
+                        FileManagement.BLOBExport(TempBlob, 'Packing List (Domestic)-' + Rec."No." + '-Customer ' + Rec."Sell-to Customer No." + '.pdf', true);
+                    end;
+                }
                 action("Print PackingList_INT")
                 {
                     ApplicationArea = Basic, Suite;
@@ -246,9 +288,49 @@ pageextension 50008 PostedSalesInvoice extends "Posted Sales Invoice"
                         PackingList.Run();
                     end;
                 }
+                action(SavePackListIntAsPdf)
+                {
+                    Caption = 'Packing List (International) As Pdf';
+                    ApplicationArea = All;
+                    Image = Export;
 
+                    trigger OnAction()
+                    var
+                        TempBlob: Codeunit "Temp Blob";
+                        FileManagement: Codeunit "File Management";
+                        OStream: OutStream;
+                        RecRef: RecordRef;
+                    begin
+                        Clear(OStream);
+                        CurrPage.SetSelectionFilter(Rec);
+                        RecRef.GetTable(Rec);
+                        TempBlob.CreateOutStream(OStream);
+                        Report.SaveAs(Report::"Packing List", '', ReportFormat::Pdf, OStream, RecRef);
+                        FileManagement.BLOBExport(TempBlob, 'Packing List (International)-' + Rec."No." + '-Customer ' + Rec."Sell-to Customer No." + '.pdf', true);
+                    end;
+                }
+                action(SaveCommInvAsPdf)
+                {
+                    Caption = 'Commercial Invoice As Pdf';
+                    ApplicationArea = All;
+                    Image = Export;
+
+                    trigger OnAction()
+                    var
+                        TempBlob: Codeunit "Temp Blob";
+                        FileManagement: Codeunit "File Management";
+                        OStream: OutStream;
+                        RecRef: RecordRef;
+                    begin
+                        Clear(OStream);
+                        CurrPage.SetSelectionFilter(Rec);
+                        RecRef.GetTable(Rec);
+                        TempBlob.CreateOutStream(OStream);
+                        Report.SaveAs(Report::"Commercial Invoice", '', ReportFormat::Pdf, OStream, RecRef);
+                        FileManagement.BLOBExport(TempBlob, 'Commercial Invoice-' + Rec."No." + '-Customer ' + Rec."Sell-to Customer No." + '.pdf', true);
+                    end;
+                }
             }
         }
     }
-
 }

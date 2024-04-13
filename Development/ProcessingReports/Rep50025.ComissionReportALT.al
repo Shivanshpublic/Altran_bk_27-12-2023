@@ -42,13 +42,13 @@ report 50025 ComissionReport_ALT
                             ExcelBuf.AddColumn(CustLedgerEntry."Posting Date", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
                             ExcelBuf.AddColumn(CustLedgerEntry."Customer No.", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
                             ExcelBuf.AddColumn(CustLedgerEntry."Customer Name", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                            ExcelBuf.AddColumn(SInvHeader."Salesperson Code", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                            if RecSperson.Get(SInvHeader."Salesperson Code") then;
+                            ExcelBuf.AddColumn(SalesInvoiceLineInv."Salesperson Code", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
+                            if RecSperson.Get(SalesInvoiceLineInv."Salesperson Code") then;
                             ExcelBuf.AddColumn(RecSperson.Name, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                            ExcelBuf.AddColumn(SInvHeader."External Rep", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                            if RecSperson.Get(SInvHeader."External Rep") then;
+                            ExcelBuf.AddColumn(SalesInvoiceLineInv."External Rep", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
+                            if RecSperson.Get(SalesInvoiceLineInv."External Rep") then;
                             ExcelBuf.AddColumn(RecSperson.Name, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                            if RecSperson.Get(SInvHeader."Internal Team") then;
+                            if RecSperson.Get(SalesInvoiceLineInv."Internal Team") then;
                             ExcelBuf.AddColumn(RecSperson.Name, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
                             ExcelBuf.AddColumn(SInvHeader."External Document No.", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
                             ExcelBuf.AddColumn(SInvHeader."No.", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
@@ -110,7 +110,16 @@ report 50025 ComissionReport_ALT
                                 lMargingPct := 0;
 
                             ExcelBuf.AddColumn(lMargingPct, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
-                            CalculateComissionAndPerct(SInvHeader."Salesperson Code", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
+                            CalculateComissionAndPerct(SalesInvoiceLineInv."Salesperson Code", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
+
+                            //++
+                            ExcelBuf.AddColumn(lCommissionPct, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
+                            //ExcelBuf.AddColumn(GetTeamCommission(SalesInvoiceLineInv."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
+                            ExcelBuf.AddColumn(lCommissionAmt, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
+
+                            lCommissionPct := 0;
+                            lCommissionAmt := 0;
+                            CalculateComissionAndPerct(SalesInvoiceLineInv."Internal Team", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
 
                             //++
                             ExcelBuf.AddColumn(lCommissionPct, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
@@ -119,20 +128,11 @@ report 50025 ComissionReport_ALT
 
                             lCommissionPct := 0;
                             lCommissionAmt := 0;
-                            CalculateComissionAndPerct(SInvHeader."Internal Team", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
+                            CalculateComissionAndPerct(SalesInvoiceLineInv."External Rep", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
 
                             //++
                             ExcelBuf.AddColumn(lCommissionPct, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
-                            //ExcelBuf.AddColumn(GetTeamCommission(SInvHeader."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
-                            ExcelBuf.AddColumn(lCommissionAmt, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
-
-                            lCommissionPct := 0;
-                            lCommissionAmt := 0;
-                            CalculateComissionAndPerct(SInvHeader."External Rep", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
-
-                            //++
-                            ExcelBuf.AddColumn(lCommissionPct, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
-                            //ExcelBuf.AddColumn(GetTeamCommission(SInvHeader."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
+                            //ExcelBuf.AddColumn(GetTeamCommission(SalesInvoiceLineInv."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
                             ExcelBuf.AddColumn(lCommissionAmt, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
                         until TempItemLedgEntry.Next() = 0;
                     end else begin
@@ -142,13 +142,13 @@ report 50025 ComissionReport_ALT
                         ExcelBuf.AddColumn(CustLedgerEntry."Posting Date", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
                         ExcelBuf.AddColumn(CustLedgerEntry."Customer No.", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
                         ExcelBuf.AddColumn(CustLedgerEntry."Customer Name", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                        ExcelBuf.AddColumn(SInvHeader."Salesperson Code", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                        if RecSperson.Get(SInvHeader."Salesperson Code") then;
+                        ExcelBuf.AddColumn(SalesInvoiceLineInv."Salesperson Code", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
+                        if RecSperson.Get(SalesInvoiceLineInv."Salesperson Code") then;
                         ExcelBuf.AddColumn(RecSperson.Name, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                        ExcelBuf.AddColumn(SInvHeader."External Rep", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                        if RecSperson.Get(SInvHeader."External Rep") then;
+                        ExcelBuf.AddColumn(SalesInvoiceLineInv."External Rep", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
+                        if RecSperson.Get(SalesInvoiceLineInv."External Rep") then;
                         ExcelBuf.AddColumn(RecSperson.Name, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
-                        if RecSperson.Get(SInvHeader."Internal Team") then;
+                        if RecSperson.Get(SalesInvoiceLineInv."Internal Team") then;
                         ExcelBuf.AddColumn(RecSperson.Name, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
                         ExcelBuf.AddColumn(SInvHeader."External Document No.", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
                         ExcelBuf.AddColumn(SInvHeader."No.", FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Text);
@@ -211,30 +211,30 @@ report 50025 ComissionReport_ALT
                             lMargingPct := 0;
 
                         ExcelBuf.AddColumn(lMargingPct, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
-                        CalculateComissionAndPerct(SInvHeader."Salesperson Code", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
+                        CalculateComissionAndPerct(SalesInvoiceLineInv."Salesperson Code", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
 
                         //++
                         ExcelBuf.AddColumn(lCommissionPct, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
-                        //ExcelBuf.AddColumn(GetTeamCOmmission(SInvHeader."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
+                        //ExcelBuf.AddColumn(GetTeamCOmmission(SalesInvoiceLineInv."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
                         ExcelBuf.AddColumn(lCommissionAmt, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
                         //--
                         lCommissionPct := 0;
                         lCommissionAmt := 0;
-                        CalculateComissionAndPerct(SInvHeader."Internal Team", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
+                        CalculateComissionAndPerct(SalesInvoiceLineInv."Internal Team", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
 
                         //++
                         ExcelBuf.AddColumn(lCommissionPct, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
-                        //ExcelBuf.AddColumn(GetTeamCOmmission(SInvHeader."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
+                        //ExcelBuf.AddColumn(GetTeamCOmmission(SalesInvoiceLineInv."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
                         ExcelBuf.AddColumn(lCommissionAmt, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
                         //--
                         //--
                         lCommissionPct := 0;
                         lCommissionAmt := 0;
-                        CalculateComissionAndPerct(SInvHeader."External Rep", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
+                        CalculateComissionAndPerct(SalesInvoiceLineInv."External Rep", SalesInvoiceLineInv."No.", SInvHeader."Posting Date", lMargingPct, SalesInvoiceLineInv."Item Category Code");
 
                         //++
                         ExcelBuf.AddColumn(lCommissionPct, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
-                        //ExcelBuf.AddColumn(GetTeamCOmmission(SInvHeader."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
+                        //ExcelBuf.AddColumn(GetTeamCOmmission(SalesInvoiceLineInv."Internal Team", lMargingPct), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
                         ExcelBuf.AddColumn(lCommissionAmt, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuf."Cell Type"::Number);
                         //--
                     end;

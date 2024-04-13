@@ -160,6 +160,28 @@ tableextension 50009 SalesShipment extends "Sales Shipment Line"
             Editable = false;
         }
         //18-09-2023-end
+        FIELD(50035; "Internal Team"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Regional Manager';
+            TableRelation = "Salesperson/Purchaser";
+        }
+        FIELD(50036; "External Rep"; Text[250])
+        {
+            DataClassification = ToBeClassified;
+            TableRelation = "Salesperson/Purchaser";
+        }
+        field(50037; "External Team Name"; Text[50])
+        {
+            Caption = 'External Team Name';
+            Editable = false;
+        }
+        field(50038; "Salesperson Code"; Code[20])
+        {
+            Caption = 'Sales Director';
+            TableRelation = "Salesperson/Purchaser";
+        }
+
         field(50111; "UL Certificate Available"; Boolean)
         {
             DataClassification = ToBeClassified;

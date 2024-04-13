@@ -1,7 +1,7 @@
-report 50016 "Daily Import Report CSR"
+report 50039 "Daily Import Report CSR New"
 {
     ProcessingOnly = true;
-    Caption = 'Daily Import Report CSR';
+    Caption = 'Daily Import Report CSR New';
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = all;
     dataset
@@ -24,8 +24,24 @@ report 50016 "Daily Import Report CSR"
                 end;
 
                 trigger OnAfterGetRecord()
+                var
+                    PRcptLine: Record "Purch. Rcpt. Line";
+                    RcptExists: Boolean;
                 begin
-                    ExporttoExcel;
+                    RcptExists := false;
+                    PRcptLine.Reset();
+                    PRcptLine.SetRange("Order No.", "Purchase Line"."Document No.");
+                    PRcptLine.SetRange("Order Line No.", "Purchase Line"."Line No.");
+                    PRcptLine.SetRange(Type, PurchRcptLine.Type::Item);
+                    PRcptLine.SetRange("No.", "Purchase Line"."No.");
+                    PRcptLine.SetFilter(Quantity, '<>%1', 0);
+                    if PRcptLine.FindFirst() then begin
+                        repeat
+                            RcptExists := true;
+                            ExporttoExcel("Purchase Line", PRcptLine, RcptExists);
+                        until PRcptLine.Next() = 0;
+                    end else
+                        ExporttoExcel("Purchase Line", PRcptLine, RcptExists);
                 end;
 
 
@@ -184,6 +200,8 @@ report 50016 "Daily Import Report CSR"
         lFactoryReadyDate: Date;
         Vendor: Record Vendor;
         Salesperson: Record "Salesperson/Purchaser";
+        TmpPurchInvLine: Record "Purch. Inv. Line" temporary;
+        PurchInvHead: Record "Purch. Inv. Header";
 
     local procedure MakeHeader()
     begin
@@ -276,27 +294,52 @@ report 50016 "Daily Import Report CSR"
         ExcelBuffer.AddColumn('Remarks', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
     end;
 
-    local procedure ExporttoExcel()
+    local procedure ExporttoExcel(var PL: Record "Purchase Line"; var PRcptLine: Record "Purch. Rcpt. Line"; RcptExists: Boolean)
     var
         SalesQty: Decimal;
         S_CostAmountActual: Decimal;
         S_SalesAmountActual: Decimal;
         BlankDate: Date;
         ShipmentMethod: Record "Shipment Method";
+
     begin
         ExcelBuffer.NewRow;
         ClearVariable;
-        PurchHeader.Get("Purchase Line"."Document Type", "Purchase Line"."Document No.");
-        SalesHeader.Reset();
-        SalesLine.Reset();
-        SalesInvHeader.Reset();
-        SalesInvLine.Reset();
-        ShipmentTrackingHeader.Reset();
+
+        //Purchase Order
+        PurchHeader.Get(PL."Document Type", PL."Document No.");
+        lPODate := PurchHeader."Creation Date";
+        lPOShipTo := PurchHeader."Ship-to Name";
+        lVia := PurchHeader.VIA;
+        lPONo := PL."Document No.";
+        if PL.Quantity <> PL."Quantity Received" then
+            lShipmentStatus := PL."Milestone Status";
+        lSupplier := PurchHeader."Buy-from Vendor Name";
+        lPartNumber := PL."No.";
+        lQuantity := PL.Quantity;
+        lCost := PL."Direct Unit Cost";
+        lTotalCost := PL.Amount;
+        lCBM := PL."Total CBM";
+        lCTNS := 0;
+        lKG := PL."Total Gross (KG)";
+        //LotInfo := "Purchase Line"."Lot No.";
+        lFactoryReadyDate := PL."Promised Receipt Date";
+        lBookedDate := PL."Planned Receipt Date";
+        lExpArriveFGDropShip := PL."Expected Receipt Date";
+        lPurchNote := PL."Order Note";
+        lSOOrderNo := PL."SO No.";
+        lPOLLocationCode := PL."Location Code";
+        if PL.Type = PL.Type::Item then
+            If Item.Get(PL."No.") then
+                lItemCategory := Item."Item Category Code";
+        if lShipmentStatus = '' then
+            lShipmentStatus := PL."Milestone Status";
+
         ResEntry.Reset();
         ResEntry.Setrange("Source Type", 39);
         ResEntry.Setrange("Source Subtype", 1);
-        ResEntry.Setrange("Source ID", "Purchase Line"."Document No.");
-        ResEntry.Setrange("Source Ref. No.", "Purchase Line"."Line No.");
+        ResEntry.Setrange("Source ID", PL."Document No.");
+        ResEntry.Setrange("Source Ref. No.", PL."Line No.");
         if ResEntry.FindFirst() then
             repeat
                 if LotInfo <> '' then
@@ -305,11 +348,84 @@ report 50016 "Daily Import Report CSR"
                     LotInfo += ResEntry."Lot No.";
             until ResEntry.Next() = 0;
 
+
+        //Purchase Receipt Details
+        if RcptExists = true then begin
+            PurchInvHead.Reset();
+            lRcptNo := PRcptLine."Document No.";
+            lRcptLineNo := PRcptLine."Line No.";
+            lShipmentStatus := PRcptLine."Milestone Status";
+            lPRQuantity := PRcptLine.Quantity;
+            lPRCost := PRcptLine."Direct Unit Cost";
+            lPRTotalCost := lPRQuantity * lPRCost;
+            GetPurchInvLines(TmpPurchInvLine, PL, PRcptLine);
+            if TmpPurchInvLine.FindFirst() then begin
+                PurchInvHead.Get(TmpPurchInvLine."Document No.");
+                lInvoiceNo := PurchInvHead."No.";
+                lInvoiceReceived := PurchInvHead."Posting Date";
+                lVendorInvoiceNo := PurchInvHead."Vendor Invoice No.";
+                TmpPurchInvLine.DeleteAll();
+            end;
+        end;
+
+        //Shipment Tracking Details
+        ShipmentTrackingHeader.Reset();
+        ShipmentTrackingLine.Reset();
+        if RcptExists = false then begin
+            ShipmentTrackingLine.SetRange("PO No.", "Purchase Line"."Document No.");
+            ShipmentTrackingLine.SetRange("PO Line No.", "Purchase Line"."Line No.");
+        end else begin
+            ShipmentTrackingLine.SetRange("Receipt No.", PRcptLine."Document No.");
+            ShipmentTrackingLine.SetRange("Receipt Line No.", PRcptLine."Line No.");
+        end;
+        ShipmentTrackingLine.SetRange("Item No.", "Purchase Line"."No.");
+        if ShipmentTrackingLine.FindFirst() then begin
+            ShipmentTrackingHeader.Get(ShipmentTrackingLine."Tracking Code");
+            lBLAWB := ShipmentTrackingHeader."Freight Details";
+            lContainer := ShipmentTrackingHeader."Container No.";
+            lATD := ShipmentTrackingHeader.ATD;
+            ATAPort := ShipmentTrackingHeader."ATA(Port)";
+            ATASterling := ShipmentTrackingHeader."ATA(Sterling)";
+            //lFreightRate := ShipmentTrackingHeader."Total Shipment Cost";
+            lForwarder := ShipmentTrackingHeader."Supplier No.";
+            if Vendor.Get(ShipmentTrackingHeader."Supplier No.") then
+                lForwarderName := Vendor.Name;
+            lVessel := ShipmentTrackingHeader."MMSI Code";
+            lShipTrackingNo := ShipmentTrackingHeader.Code;
+            lMBL := ShipmentTrackingHeader.MBL;
+            lHBL := ShipmentTrackingHeader.HBL;
+            lRemarks := ShipmentTrackingHeader.Remarks;
+            lDeliveryLeadTime := ShipmentTrackingHeader."Delivery Lead Time";
+            lPortOfDispatch := ShipmentTrackingHeader."Port of Dispatch";
+            lPortOfLoad := ShipmentTrackingHeader."Port of Load";
+            lFCLLCL := ShipmentTrackingHeader."FCL/LCL";
+            //ShipmentTrackingHeader.CalcFields("Total Net (KG)", "Pallet Quantity");
+            TotalInTransitDays := ShipmentTrackingHeader."Total in-Transit Days";
+            lFreightRate := ShipmentTrackingLine."Shipment Cost";
+            if ShipmentTrackingLine."Date of Dispatch" = 0D then
+                lETD := ShipmentTrackingHeader."Date of Dispatch"
+            else
+                lETD := ShipmentTrackingLine."Date of Dispatch";
+
+            TotalNetKG := ShipmentTrackingLine."Total Net (KG)";
+            PalletQty := ShipmentTrackingLine."Pallet Quantity";
+            lETA := ShipmentTrackingLine."Date of Arrival";
+        end;
+
+
+        //Sales Details
+        SalesHeader.Reset();
+        SalesLine.Reset();
+        SalesInvHeader.Reset();
+        SalesInvLine.Reset();
+
         SalesLine.SetRange("Document Type", SalesLine."Document Type"::Order);
         SalesLine.SetRange(Type, SalesLine.Type::Item);
-        SalesLine.SetRange("No.", "Purchase Line"."No.");
-        SalesLine.SetRange("PO No.", "Purchase Line"."Document No.");
-        SalesLine.SetRange("PO Line No.", "Purchase Line"."Line No.");
+        SalesLine.SetRange("No.", PL."No.");
+        SalesLine.SetRange("PO No.", PL."Document No.");
+        SalesLine.SetRange("PO Line No.", PL."Line No.");
+        //SalesLine.SetRange("Shipment Tracking Code", ShipmentTrackingLine."Tracking Code");
+        //SalesLine.SetRange("Shipment Tracking Line No.", ShipmentTrackingLine."Line No.");
         if SalesLine.FindFirst() then begin
             SalesHeader.Get(SalesLine."Document Type", SalesLine."Document No.");
             lSellingQty := SalesLine.Quantity;
@@ -334,19 +450,27 @@ report 50016 "Daily Import Report CSR"
             SalesInvLine.SetRange("Order Line No.", SalesLine."Line No.");
             SalesInvLine.SetRange("PO No.", SalesLine."PO No.");
             SalesInvLine.SetRange("PO Line No.", SalesLine."PO Line No.");
+            SalesInvLine.SetRange("Shipment Tracking Code", SalesLine."Shipment Tracking Code");
+            SalesInvLine.SetRange("Shipment Tracking Line No.", SalesLine."Shipment Tracking Line No.");
             SalesInvLine.SetRange(Type, SalesLine.Type);
             SalesInvLine.SetRange("No.", SalesLine."No.");
             if SalesInvLine.FindFirst() then begin
-                SalesInvHeader.Get(SalesInvLine."Document No.");
-                lInvoiceNo := SalesInvLine."Document No.";
-                lInvoiceReceived := SalesInvLine."Posting Date";
-                lVendorInvoiceNo := SalesInvHeader."External Document No.";
+                //SalesInvHeader.Get(SalesInvLine."Document No.");
+                lSellingQty := SalesInvLine.Quantity;
+                lSellingPrice := SalesInvLine."Unit Price";
+                lTotalSell := SalesInvLine."Line Amount";
+
+                //lInvoiceNo := SalesInvLine."Document No.";
+                //lInvoiceReceived := SalesInvLine."Posting Date";
+                //lVendorInvoiceNo := SalesInvHeader."External Document No.";
             end;
         end else begin
             SalesInvLine.SetRange("Order No.", SalesLine."Document No.");
             SalesInvLine.SetRange("Order Line No.", SalesLine."Line No.");
             SalesInvLine.SetRange("PO No.", SalesLine."PO No.");
             SalesInvLine.SetRange("PO Line No.", SalesLine."PO Line No.");
+            SalesInvLine.SetRange("Shipment Tracking Code", ShipmentTrackingLine."Tracking Code");
+            SalesInvLine.SetRange("Shipment Tracking Line No.", ShipmentTrackingLine."Line No.");
             SalesInvLine.SetRange(Type, SalesLine.Type);
             SalesInvLine.SetRange("No.", SalesLine."No.");
             if SalesInvLine.FindFirst() then begin
@@ -356,17 +480,17 @@ report 50016 "Daily Import Report CSR"
                 lCustomer := SalesInvHeader."Sell-to Customer Name";
                 lCustomerPO := SalesInvHeader."External Document No.";
                 lTotalSell := SalesInvLine."Line Amount";
-                lInvoiceNo := SalesInvLine."Document No.";
-                lInvoiceReceived := SalesInvLine."Posting Date";
-                lVendorInvoiceNo := SalesInvHeader."External Document No.";
+                //lInvoiceNo := SalesInvLine."Document No.";
+                //lInvoiceReceived := SalesInvLine."Posting Date";
+                //lVendorInvoiceNo := SalesInvHeader."External Document No.";
             end;
         end;
 
-        SalesILE.Reset();
-        SalesILE.SetCurrentKey("Item No.", "Entry Type");
-        SalesILE.SetRange("Item No.", "Purchase Line"."No.");
-        SalesILE.SetRange("Entry Type", PurchILE."Entry Type"::Sale);
-        SalesILE.SetRange("Document Type", PurchILE."Document Type"::"Sales Shipment");
+        // SalesILE.Reset();
+        // SalesILE.SetCurrentKey("Item No.", "Entry Type");
+        // SalesILE.SetRange("Item No.", "Purchase Line"."No.");
+        // SalesILE.SetRange("Entry Type", PurchILE."Entry Type"::Sale);
+        // SalesILE.SetRange("Document Type", PurchILE."Document Type"::"Sales Shipment");
 
         PurchILE.Reset();
         PurchILE.SetCurrentKey("Document No.", "Document Type", "Document Line No.");
@@ -376,128 +500,60 @@ report 50016 "Daily Import Report CSR"
         PurchILE.SetRange("Document Type", PurchILE."Document Type"::"Purchase Receipt");
         PurchILE.SetRange("Item No.", "Purchase Line"."No.");
 
-        PurchRcptLine.Reset();
-        PurchRcptLine.SetRange("Order No.", "Purchase Line"."Document No.");
-        PurchRcptLine.SetRange("Order Line No.", "Purchase Line"."Line No.");
-        PurchRcptLine.SetRange(Type, PurchRcptLine.Type::Item);
-        PurchRcptLine.SetRange("No.", "Purchase Line"."No.");
-        if PurchRcptLine.FindFirst() then begin
-            Clear(LotInfo);
+        // PurchRcptLine.Reset();
+        // PurchRcptLine.SetRange("Order No.", "Purchase Line"."Document No.");
+        // PurchRcptLine.SetRange("Order Line No.", "Purchase Line"."Line No.");
+        // PurchRcptLine.SetRange(Type, PurchRcptLine.Type::Item);
+        // PurchRcptLine.SetRange("No.", "Purchase Line"."No.");
+        // if PurchRcptLine.FindFirst() then begin
+        //     Clear(LotInfo);
+        //     repeat
+        if PRcptLine."Item Rcpt. Entry No." <> 0 then begin
+            PurchILE.SetRange("Entry No.", PRcptLine."Item Rcpt. Entry No.")
+        end else begin
+            PurchILE.SetRange("Document Line No.", PRcptLine."Line No.");
+        end;
+        PurchILE.SetRange("Document No.", PRcptLine."Document No.");
+        IF PurchILE.FindFirst() then
             repeat
-                if PurchRcptLine."Item Rcpt. Entry No." <> 0 then begin
-                    PurchILE.SetRange("Entry No.", PurchRcptLine."Item Rcpt. Entry No.")
-                end else begin
-                    PurchILE.SetRange("Document Line No.", PurchRcptLine."Line No.");
-                end;
-                PurchILE.SetRange("Document No.", PurchRcptLine."Document No.");
-                IF PurchILE.FindFirst() then
-                    repeat
-                        if PurchILE."Lot No." <> '' then
-                            if LotInfo <> '' then
-                                LotInfo += ', ' + PurchILE."Lot No."
-                            else
-                                LotInfo += PurchILE."Lot No.";
+                if PurchILE."Lot No." <> '' then
+                    if LotInfo <> '' then
+                        LotInfo += ', ' + PurchILE."Lot No."
+                    else
+                        LotInfo += PurchILE."Lot No.";
 
-                        SalesILE.SetRange("Lot No.", PurchILE."Lot No.");
-                        if SalesILE.FindFirst() then
-                            repeat
-                                // if SalesILE."Lot No." <> '' then
-                                //     if LotInfo <> '' then
-                                //         LotInfo += ', ' + SalesILE."Lot No."
-                                //     else
-                                //         LotInfo += SalesILE."Lot No.";
-                                SalesILE.CalcFields("Cost Amount (Actual)", "Sales Amount (Actual)");
-                                SalesQty += (-1 * SalesILE.Quantity);
-                                S_CostAmountActual += (-1 * SalesILE."Cost Amount (Actual)");
-                                S_SalesAmountActual += SalesILE."Sales Amount (Actual)";
-                            until SalesILE.Next() = 0;
-                    until PurchILE.Next() = 0;
-                if lRcptNo <> '' then
-                    lRcptNo += ', ' + PurchRcptLine."Document No."
-                else
-                    lRcptNo += PurchRcptLine."Document No.";
-                if lRcptLineNo = 0 then
-                    lRcptLineNo := PurchRcptLine."Line No.";
-                lShipmentStatus := PurchRcptLine."Milestone Status";
-            until PurchRcptLine.Next() = 0;
-        end;
+            // SalesILE.SetRange("Lot No.", PurchILE."Lot No.");
+            // if SalesILE.FindFirst() then
+            //     repeat
+            // if SalesILE."Lot No." <> '' then
+            //     if LotInfo <> '' then
+            //         LotInfo += ', ' + SalesILE."Lot No."
+            //     else
+            //         LotInfo += SalesILE."Lot No.";
+            //     SalesILE.CalcFields("Cost Amount (Actual)", "Sales Amount (Actual)");
+            //     SalesQty += (-1 * SalesILE.Quantity);
+            //     S_CostAmountActual += (-1 * SalesILE."Cost Amount (Actual)");
+            //     S_SalesAmountActual += SalesILE."Sales Amount (Actual)";
+            // until SalesILE.Next() = 0;
+            until PurchILE.Next() = 0;
+        // if lRcptNo <> '' then
+        //     lRcptNo += ', ' + PurchRcptLine."Document No."
+        // else
+        //     lRcptNo += PurchRcptLine."Document No.";
+        // if lRcptLineNo = 0 then
+        //     lRcptLineNo := PurchRcptLine."Line No.";
+        // lShipmentStatus := PurchRcptLine."Milestone Status";
+        // until PurchRcptLine.Next() = 0;
+        // end;
 
-        if S_SalesAmountActual <> 0 then begin
-            lSellingCost := S_CostAmountActual;
-            lTotalSell := S_SalesAmountActual;
-            lSellingQty := SalesQty;
-            if lSellingQty <> 0 then
-                lSellingPrice := S_SalesAmountActual / lSellingQty;
-        end;
+        // if S_SalesAmountActual <> 0 then begin
+        //     lSellingCost := S_CostAmountActual;
+        //     lTotalSell := S_SalesAmountActual;
+        //     lSellingQty := SalesQty;
+        //     if lSellingQty <> 0 then
+        //         lSellingPrice := S_SalesAmountActual / lSellingQty;
+        // end;
 
-        ShipmentTrackingLine.Reset();
-        ShipmentTrackingLine.SetRange("PO No.", "Purchase Line"."Document No.");
-        ShipmentTrackingLine.SetRange("PO Line No.", "Purchase Line"."Line No.");
-        ShipmentTrackingLine.SetRange("Item No.", "Purchase Line"."No.");
-        if ShipmentTrackingLine.FindFirst() then begin
-            ShipmentTrackingHeader.Get(ShipmentTrackingLine."Tracking Code");
-            lBLAWB := ShipmentTrackingHeader."Freight Details";
-            lContainer := ShipmentTrackingHeader."Container No.";
-            lFreightRate := ShipmentTrackingHeader."Total Shipment Cost";
-            if ShipmentTrackingLine."Date of Dispatch" = 0D then
-                lETD := ShipmentTrackingHeader."Date of Dispatch"
-            else
-                lETD := ShipmentTrackingLine."Date of Dispatch";
-            lATD := ShipmentTrackingHeader.ATD;
-            ATAPort := ShipmentTrackingHeader."ATA(Port)";
-            ATASterling := ShipmentTrackingHeader."ATA(Sterling)";
-            //ShipmentTrackingHeader.CalcFields("Total Net (KG)", "Pallet Quantity");
-            TotalInTransitDays := ShipmentTrackingHeader."Total in-Transit Days";
-            TotalNetKG := ShipmentTrackingLine."Total Net (KG)";
-            PalletQty := ShipmentTrackingLine."Pallet Quantity";
-            lETA := ShipmentTrackingLine."Date of Arrival";
-            lForwarder := ShipmentTrackingHeader."Supplier No.";
-            if Vendor.Get(ShipmentTrackingHeader."Supplier No.") then
-                lForwarderName := Vendor.Name;
-            lVessel := ShipmentTrackingHeader."MMSI Code";
-            lShipTrackingNo := ShipmentTrackingHeader.Code;
-            lMBL := ShipmentTrackingHeader.MBL;
-            lHBL := ShipmentTrackingHeader.HBL;
-            lRemarks := ShipmentTrackingHeader.Remarks;
-            lDeliveryLeadTime := ShipmentTrackingHeader."Delivery Lead Time";
-            lPortOfDispatch := ShipmentTrackingHeader."Port of Dispatch";
-            lPortOfLoad := ShipmentTrackingHeader."Port of Load";
-            lFCLLCL := ShipmentTrackingHeader."FCL/LCL";
-
-            //lRcptNo := ShipmentTrackingLine."Receipt No.";
-            //lRcptLineNo := ShipmentTrackingLine."Receipt Line No.";
-        end;
-
-        //lPODate := "Purchase Line"."Order Date";
-        lPODate := PurchHeader."Creation Date";
-        lPONo := "Purchase Line"."Document No.";
-        if "Purchase Line".Quantity <> "Purchase Line"."Quantity Received" then
-            lShipmentStatus := "Purchase Line"."Milestone Status";
-        lSupplier := PurchHeader."Buy-from Vendor Name";
-        lPartNumber := "Purchase Line"."No.";
-        lQuantity := "Purchase Line".Quantity;
-        lCost := "Purchase Line"."Direct Unit Cost";
-        lTotalCost := "Purchase Line".Amount;
-        lPRQuantity := "Purchase Line"."Quantity Received";
-        lPRCost := "Purchase Line"."Direct Unit Cost";
-        lPRTotalCost := lPRQuantity * lPRCost;
-        lPOShipTo := PurchHeader."Ship-to Name";
-        lVia := PurchHeader.VIA;
-        lCBM := "Purchase Line"."Total CBM";
-        lCTNS := 0;
-        lKG := "Purchase Line"."Total Gross (KG)";
-        //LotInfo := "Purchase Line"."Lot No.";
-        lFactoryReadyDate := "Purchase Line"."Promised Receipt Date";
-        lBookedDate := "Purchase Line"."Planned Receipt Date";
-        lExpArriveFGDropShip := "Purchase Line"."Expected Receipt Date";
-        lPurchNote := "Purchase Line"."Order Note";
-        lSOOrderNo := "Purchase Line"."SO No.";
-        lPOLLocationCode := "Purchase Line"."Location Code";
-        if "Purchase Line".Type = "Purchase Line".Type::Item then
-            If Item.Get("Purchase Line"."No.") then
-                lItemCategory := Item."Item Category Code";
-        if lShipmentStatus = '' then
-            lShipmentStatus := "Purchase Line"."Milestone Status";
 
         ExcelBuffer.AddColumn(lPODate, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Date);
         ExcelBuffer.AddColumn(lPONo, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -653,5 +709,31 @@ report 50016 "Daily Import Report CSR"
         ExcelBuffer.OpenExcel();
     end;
 
+    procedure GetPurchInvLines(var TempPurchInvLine: Record "Purch. Inv. Line" temporary; PL: Record "Purchase Line"; PRL: Record "Purch. Rcpt. Line")
+    var
+        PurchInvLine: Record "Purch. Inv. Line";
+        ValueItemLedgerEntries: Query "Value Item Ledger Entries";
+    begin
+        TempPurchInvLine.Reset();
+        TempPurchInvLine.DeleteAll();
+
+        if PRL.Type <> PRL.Type::Item then
+            exit;
+
+        ValueItemLedgerEntries.SetRange(Item_Ledg_Document_No, PRL."Document No.");
+        ValueItemLedgerEntries.SetRange(Item_Ledg_Document_Type, Enum::"Item Ledger Document Type"::"Purchase Receipt");
+        ValueItemLedgerEntries.SetRange(Item_Ledg_Document_Line_No, PRL."Line No.");
+        ValueItemLedgerEntries.SetFilter(Item_Ledg_Invoice_Quantity, '<>0');
+        ValueItemLedgerEntries.SetRange(Value_Entry_Type, Enum::"Cost Entry Type"::"Direct Cost");
+        ValueItemLedgerEntries.SetFilter(Value_Entry_Invoiced_Qty, '<>0');
+        ValueItemLedgerEntries.SetRange(Value_Entry_Doc_Type, Enum::"Item Ledger Document Type"::"Purchase Invoice");
+        ValueItemLedgerEntries.Open();
+        while ValueItemLedgerEntries.Read() do
+            if PurchInvLine.Get(ValueItemLedgerEntries.Value_Entry_Doc_No, ValueItemLedgerEntries.Value_Entry_Doc_Line_No) then begin
+                TempPurchInvLine.Init();
+                TempPurchInvLine := PurchInvLine;
+                if TempPurchInvLine.Insert() then;
+            end;
+    end;
 }
 

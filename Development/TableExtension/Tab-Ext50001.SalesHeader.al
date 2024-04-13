@@ -46,10 +46,11 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
                 SalesLine.SetRange("Document No.", "No.");
                 if SalesLine.FindFirst() then
                     repeat
-                        if Salesperson.Get("Internal Team") then
-                            SalesLine."Internal Team Name" := Salesperson.Name
-                        else
-                            SalesLine."Internal Team Name" := '';
+                        SalesLine.Validate("Internal Team", "Internal Team");
+                        // if Salesperson.Get("Internal Team") then
+                        //     SalesLine."Internal Team Name" := Salesperson.Name
+                        // else
+                        //     SalesLine."Internal Team Name" := '';
                         SalesLine.Modify();
                     until SalesLine.Next() = 0;
 
@@ -68,10 +69,11 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
                 SalesLine.SetRange("Document No.", "No.");
                 if SalesLine.FindFirst() then
                     repeat
-                        if Salesperson.Get("Salesperson Code") then
-                            SalesLine."Salesperson Name" := Salesperson.Name
-                        else
-                            SalesLine."Salesperson Name" := '';
+                        SalesLine.Validate("Salesperson Code", "Salesperson Code");
+                        // if Salesperson.Get("Salesperson Code") then
+                        //     SalesLine."Salesperson Name" := Salesperson.Name
+                        // else
+                        //     SalesLine."Salesperson Name" := '';
                         SalesLine.Modify();
                     until SalesLine.Next() = 0;
             end;
@@ -79,6 +81,27 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
         FIELD(50001; "External Rep"; Text[250])
         {
             DataClassification = ToBeClassified;
+
+            trigger OnValidate()
+            var
+                SalesLine: Record "Sales Line";
+                Salesperson: Record "Salesperson/Purchaser";
+            begin
+                SalesLine.Reset();
+                SalesLine.SetRange("Document Type", "Document Type");
+                SalesLine.SetRange("Document No.", "No.");
+                if SalesLine.FindFirst() then
+                    repeat
+                        SalesLine.Validate("External Rep", "External Rep");
+                        // if Salesperson.Get("Internal Team") then
+                        //     SalesLine."Internal Team Name" := Salesperson.Name
+                        // else
+                        //     SalesLine."Internal Team Name" := '';
+                        SalesLine.Modify();
+                    until SalesLine.Next() = 0;
+
+            end;
+
             TRIGGER OnLookup()
             BEGIN
                 LookupOnExternalRep();

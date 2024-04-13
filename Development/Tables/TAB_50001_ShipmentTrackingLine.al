@@ -74,7 +74,7 @@ TABLE 50001 "Tracking Shipment Line"
         FIELD(7; "Date of Arrival"; Date)
         {
             DataClassification = ToBeClassified;
-            Caption = 'ETA';
+            Caption = 'ETA (Port)';
 
             TRIGGER OnValidate()
             VAR

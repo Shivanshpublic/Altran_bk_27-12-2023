@@ -58,7 +58,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         FIELD(8; "Freight Details"; Text[250])
         {
             DataClassification = ToBeClassified;
-            Caption = 'BL/AWB #';
+            Caption = 'AWB #';
         }
         FIELD(9; "Created Date"; Date)
         {
@@ -119,6 +119,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         FIELD(19; "MMSI Code"; Code[20])
         {
             DataClassification = ToBeClassified;
+            Caption = 'Vessel No.';
         }
         FIELD(21; "Surcharge Allocated to SO"; Boolean)
         {
@@ -196,10 +197,12 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         FIELD(32; "FCL/LCL"; Enum FCL_LCL_Option)
         {
             DataClassification = ToBeClassified;
+            Caption = 'Mode of Shipment';
         }
         FIELD(33; "Port of Load"; Text[50])
         {
             DataClassification = ToBeClassified;
+            Caption = 'Port Of Origin';
         }
         field(35; "Milestone Status"; Code[20])
         {
@@ -224,7 +227,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         FIELD(38; "Date of Arrival"; Date)
         {
             DataClassification = ToBeClassified;
-            Caption = 'ETA';
+            Caption = 'ETA (Port)';
 
             TRIGGER OnValidate()
             VAR
@@ -254,6 +257,43 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                     until TrackingShipmentLine.Next() = 0;
 
             END;
+        }
+        FIELD(39; "ATD"; Date)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            begin
+                if ("ATA(Sterling)" <> 0D) AND (ATD <> 0D) then begin
+                    Validate("Total in-Transit Days", ("ATA(Sterling)" - ATD))
+                end else
+                    Validate("Total in-Transit Days", 0)
+            end;
+        }
+        FIELD(40; "ATA(Port)"; Date)
+        {
+            DataClassification = ToBeClassified;
+        }
+        FIELD(41; "ATA(Sterling)"; Date)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            begin
+                if ("ATA(Sterling)" <> 0D) AND (ATD <> 0D) then begin
+                    Validate("Total in-Transit Days", ("ATA(Sterling)" - ATD))
+                end else
+                    Validate("Total in-Transit Days", 0)
+            end;
+        }
+        FIELD(42; "Total in-Transit Days"; Integer)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
+        }
+        field(43; "URL"; Text[80])
+        {
+            Caption = 'URL';
+            ExtendedDatatype = URL;
+            DataClassification = CustomerContent;
         }
     }
 

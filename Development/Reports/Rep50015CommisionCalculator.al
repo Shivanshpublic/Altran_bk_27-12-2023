@@ -218,11 +218,11 @@ report 50015 "Commision Calculator Report"
         lCustomerName := SalesInvHeader."Sell-to Customer Name";
         lExternalDocNo := SalesInvHeader."External Document No.";
         lExternalRep := SalesInvHeader."External Rep";
-        if SalesPerson.Get(SalesInvHeader."Internal Team") then
+        if SalesPerson.Get("Sales Invoice Line"."Internal Team") then
             lTeamNameDesc := SalesPerson.Name;
-        if SalesPerson.Get(SalesInvHeader."Salesperson Code") then
+        if SalesPerson.Get("Sales Invoice Line"."Salesperson Code") then
             lDescriptionC := SalesPerson.Name;
-        if SalesPerson.Get(SalesInvHeader."External Rep") then
+        if SalesPerson.Get("Sales Invoice Line"."External Rep") then
             lDescriptionE := SalesPerson.Name;
 
         if CustLedgEntry.Get(SalesInvHeader."Cust. Ledger Entry No.") then begin

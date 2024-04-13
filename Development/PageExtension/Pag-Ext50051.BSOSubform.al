@@ -7,6 +7,14 @@ pageextension 50051 BSOSubform extends "Blanket Sales Order Subform"
         }
         addlast(Control1)
         {
+            field("Planned Delivery Date"; Rec."Planned Delivery Date")
+            {
+                ApplicationArea = All;
+            }
+            field("Planned Shipment Date"; Rec."Planned Shipment Date")
+            {
+                ApplicationArea = All;
+            }
             field("Assigned CSR"; Rec."Assigned CSR")
             {
                 ApplicationArea = All;

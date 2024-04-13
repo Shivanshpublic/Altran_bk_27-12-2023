@@ -10,6 +10,7 @@ TABLEEXTENSION 50002 "Ext Sales Inv. Header" EXTENDS "Sales Invoice Header"
         {
             DataClassification = ToBeClassified;
             Caption = 'Regional Manager';
+            TableRelation = "Salesperson/Purchaser";
         }
         FIELD(50001; "External Rep"; Text[250])
         {

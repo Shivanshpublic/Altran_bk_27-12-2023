@@ -1065,6 +1065,7 @@ report 50018 "Altran Sales - Order Conf."
                     {
                         ApplicationArea = All;
                         Caption = 'Print with Term & Condition';
+                        Visible = false;
                     }
                 }
             }
@@ -1125,17 +1126,17 @@ report 50018 "Altran Sales - Order Conf."
 
                 until Header.Next() = 0;
 
-        if PrintTermCondition then
-            if NOT CurrReport.Preview then begin
-                CompInfo.Get();
-                if CompInfo."Term Condition Report ID" <> 0 then
-                    Report.Run(CompInfo."Term Condition Report ID")
-                else begin
-                    Clear(TermConditionRep);
-                    TermConditionRep.UseRequestPage(false);
-                    TermConditionRep.Run;
-                end;
-            end;
+        // if PrintTermCondition then
+        //     if NOT CurrReport.Preview then begin
+        //         CompInfo.Get();
+        //         if CompInfo."Term Condition Report ID" <> 0 then
+        //             Report.Run(CompInfo."Term Condition Report ID")
+        //         else begin
+        //             Clear(TermConditionRep);
+        //             TermConditionRep.UseRequestPage(false);
+        //             TermConditionRep.Run;
+        //         end;
+        //     end;
     end;
 
     trigger OnPreReport()

@@ -306,6 +306,7 @@ REPORT 50004 "Sales Quote Report"
                     {
                         ApplicationArea = All;
                         Caption = 'Print with Term & Condition';
+                        Visible = false;
                     }
 
                 }
@@ -339,17 +340,17 @@ REPORT 50004 "Sales Quote Report"
         TermConditionRep: Report "Term and Condition";
         CompInfo: Record "Company Information";
     begin
-        if PrintTermCondition then
-            if NOT CurrReport.Preview then begin
-                CompInfo.Get();
-                if CompInfo."Term Condition Report ID" <> 0 then
-                    Report.Run(CompInfo."Term Condition Report ID")
-                else begin
-                    Clear(TermConditionRep);
-                    TermConditionRep.UseRequestPage(false);
-                    TermConditionRep.Run;
-                end;
-            end;
+        // if PrintTermCondition then
+        //     if NOT CurrReport.Preview then begin
+        //         CompInfo.Get();
+        //         if CompInfo."Term Condition Report ID" <> 0 then
+        //             Report.Run(CompInfo."Term Condition Report ID")
+        //         else begin
+        //             Clear(TermConditionRep);
+        //             TermConditionRep.UseRequestPage(false);
+        //             TermConditionRep.Run;
+        //         end;
+        //     end;P
     end;
 
     local procedure GetCountryDesc(CountryCode: code[20]): Text[100]

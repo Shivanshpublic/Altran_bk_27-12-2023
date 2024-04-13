@@ -146,6 +146,26 @@ PAGE 50001 "Shipment Tracking Card"
                 {
                     ApplicationArea = All;
                 }
+                FIELD(ATD; Rec.ATD)
+                {
+                    ApplicationArea = All;
+                }
+                FIELD("ATA(Port)"; Rec."ATA(Port)")
+                {
+                    ApplicationArea = All;
+                }
+                FIELD("ATA(Sterling)"; Rec."ATA(Sterling)")
+                {
+                    ApplicationArea = All;
+                }
+                FIELD("Total in-Transit Days"; Rec."Total in-Transit Days")
+                {
+                    ApplicationArea = All;
+                }
+                FIELD(URL; Rec.URL)
+                {
+                    ApplicationArea = All;
+                }
                 FIELD("Created Date"; Rec."Created Date")
                 {
                     ApplicationArea = All;

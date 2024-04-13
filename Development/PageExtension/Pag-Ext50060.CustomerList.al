@@ -1,5 +1,23 @@
 pageextension 50060 CustomerListExt extends "Customer List"
 {
+    LAYOUT
+    {
+        ADDAFTER("Salesperson Code")
+        {
+            FIELD("Internal Team"; Rec."Internal Team")
+            {
+                ApplicationArea = All;
+            }
+            FIELD("External Rep"; Rec."External Rep")
+            {
+                ApplicationArea = All;
+            }
+            FIELD("Assigned User ID"; Rec."Assigned User ID")
+            {
+                ApplicationArea = All;
+            }
+        }
+    }
     actions
     {
         addafter("Sent Emails")

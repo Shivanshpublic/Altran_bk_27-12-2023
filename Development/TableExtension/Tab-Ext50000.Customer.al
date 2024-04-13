@@ -34,6 +34,24 @@ TABLEEXTENSION 50000 "Ext Customer" EXTENDS Customer
                 LookupOnExternalRep();
             END;
         }
+        field(50002; "Assigned User ID"; Code[50])
+        {
+            Caption = 'Assigned User ID';
+            DataClassification = EndUserIdentifiableInformation;
+            TableRelation = "User Setup";
+
+            trigger OnValidate()
+            var
+                UserSetupMgt: Codeunit "User Setup Management";
+                RespCenter: Record "Responsibility Center";
+                Text061: Label '%1 is set up to process from %2 %3 only.';
+            begin
+                if not UserSetupMgt.CheckRespCenter(0, "Responsibility Center", "Assigned User ID") then
+                    Error(
+                      Text061, "Assigned User ID",
+                      RespCenter.TableCaption(), UserSetupMgt.GetSalesFilter("Assigned User ID"));
+            end;
+        }
     }
 
     PROCEDURE LookupOnExternalRep()

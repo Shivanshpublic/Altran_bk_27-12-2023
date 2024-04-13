@@ -10,6 +10,7 @@ TABLEEXTENSION 50003 "Ext Sales Cr.Memo Header" EXTENDS "Sales Cr.Memo Header"
         {
             DataClassification = ToBeClassified;
             Caption = 'Regional Manager';
+            TableRelation = "Salesperson/Purchaser";
         }
         FIELD(50001; "External Rep"; Text[250])
         {

@@ -175,6 +175,60 @@ tableextension 50007 SalesLine extends "Sales Line"
             Caption = 'Regional Manager Name';
             Editable = false;
         }
+        FIELD(50035; "Internal Team"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Regional Manager';
+            TableRelation = "Salesperson/Purchaser";
+            trigger OnValidate()
+            var
+                Salesperson: Record "Salesperson/Purchaser";
+            begin
+                if Salesperson.Get("Internal Team") then
+                    "Internal Team Name" := Salesperson.Name
+                else
+                    "Internal Team Name" := '';
+            end;
+        }
+        FIELD(50036; "External Rep"; Text[250])
+        {
+            DataClassification = ToBeClassified;
+            TableRelation = "Salesperson/Purchaser";
+            trigger OnValidate()
+            var
+                Salesperson: Record "Salesperson/Purchaser";
+            begin
+                if Salesperson.Get("External Rep") then
+                    "External Team Name" := Salesperson.Name
+                else
+                    "External Team Name" := '';
+            end;
+
+            TRIGGER OnLookup()
+            BEGIN
+                LookupOnExternalRep();
+            END;
+        }
+        field(50037; "External Team Name"; Text[50])
+        {
+            Caption = 'External Team Name';
+            Editable = false;
+        }
+        field(50038; "Salesperson Code"; Code[20])
+        {
+            Caption = 'Sales Director';
+            TableRelation = "Salesperson/Purchaser";
+            trigger OnValidate()
+            var
+                Salesperson: Record "Salesperson/Purchaser";
+            begin
+                if Salesperson.Get("Salesperson Code") then
+                    "Salesperson Name" := Salesperson.Name
+                else
+                    "Salesperson Name" := '';
+            end;
+
+        }
         field(50111; "UL Certificate Available"; Boolean)
         {
             DataClassification = ToBeClassified;
@@ -203,9 +257,11 @@ tableextension 50007 SalesLine extends "Sales Line"
         "External Document No." := RecHdr."External Document No.";
         "Sell-to Customer Name" := RecHdr."Sell-to Customer Name";
         if Salesperson.Get(RecHdr."Internal Team") then
-            "Internal Team Name" := Salesperson.Name;
+            Validate("Internal Team", RecHdr."Internal Team");
+        if Salesperson.Get(RecHdr."External Rep") then
+            Validate("External Rep", RecHdr."External Rep");
         if Salesperson.Get(RecHdr."Salesperson Code") then
-            "Salesperson Name" := Salesperson.Name;
+            Validate("Salesperson Code", RecHdr."Salesperson Code");
     end;
 
     trigger OnModify()
@@ -223,4 +279,13 @@ tableextension 50007 SalesLine extends "Sales Line"
         "External Document No." := RecHdr."External Document No.";
         "Sell-to Customer Name" := RecHdr."Sell-to Customer Name";
     end;
+
+    PROCEDURE LookupOnExternalRep()
+    VAR
+        SalesPersonList: Page "Salespersons/Purchasers";
+    BEGIN
+        SalesPersonList.LOOKUPMODE(TRUE);
+        IF SalesPersonList.RUNMODAL = ACTION::LookupOK THEN
+            VALIDATE("External Rep", SalesPersonList.GetSelectionFilter);
+    END;
 }
