@@ -8,8 +8,6 @@ pageextension 50009 POCard extends "Purchase Order"
         }
         addlast(General)
         {
-
-
             field("Country of Origin"; Rec."Country of Origin")
             {
                 ApplicationArea = All;

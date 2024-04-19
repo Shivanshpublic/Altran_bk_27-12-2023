@@ -47,4 +47,135 @@ pageextension 50014 ItemCatg extends "Item Categories"
             }
         }
     }
+    actions
+    {
+        addfirst(processing)
+        {
+            action("Motors")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page Motors;
+            }
+            action("Blowers")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page Blowers;
+            }
+            action("DC")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page DC;
+            }
+            action("SSR")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page SSR;
+            }
+            action("DP")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page DP;
+            }
+            action("EMI Filters")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "EMI Filters";
+            }
+            action("Circuit Breakers")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "Circuit Breakers";
+            }
+            action("XFMR")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "XFMR";
+            }
+            action("Voltage Monitors")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "Voltage Monitors";
+            }
+            action("Relays")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "Relays";
+            }
+            action("IEC Contactors")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "IEC Contactors";
+            }
+            action("Switch Disconnectors")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "Switch Disconnectors";
+            }
+            action("Start Capacitors")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "Start Capacitors";
+            }
+            action("Run Caps")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "Run Caps";
+            }
+            action("PULLOUT-DSCN-SWITCH ")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "PULLOUT-DSCN-SWITCH ";
+            }
+
+
+
+        }
+    }
+
 }
+
