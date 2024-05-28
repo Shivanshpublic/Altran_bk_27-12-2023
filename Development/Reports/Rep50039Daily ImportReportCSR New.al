@@ -13,10 +13,11 @@ report 50039 "Daily Import Report CSR New"
             {
                 DataItemLinkReference = "Purchase Header";
                 DataItemLink = "Document No." = FIELD("No.");
-
                 RequestFilterFields = Type, "No.", "Buy-from Vendor No.";
+                DataItemTableView = where(Type = filter(Item));
                 trigger OnPreDataItem()
                 begin
+
                     if ShowOnlyRcvdnotInv then
                         SetFilter("Qty. Rcd. Not Invoiced", '<>%1', 0);
                     //IF (StartingDate <> 0D) AND (EndingDate <> 0D) then
@@ -28,6 +29,8 @@ report 50039 "Daily Import Report CSR New"
                     PRcptLine: Record "Purch. Rcpt. Line";
                     RcptExists: Boolean;
                 begin
+                    // IF "Purchase Line"."Document No." = 'PO-00432' then
+                    //     Message('PO-00432');
                     RcptExists := false;
                     PRcptLine.Reset();
                     PRcptLine.SetRange("Order No.", "Purchase Line"."Document No.");
@@ -48,65 +51,12 @@ report 50039 "Daily Import Report CSR New"
             }
             trigger OnPreDataItem()
             var
-            // PurchHeaderArchive: Record "Purchase Header Archive";
-            // PHArchive: Record "Purchase Header Archive";
             begin
                 SetRange("Document Type", "Document Type"::Order);
                 IF (StartingDate <> 0D) AND (EndingDate <> 0D) then
                     SetRange("Creation Date", StartingDate, EndingDate);
-
-                // PurchHeaderArchive.Reset();
-                // PurchHeaderArchive.SetCurrentKey("PO Exists", "Latest Version");
-                // PurchHeaderArchive.SetRange("Document Type", PurchHeaderArchive."Document Type"::Order);
-                // PurchHeaderArchive.SetRange("PO Exists", false);
-                // if PurchHeaderArchive.Findfirst() then begin
-                //     PHArchive.SetRange("Document Type", PHArchive."Document Type"::Order);
-                //     PHArchive.SetRange("No.", PHArchive."No.");
-                //     if PHArchive.FindLast() then begin
-                //         PHArchive."Latest Version" := true;
-                //         PHArchive.Modify();
-                //     end;
-                // end;
             end;
 
-            trigger OnAfterGetRecord()
-            var
-            // PurchHeaderArchive: Record "Purchase Header Archive";
-            begin
-                // PurchHeaderArchive.SetRange("Document Type", "Purchase Header"."Document Type");
-                // PurchHeaderArchive.SetRange("No.", "Purchase Header"."No.");
-                // if PurchHeaderArchive.FindLast() then begin
-                //     //PurchHeaderArchive."PO Exists" := true;
-                //     PurchHeaderArchive.ModifyAll("PO Exists", true);
-                // end;
-            end;
-
-            trigger OnPostDataItem()
-            var
-            // PurchHeaderArchive: Record "Purchase Header Archive";
-            // PHArchive: Record "Purchase Header Archive";
-            begin
-                // PHArchive.Reset();
-                // PurchHeaderArchive.Reset();
-                // PurchHeaderArchive.SetCurrentKey("PO Exists", "Latest Version");
-                // PurchHeaderArchive.SetRange("Document Type", PurchHeaderArchive."Document Type"::Order);
-                // PurchHeaderArchive.SetRange("PO Exists", false);
-                // PurchHeaderArchive.SetRange("Old Version", false);
-                // if PurchHeaderArchive.Findfirst() then
-                //     Repeat
-                //         PHArchive.SetRange("Document Type", PHArchive."Document Type"::Order);
-                //         PHArchive.SetRange("No.", PurchHeaderArchive."No.");
-                //         if PHArchive.FindLast() then begin
-                //             PHArchive."Latest Version" := true;
-                //             PHArchive.Modify();
-                //         end;
-                //         if PHArchive."Version No." <> PurchHeaderArchive."Version No." then begin
-                //             PurchHeaderArchive."Old Version" := true;
-                //             PurchHeaderArchive."Latest Version" := false;
-                //             PurchHeaderArchive.Modify();
-                //         end;
-                //     until PurchHeaderArchive.Next() = 0;
-            end;
         }
         dataitem("Purchase Header Archive"; "Purchase Header Archive")
         {
@@ -116,6 +66,7 @@ report 50039 "Daily Import Report CSR New"
             {
                 DataItemLinkReference = "Purchase Header Archive";
                 RequestFilterFields = Type, "No.", "Buy-from Vendor No.";
+                DataItemTableView = where(Type = filter(Item));
                 trigger OnPreDataItem()
                 begin
                     SetRange("Document Type", "Purchase Header Archive"."Document Type");
@@ -133,6 +84,8 @@ report 50039 "Daily Import Report CSR New"
                     PRcptLine: Record "Purch. Rcpt. Line";
                     RcptExists: Boolean;
                 begin
+                    // IF "Purchase Line Archive"."Document No." = 'PO-00432' then
+                    //     Message('PO-00432');
                     RcptExists := false;
                     PRcptLine.Reset();
                     PRcptLine.SetRange("Order No.", "Purchase Line Archive"."Document No.");
@@ -229,6 +182,8 @@ report 50039 "Daily Import Report CSR New"
         CustLedgEntry: Record "Cust. Ledger Entry";
         SalesLine: Record "Sales Line";
         SalesHeader: Record "Sales Header";
+        SalesLineArchive: Record "Sales Line Archive";
+        SalesHeaderArchive: Record "Sales Header Archive";
         SalesInvLine: Record "Sales Invoice Line";
         SalesInvHeader: Record "Sales Invoice Header";
         PurchHeader: Record "Purchase Header";
@@ -249,6 +204,7 @@ report 50039 "Daily Import Report CSR New"
         lCustomerReqDate: Date;
         lSupplier: Text[100];
         lPartNumber: Code[20];
+        lModelNumber: Text[50];
         lQuantity: Decimal;
         lCost: Decimal;
         lTotalCost: Decimal;
@@ -357,6 +313,7 @@ report 50039 "Daily Import Report CSR New"
         ExcelBuffer.AddColumn('ATA (Port)', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('ATA (Sterling)', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Part Number', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn('Model Number', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Line Type', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Item Category', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('UOM', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -436,6 +393,7 @@ report 50039 "Daily Import Report CSR New"
             lShipmentStatus := PL."Milestone Status";
         lSupplier := PurchHeader."Buy-from Vendor Name";
         lPartNumber := PL."No.";
+        lModelNumber := PL."Description 2";
         lQuantity := PL.Quantity;
         lLineType := PL.Type;
         PurchUOM := PL."Unit of Measure Code";
@@ -540,6 +498,8 @@ report 50039 "Daily Import Report CSR New"
         //Sales Details
         SalesHeader.Reset();
         SalesLine.Reset();
+        SalesHeaderArchive.Reset();
+        SalesLineArchive.Reset();
         SalesInvHeader.Reset();
         SalesInvLine.Reset();
 
@@ -585,14 +545,41 @@ report 50039 "Daily Import Report CSR New"
                 lTotalSell := SalesInvLine."Line Amount";
             end;
         end else begin
-            SalesInvLine.SetRange("Order No.", SalesLine."Document No.");
-            SalesInvLine.SetRange("Order Line No.", SalesLine."Line No.");
-            SalesInvLine.SetRange("PO No.", SalesLine."PO No.");
-            SalesInvLine.SetRange("PO Line No.", SalesLine."PO Line No.");
+            SalesLineArchive.SetRange("Document Type", SalesLineArchive."Document Type"::Order);
+            SalesLineArchive.SetRange(Type, SalesLineArchive.Type::Item);
+            SalesLineArchive.SetRange("No.", PL."No.");
+            SalesLineArchive.SetRange("PO No.", PL."Document No.");
+            SalesLineArchive.SetRange("PO Line No.", PL."Line No.");
+            //SalesLineArchive.SetRange("Shipment Tracking Code", ShipmentTrackingLine."Tracking Code");
+            //SalesLineArchive.SetRange("Shipment Tracking Line No.", ShipmentTrackingLine."Line No.");
+            if SalesLineArchive.FindLast() then begin
+                SalesHeaderArchive.Get(SalesLineArchive."Document Type", SalesLineArchive."Document No.", SalesLineArchive."Doc. No. Occurrence", SalesLineArchive."Version No.");
+                lCustomer := SalesHeaderArchive."Sell-to Customer Name";
+                lCustomerPO := SalesHeaderArchive."External Document No.";
+                lCustomerReqDate := SalesLineArchive."Planned Delivery Date";
+                lShipmentDate := SalesLineArchive."Shipment Date";
+                lPlanShipDate := SalesLineArchive."Planned Shipment Date";
+                lAssignedCSR := SalesLineArchive."Assigned CSR";
+                SalesUOM := SalesLineArchive."Unit of Measure Code";
+                lSOLLocationCode := SalesLineArchive."Location Code";
+                lSOShipTo := SalesHeaderArchive."Ship-to Name";
+                if ShipmentMethod.Get(SalesHeaderArchive."Shipment Method Code") then
+                    CustomerIncoterms := ShipmentMethod.Description;
+                SalesDirector := SalesLineArchive."Salesperson Name";
+                RegionalManager := SalesLineArchive."Internal Team Name";
+                if Salesperson.Get(SalesLineArchive."External Rep") then
+                    ExternalRep := Salesperson.Name;
+                SampleOrder := SalesHeaderArchive."Sample Order";
+            end;
+
+            SalesInvLine.SetRange("Order No.", PL."SO No.");
+            SalesInvLine.SetRange("Order Line No.", PL."SO Line No.");
+            SalesInvLine.SetRange("PO No.", PL."Document No.");
+            SalesInvLine.SetRange("PO Line No.", PL."Line No.");
             SalesInvLine.SetRange("Shipment Tracking Code", ShipmentTrackingLine."Tracking Code");
             SalesInvLine.SetRange("Shipment Tracking Line No.", ShipmentTrackingLine."Line No.");
-            SalesInvLine.SetRange(Type, SalesLine.Type);
-            SalesInvLine.SetRange("No.", SalesLine."No.");
+            SalesInvLine.SetRange(Type, SalesInvLine.Type);
+            SalesInvLine.SetRange("No.", PL."No.");
             if SalesInvLine.FindFirst() then begin
                 SalesInvHeader.Get(SalesInvLine."Document No.");
                 lSellingQty := SalesInvLine.Quantity;
@@ -600,6 +587,7 @@ report 50039 "Daily Import Report CSR New"
                 lCustomer := SalesInvHeader."Sell-to Customer Name";
                 lCustomerPO := SalesInvHeader."External Document No.";
                 lTotalSell := SalesInvLine."Line Amount";
+                SampleOrder := SalesInvHeader."Sample Order";
             end;
         end;
 
@@ -650,6 +638,7 @@ report 50039 "Daily Import Report CSR New"
         ExcelBuffer.AddColumn(ATAPort, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(ATASterling, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lPartNumber, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn(lModelNumber, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lLineType, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lItemCategory, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(PurchUOM, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -672,7 +661,7 @@ report 50039 "Daily Import Report CSR New"
         ExcelBuffer.AddColumn(RegionalManager, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(ExternalRep, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lSOLLocationCode, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
-        ExcelBuffer.AddColumn(PurchUOM, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn(SalesUOM, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lSellingQty, FALSE, '', FALSE, FALSE, FALSE, '#,##0.00', ExcelBuffer."Cell Type"::Number);
         // ExcelBuffer.AddColumn(lSellingCost, FALSE, '', FALSE, FALSE, FALSE, '#,##0.00', ExcelBuffer."Cell Type"::Number);
         ExcelBuffer.AddColumn(lSellingPrice, FALSE, '', FALSE, FALSE, FALSE, '#,##0.00', ExcelBuffer."Cell Type"::Number);
@@ -726,6 +715,7 @@ report 50039 "Daily Import Report CSR New"
             lShipmentStatus := PLA."Milestone Status";
         lSupplier := PurchArHeader."Buy-from Vendor Name";
         lPartNumber := PLA."No.";
+        lModelNumber := PLA."Description 2";
         lQuantity := PLA.Quantity;
         lLineType := PLA.Type;
         PurchUOM := PLA."Unit of Measure Code";
@@ -863,6 +853,7 @@ report 50039 "Daily Import Report CSR New"
             if Salesperson.Get(SalesLine."External Rep") then
                 ExternalRep := Salesperson.Name;
             SampleOrder := SalesHeader."Sample Order";
+
             SalesInvLine.SetRange("Order No.", SalesLine."Document No.");
             SalesInvLine.SetRange("Order Line No.", SalesLine."Line No.");
             SalesInvLine.SetRange("PO No.", SalesLine."PO No.");
@@ -882,20 +873,54 @@ report 50039 "Daily Import Report CSR New"
                 //lVendorInvoiceNo := SalesInvHeader."External Document No.";
             end;
         end else begin
-            SalesInvLine.SetRange("Order No.", SalesLine."Document No.");
-            SalesInvLine.SetRange("Order Line No.", SalesLine."Line No.");
-            SalesInvLine.SetRange("PO No.", SalesLine."PO No.");
-            SalesInvLine.SetRange("PO Line No.", SalesLine."PO Line No.");
+            SalesLineArchive.SetRange("Document Type", SalesLineArchive."Document Type"::Order);
+            SalesLineArchive.SetRange(Type, SalesLineArchive.Type::Item);
+            SalesLineArchive.SetRange("No.", PLA."No.");
+            SalesLineArchive.SetRange("PO No.", PLA."Document No.");
+            SalesLineArchive.SetRange("PO Line No.", PLA."Line No.");
+            //SalesLineArchive.SetRange("Shipment Tracking Code", ShipmentTrackingLine."Tracking Code");
+            //SalesLineArchive.SetRange("Shipment Tracking Line No.", ShipmentTrackingLine."Line No.");
+            if SalesLineArchive.FindLast() then begin
+                SalesHeaderArchive.Get(SalesLineArchive."Document Type", SalesLineArchive."Document No.", SalesLineArchive."Doc. No. Occurrence", SalesLineArchive."Version No.");
+
+                lCustomerReqDate := SalesLineArchive."Planned Delivery Date";
+                lShipmentDate := SalesLineArchive."Shipment Date";
+                lPlanShipDate := SalesLineArchive."Planned Shipment Date";
+                lAssignedCSR := SalesLineArchive."Assigned CSR";
+                SalesUOM := SalesLineArchive."Unit of Measure Code";
+                lSOLLocationCode := SalesLineArchive."Location Code";
+                lSOShipTo := SalesHeaderArchive."Ship-to Name";
+                if ShipmentMethod.Get(SalesHeaderArchive."Shipment Method Code") then
+                    CustomerIncoterms := ShipmentMethod.Description;
+                SalesDirector := SalesLineArchive."Salesperson Name";
+                RegionalManager := SalesLineArchive."Internal Team Name";
+                if Salesperson.Get(SalesLineArchive."External Rep") then
+                    ExternalRep := Salesperson.Name;
+                SampleOrder := SalesHeaderArchive."Sample Order";
+
+                lSellingQty := SalesLineArchive.Quantity;
+                lSellingPrice := SalesLineArchive."Unit Price";
+                lCustomer := SalesHeaderArchive."Sell-to Customer Name";
+                lCustomerPO := SalesHeaderArchive."External Document No.";
+                lTotalSell := SalesLineArchive."Line Amount";
+            end;
+
+            SalesInvLine.SetRange("Order No.", PLA."SO No.");
+            SalesInvLine.SetRange("Order Line No.", PLA."SO Line No.");
+            SalesInvLine.SetRange("PO No.", PLA."Document No.");
+            SalesInvLine.SetRange("PO Line No.", PLA."Line No.");
             SalesInvLine.SetRange("Shipment Tracking Code", ShipmentTrackingLine."Tracking Code");
             SalesInvLine.SetRange("Shipment Tracking Line No.", ShipmentTrackingLine."Line No.");
-            SalesInvLine.SetRange(Type, SalesLine.Type);
-            SalesInvLine.SetRange("No.", SalesLine."No.");
+            SalesInvLine.SetRange(Type, SalesInvLine.Type::Item);
+            SalesInvLine.SetRange("No.", PLA."No.");
             if SalesInvLine.FindFirst() then begin
                 SalesInvHeader.Get(SalesInvLine."Document No.");
                 lSellingQty := SalesInvLine.Quantity;
                 lSellingPrice := SalesInvLine."Unit Price";
-                lCustomer := SalesInvHeader."Sell-to Customer Name";
-                lCustomerPO := SalesInvHeader."External Document No.";
+                if lCustomer = '' then
+                    lCustomer := SalesInvHeader."Sell-to Customer Name";
+                if lCustomerPO = '' then
+                    lCustomerPO := SalesInvHeader."External Document No.";
                 lTotalSell := SalesInvLine."Line Amount";
                 //lInvoiceNo := SalesInvLine."Document No.";
                 //lInvoiceReceived := SalesInvLine."Posting Date";
@@ -948,6 +973,7 @@ report 50039 "Daily Import Report CSR New"
         ExcelBuffer.AddColumn(ATAPort, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(ATASterling, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lPartNumber, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn(lModelNumber, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lLineType, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lItemCategory, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(PurchUOM, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -970,7 +996,7 @@ report 50039 "Daily Import Report CSR New"
         ExcelBuffer.AddColumn(RegionalManager, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(ExternalRep, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lSOLLocationCode, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
-        ExcelBuffer.AddColumn(PurchUOM, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn(SalesUOM, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lSellingQty, FALSE, '', FALSE, FALSE, FALSE, '#,##0.00', ExcelBuffer."Cell Type"::Number);
         // ExcelBuffer.AddColumn(lSellingCost, FALSE, '', FALSE, FALSE, FALSE, '#,##0.00', ExcelBuffer."Cell Type"::Number);
         ExcelBuffer.AddColumn(lSellingPrice, FALSE, '', FALSE, FALSE, FALSE, '#,##0.00', ExcelBuffer."Cell Type"::Number);
@@ -1009,6 +1035,7 @@ report 50039 "Daily Import Report CSR New"
         Clear(lCustomerReqDate);
         Clear(lSupplier);
         Clear(lPartNumber);
+        Clear(lModelNumber);
         Clear(lQuantity);
         Clear(lCost);
         Clear(lTotalCost);
@@ -1029,6 +1056,7 @@ report 50039 "Daily Import Report CSR New"
         Clear(lCustomerPO);
         Clear(lVia);
         Clear(lForwarder);
+        Clear(lForwarderName);
         Clear(SampleOrder);
         Clear(lETD);
         Clear(lATD);

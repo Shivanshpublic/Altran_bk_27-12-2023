@@ -39,8 +39,9 @@ report 50021 "Populate Bin Code"
                             BinContent.Insert();
                         end;
                         RecCount += 1;
-                        DialogBox.UPDATE(1, RecCount);
-
+                        if GuiAllowed then begin
+                            DialogBox.UPDATE(1, RecCount);
+                        end;
                     end;
                 }
             }
@@ -53,13 +54,17 @@ report 50021 "Populate Bin Code"
             exit;
         end;
         RecCount := 0;
-        DialogBox.OPEN(tcProgress);
+        if GuiAllowed then begin
+            DialogBox.OPEN(tcProgress);
+        end;
     end;
 
     trigger OnPostReport()
     begin
-        DialogBox.Close();
-        Message('All Location wise Bins have been populated in Item successfully.\Total No. of Records retrieved %1', RecCount);
+        if GuiAllowed then begin
+            DialogBox.Close();
+            Message('All Location wise Bins have been populated in Item successfully.\Total No. of Records retrieved %1', RecCount);
+        end;
     end;
 
     var

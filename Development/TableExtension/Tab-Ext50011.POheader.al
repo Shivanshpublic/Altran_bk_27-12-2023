@@ -83,7 +83,8 @@ tableextension 50011 POheader extends "Purchase Header"
         Cnt: Integer;
         Text000: Label 'Lot no. %1 already exist against line %2, Do you still want to add additional line ?';
         Text001: Label 'Do you want replace lot no. on lines with %1.';
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
+        NoSeriesMgt1: Codeunit "No. Series - Batch";
     begin
         PurchHead.TestField(Status, PurchHead.Status::Released);
         if PurchHead.Status = PurchHead.Status::Released then begin
@@ -120,7 +121,9 @@ tableextension 50011 POheader extends "Purchase Header"
                                 if LineNo = 0 then begin
                                     if PurchLine."Lot No." = '' then begin
                                         Item.TestField("Lot Nos.");
-                                        NoSeriesMgt.InitSeries(Item."Lot Nos.", Item."Lot Nos.", 0D, PurchLine."Lot No.", Item."Lot Nos.");
+                                        PurchLine."Lot No." := NoSeriesMgt.GetNextNo(Item."Lot Nos.", Today, true);
+                                        //NoSeriesMgt.GetNextNo(Item."Lot Nos.", Item."Lot Nos.", 0D, PurchLine."Lot No.", Item."Lot Nos.");
+                                        //NoSeriesMgt.InitSeries(Item."Lot Nos.", Item."Lot Nos.", 0D, PurchLine."Lot No.", Item."Lot Nos.");
                                         LotNo := PurchLine."Lot No.";
                                     end;
                                 end;

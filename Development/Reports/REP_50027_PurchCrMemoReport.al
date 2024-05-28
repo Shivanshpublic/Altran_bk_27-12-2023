@@ -56,7 +56,7 @@ REPORT 50027 "Purchase Cr. Memo Report"
                     {
                     }
                     COLUMN(CompanyPostCode; CompanyInfo."Post Code") { }
-                    COLUMN(HomePage; CompanyInfo."Home Page")
+                    COLUMN(HomePage; CompanyInfo."Home Page Custom")
                     {
                     }
                     COLUMN(CompanyCountry; GetCountryDesc(CompanyInfo."Country/Region Code")) { }
@@ -77,7 +77,7 @@ REPORT 50027 "Purchase Cr. Memo Report"
                     {
 
                     }
-                    column(CompanyHomePage; CompanyInfo."Home Page")
+                    column(CompanyHomePage; CompanyInfo."Home Page Custom")
                     {
                     }
                     COLUMN(ShiptoName; ShiptoName)

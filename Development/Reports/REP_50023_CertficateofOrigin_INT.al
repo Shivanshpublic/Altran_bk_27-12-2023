@@ -49,7 +49,7 @@ REPORT 50023 "Certificate of Origin INT"
                     {
                     }
                     COLUMN(CompanyPostCode; CompanyInfo."Post Code") { }
-                    COLUMN(HomePage; CompanyInfo."Home Page")
+                    COLUMN(HomePage; CompanyInfo."Home Page Custom")
                     {
                     }
                     COLUMN(CompanyCountry; GetCountryDesc(CompanyInfo."Country/Region Code")) { }
@@ -98,6 +98,7 @@ REPORT 50023 "Certificate of Origin INT"
                     {
                         DataItemLinkReference = SalesInvoiceHeader;
                         DataItemLink = "Document No." = FIELD("No.");
+                        DataItemTableView = SORTING("No.") WHERE("Parent Line No." = FILTER(= 0));
                         COLUMN(ItemNo; "No.") { }
                         COLUMN(Description; Description) { }
                         COLUMN(Description2; "Description 2") { }
@@ -126,6 +127,52 @@ REPORT 50023 "Certificate of Origin INT"
 
                         }
                         COLUMN(TotalGrossKG; "Total Gross (KG)") { }
+                        trigger OnAfterGetRecord()
+                        var
+                            myInt: Integer;
+                        begin
+                            if (Quantity = 0) AND (Type <> Type::" ") then
+                                CurrReport.Skip();
+                        end;
+
+                        TRIGGER OnPreDataItem()
+                        BEGIN
+                            NoOfRecords := SalesInvoiceLine.COUNT;
+                        END;
+                    }
+                    DATAITEM(ParentSalesInvoiceLine; "Sales Invoice Line")
+                    {
+                        DataItemLinkReference = SalesInvoiceHeader;
+                        DataItemLink = "Document No." = FIELD("No.");
+                        DataItemTableView = SORTING("No.") WHERE("Parent Line No." = FILTER(<> 0));
+                        COLUMN(PItemNo; "No.") { }
+                        COLUMN(PDescription; Description) { }
+                        COLUMN(PDescription2; "Description 2") { }
+                        COLUMN(PUnitofMeasureCode; "Unit of Measure Code") { }
+                        COLUMN(PHSCode; "HS Code") { }
+                        column(PVIA; VIA)
+                        {
+
+                        }
+                        COLUMN(PHTSCode; "HTS Code") { }
+                        COLUMN(PQuantity; Quantity) { }
+                        COLUMN(PUnitPrice; "Unit Price") { }
+                        COLUMN(PExtendedPrice; Amount) { }
+                        COLUMN(PLine_Amount; "Line Amount") { }
+                        COLUMN(PLine_Discount_Amount; "Line Discount Amount") { }
+                        COLUMN(PLineAmountAfterDisc; "Line Discount Amount" - "Line Amount") { }
+                        COLUMN(PAmountIncVAT; "Amount Including VAT") { }
+                        COLUMN(PNoOfPackages; "No. of Packages") { }
+                        COLUMN(PTotalCBM; "Total CBM") { }
+                        column(PCountry_of_Origin; GetCountryDesc("Country of Origin"))
+                        {
+
+                        }
+                        column(PAWBNumber; GetAWBNumber("Shipment Tracking Code"))
+                        {
+
+                        }
+                        COLUMN(PTotalGrossKG; "Total Gross (KG)") { }
                         trigger OnAfterGetRecord()
                         var
                             myInt: Integer;

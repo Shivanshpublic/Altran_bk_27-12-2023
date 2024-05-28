@@ -50,7 +50,7 @@ REPORT 50020 "Commercial Invoice"
                     {
                     }
                     COLUMN(CompanyPostCode; CompanyInfo."Post Code") { }
-                    COLUMN(HomePage; CompanyInfo."Home Page")
+                    COLUMN(HomePage; CompanyInfo."Home Page Custom")
                     {
                     }
                     COLUMN(CompanyCountry; GetCountryDesc(CompanyInfo."Country/Region Code")) { }
@@ -100,6 +100,7 @@ REPORT 50020 "Commercial Invoice"
                     {
                         DataItemLinkReference = SalesInvoiceHeader;
                         DataItemLink = "Document No." = FIELD("No.");
+                        DataItemTableView = SORTING("No.") WHERE("Parent Line No." = FILTER(= 0));
                         COLUMN(ItemNo; "No.") { }
                         COLUMN(ItemReferenceNo; "Item Reference No.") { }
                         COLUMN(Description; Description) { }
@@ -117,6 +118,40 @@ REPORT 50020 "Commercial Invoice"
                         COLUMN(NoOfPackages; "No. of Packages") { }
                         COLUMN(TotalCBM; "Total CBM") { }
                         COLUMN(TotalGrossKG; "Total Gross (KG)") { }
+
+                        TRIGGER OnPreDataItem()
+                        BEGIN
+                            NoOfRecords := SalesInvoiceLine.COUNT;
+                        END;
+
+                        trigger OnAfterGetRecord()
+                        begin
+                            if (Quantity = 0) AND (Type <> Type::" ") then
+                                CurrReport.Skip();
+                        end;
+                    }
+                    DATAITEM(ParentSalesInvoiceLine; "Sales Invoice Line")
+                    {
+                        DataItemLinkReference = SalesInvoiceHeader;
+                        DataItemLink = "Document No." = FIELD("No.");
+                        DataItemTableView = SORTING("No.") WHERE("Parent Line No." = FILTER(<> 0));
+                        COLUMN(PItemNo; "No.") { }
+                        COLUMN(PItemReferenceNo; "Item Reference No.") { }
+                        COLUMN(PDescription; Description) { }
+                        COLUMN(PDescription2; "Description 2") { }
+                        COLUMN(PUnitofMeasureCode; "Unit of Measure Code") { }
+                        COLUMN(PHSCode; "HS Code") { }
+                        COLUMN(PHTSCode; "HTS Code") { }
+                        COLUMN(PQuantity; Quantity) { }
+                        COLUMN(PUnitPrice; "Unit Price") { }
+                        COLUMN(PExtendedPrice; Amount) { }
+                        COLUMN(PLine_Amount; "Line Amount") { }
+                        COLUMN(PLine_Discount_Amount; "Line Discount Amount") { }
+                        COLUMN(PLineAmountAfterDisc; "Line Discount Amount" - "Line Amount") { }
+                        COLUMN(PAmountIncVAT; "Amount Including VAT") { }
+                        COLUMN(PPNoOfPackages; "No. of Packages") { }
+                        COLUMN(PTotalCBM; "Total CBM") { }
+                        COLUMN(PTotalGrossKG; "Total Gross (KG)") { }
 
                         TRIGGER OnPreDataItem()
                         BEGIN
@@ -279,7 +314,7 @@ REPORT 50020 "Commercial Invoice"
         ConAddress: Text[100];
         ConAddress2: Text[50];
         ConPhoneNo: Text[30];
-        ConCity: Text[30];
+        ConCity: Text[100];
         ConPostCode: Code[20];
         ConCountry: Code[100];
         ShipToAdd: Record "Ship-to Address";

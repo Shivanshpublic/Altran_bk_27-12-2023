@@ -16,6 +16,10 @@ pageextension 50002 UserSetup extends "User Setup"
             {
                 ApplicationArea = All;
             }
+            field("Modify PO on SO"; Rec."Modify PO on SO")
+            {
+                ApplicationArea = All;
+            }
         }
     }
 }

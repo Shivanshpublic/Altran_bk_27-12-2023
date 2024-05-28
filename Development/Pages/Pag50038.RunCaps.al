@@ -4,7 +4,7 @@ page 50038 "Run Caps"
     Caption = 'Run Caps';
     PageType = List;
     SourceTable = "Run Caps";
-    
+
     layout
     {
         area(content)
@@ -55,6 +55,15 @@ page 50038 "Run Caps"
                 {
                     ToolTip = 'Specifies the value of the SystemModifiedBy field.';
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

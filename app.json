@@ -2,7 +2,7 @@
   "id": "c1aea910-0615-45ab-b6dd-efe5b715c40b",
   "name": "ALTranDevelopment",
   "publisher": "SCO",
-  "version": "1.0.0.150",
+  "version": "1.0.0.178",
   "brief": "",
   "description": "",
   "privacyStatement": "",
@@ -20,7 +20,7 @@
   ],
   "screenshots": [],
   "platform": "1.0.0.0",
-  "application": "22.0.0.0",
+  "application": "23.0.0.0",
   "idRanges": [
     {
       "from": 50000,
@@ -32,5 +32,5 @@
     "allowDownloadingSource": false,
     "includeSourceInSymbolFile": false
   },
-  "runtime": "11.0"  
+  "runtime": "12.0"  
 }

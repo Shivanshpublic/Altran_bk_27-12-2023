@@ -6,6 +6,12 @@ tableextension 50032 CompanyInformation extends "Company Information"
         {
 
         }
+
+        field(50035; "Home Page Custom"; Text[255])
+        {
+            Caption = 'Home Page Custom';
+            ExtendedDatatype = URL;
+        }
     }
 
 }

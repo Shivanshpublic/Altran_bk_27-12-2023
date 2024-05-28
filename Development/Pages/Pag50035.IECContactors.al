@@ -4,7 +4,7 @@ page 50035 "IEC Contactors"
     Caption = 'IEC Contactors';
     PageType = List;
     SourceTable = "IEC Contactors";
-    
+
     layout
     {
         area(content)
@@ -59,6 +59,15 @@ page 50035 "IEC Contactors"
                 {
                     ToolTip = 'Specifies the value of the Termination field.';
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

@@ -4,7 +4,7 @@ page 50029 DP
     Caption = 'DP';
     PageType = List;
     SourceTable = DP;
-    
+
     layout
     {
         area(content)
@@ -51,6 +51,15 @@ page 50029 DP
                 {
                     ToolTip = 'Specifies the value of the Termination field.';
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

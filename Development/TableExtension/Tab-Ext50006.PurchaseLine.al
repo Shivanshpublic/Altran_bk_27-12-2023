@@ -9,8 +9,12 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
             //Editable = false;
             trigger OnValidate()
             begin
-                if xrec."SO No." <> "SO No." then
+                if xrec."SO No." <> "SO No." then begin
+                    TestField("Qty. Rcd. Not Invoiced", 0);
+                    TestField("Quantity Received", 0);
+                    ResetSOLineFromPOLine(xrec."SO No.", "SO Line No.");
                     "SO Line No." := 0;
+                end;
             end;
         }
         field(50001; "SO Line No."; Integer)
@@ -21,8 +25,13 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
             trigger OnValidate()
             var
             begin
+                if xRec."SO Line No." <> Rec."SO Line No." then begin
+                    TestField("Qty. Rcd. Not Invoiced", 0);
+                    TestField("Quantity Received", 0);
+                end;
                 if ("SO No." <> '') AND ("SO Line No." <> 0) then begin
                     UpdatePOLineFromSOLine();
+
                 end;
             end;
         }
@@ -292,22 +301,34 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
             //Sline.SetRange(Type, Sline.Type::Item);
             Sline.SetRange("Line No.", "SO Line No.");
             if Sline.FindFirst() then begin
-
-                "HS Code" := Sline."HS Code";
-                "HTS Code" := Sline."HTS Code";
-                "No. of Packages" := Sline."No. of Packages";
-                "Total Gross (KG)" := Sline."Total Gross (KG)";
-                "Total CBM" := Sline."Total CBM";
-                "Total Net (KG)" := Sline."Total Net (KG)";
-                "Port of Load" := Sline."Port of Load";
-                "Port of Discharge" := Sline."Port of Discharge";
-                "Country of Origin" := Sline."Country of Origin";
-                "Country of provenance" := Sline."Country of provenance";
-                "Country of Acquisition" := Sline."Country of Acquisition";
-                "VIA" := Sline."VIA";
-                "Milestone Status" := Sline."Milestone Status";
-
-                "Pallet Quantity" := Sline."Pallet Quantity";
+                if "HS Code" = '' then
+                    "HS Code" := Sline."HS Code";
+                if "HTS Code" = '' then
+                    "HTS Code" := Sline."HTS Code";
+                if "No. of Packages" = 0 then
+                    "No. of Packages" := Sline."No. of Packages";
+                if "Total Gross (KG)" = 0 then
+                    "Total Gross (KG)" := Sline."Total Gross (KG)";
+                if "Total CBM" = 0 then
+                    "Total CBM" := Sline."Total CBM";
+                if "Total Net (KG)" = 0 then
+                    "Total Net (KG)" := Sline."Total Net (KG)";
+                if "Port of Load" = '' then
+                    "Port of Load" := Sline."Port of Load";
+                if "Port of Discharge" = '' then
+                    "Port of Discharge" := Sline."Port of Discharge";
+                if "Country of Origin" = '' then
+                    "Country of Origin" := Sline."Country of Origin";
+                if "Country of provenance" = '' then
+                    "Country of provenance" := Sline."Country of provenance";
+                if "Country of Acquisition" = '' then
+                    "Country of Acquisition" := Sline."Country of Acquisition";
+                if "VIA" = '' then
+                    "VIA" := Sline."VIA";
+                if "Milestone Status" = '' then
+                    "Milestone Status" := Sline."Milestone Status";
+                if "Pallet Quantity" = 0 then
+                    "Pallet Quantity" := Sline."Pallet Quantity";
             end;
         end;
     end;
@@ -327,39 +348,41 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
             //Sline.SetRange(Type, Sline.Type::Item);
             Sline.SetRange("Line No.", PurchOrderLine."SO Line No.");
             if Sline.FindFirst() then begin
-                if PurchOrderLine."HS Code" <> Sline."HS Code" then
-                    Sline."HS Code" := PurchOrderLine."HS Code";
-                if PurchOrderLine."HTS Code" <> Sline."HTS Code" then
-                    Sline."HTS Code" := PurchOrderLine."HTS Code";
-                //if PurchOrderLine."No. of Packages" <> Sline."No. of Packages" then
-                //    Sline."No. of Packages" := PurchOrderLine."No. of Packages";
-                //if PurchOrderLine."Total Gross (KG)" <> Sline."Total Gross (KG)" then
-                //    Sline."Total Gross (KG)" := PurchOrderLine."Total Gross (KG)";
-                //if PurchOrderLine."Total CBM" <> Sline."Total CBM" then
-                //    Sline."Total CBM" := PurchOrderLine."Total CBM";
-                //if PurchOrderLine."Total Net (KG)" <> Sline."Total Net (KG)" then
-                //    Sline."Total Net (KG)" := PurchOrderLine."Total Net (KG)";
-                if PurchOrderLine."Port of Load" <> '' then
-                    if PurchOrderLine."Port of Load" <> Sline."Port of Load" then
-                        Sline."Port of Load" := PurchOrderLine."Port of Load";
-                if PurchOrderLine."Port of Discharge" <> '' then
-                    if PurchOrderLine."Port of Discharge" <> Sline."Port of Discharge" then
-                        Sline."Port of Discharge" := PurchOrderLine."Port of Discharge";
-                if PurchOrderLine."Country of Origin" <> '' then
-                    if PurchOrderLine."Country of Origin" <> Sline."Country of Origin" then
-                        Sline."Country of Origin" := PurchOrderLine."Country of Origin";
-                if PurchOrderLine."Country of provenance" <> '' then
-                    if PurchOrderLine."Country of provenance" <> Sline."Country of provenance" then
-                        Sline."Country of provenance" := PurchOrderLine."Country of provenance";
-                if PurchOrderLine."Country of Acquisition" <> '' then
-                    if PurchOrderLine."Country of Acquisition" <> Sline."Country of Acquisition" then
-                        Sline."Country of Acquisition" := PurchOrderLine."Country of Acquisition";
-                if PurchOrderLine.VIA <> '' then
-                    if PurchOrderLine.VIA <> Sline.VIA then
-                        Sline."VIA" := PurchOrderLine."VIA";
-                if PurchOrderLine."Milestone Status" <> '' then
-                    if PurchOrderLine."Milestone Status" <> Sline."Milestone Status" then
-                        Sline."Milestone Status" := PurchOrderLine."Milestone Status";
+                // if PurchOrderLine."HS Code" <> Sline."HS Code" then
+                //     Sline."HS Code" := PurchOrderLine."HS Code";
+                // if PurchOrderLine."HTS Code" <> Sline."HTS Code" then
+                //     Sline."HTS Code" := PurchOrderLine."HTS Code";
+                Sline."PO No." := PurchOrderLine."Document No.";
+                Sline."PO Line No." := PurchOrderLine."Line No.";
+                if PurchOrderLine."No. of Packages" <> Sline."No. of Packages" then
+                    Sline."No. of Packages" := PurchOrderLine."No. of Packages";
+                if PurchOrderLine."Total Gross (KG)" <> Sline."Total Gross (KG)" then
+                    Sline."Total Gross (KG)" := PurchOrderLine."Total Gross (KG)";
+                if PurchOrderLine."Total CBM" <> Sline."Total CBM" then
+                    Sline."Total CBM" := PurchOrderLine."Total CBM";
+                if PurchOrderLine."Total Net (KG)" <> Sline."Total Net (KG)" then
+                    Sline."Total Net (KG)" := PurchOrderLine."Total Net (KG)";
+                // if PurchOrderLine."Port of Load" <> '' then
+                //     if PurchOrderLine."Port of Load" <> Sline."Port of Load" then
+                //         Sline."Port of Load" := PurchOrderLine."Port of Load";
+                // if PurchOrderLine."Port of Discharge" <> '' then
+                //     if PurchOrderLine."Port of Discharge" <> Sline."Port of Discharge" then
+                //         Sline."Port of Discharge" := PurchOrderLine."Port of Discharge";
+                // if PurchOrderLine."Country of Origin" <> '' then
+                //     if PurchOrderLine."Country of Origin" <> Sline."Country of Origin" then
+                //         Sline."Country of Origin" := PurchOrderLine."Country of Origin";
+                // if PurchOrderLine."Country of provenance" <> '' then
+                //     if PurchOrderLine."Country of provenance" <> Sline."Country of provenance" then
+                //         Sline."Country of provenance" := PurchOrderLine."Country of provenance";
+                // if PurchOrderLine."Country of Acquisition" <> '' then
+                //     if PurchOrderLine."Country of Acquisition" <> Sline."Country of Acquisition" then
+                //         Sline."Country of Acquisition" := PurchOrderLine."Country of Acquisition";
+                // if PurchOrderLine.VIA <> '' then
+                //     if PurchOrderLine.VIA <> Sline.VIA then
+                //         Sline."VIA" := PurchOrderLine."VIA";
+                // if PurchOrderLine."Milestone Status" <> '' then
+                //     if PurchOrderLine."Milestone Status" <> Sline."Milestone Status" then
+                //         Sline."Milestone Status" := PurchOrderLine."Milestone Status";
                 //if PurchOrderLine."Pallet Quantity" <> Sline."Pallet Quantity" then
                 //    Sline."Pallet Quantity" := PurchOrderLine."Pallet Quantity";
                 Sline.Modify();
@@ -367,5 +390,25 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
         end;
     end;
 
+    local procedure ResetSOLineFromPOLine(SONo: Code[20]; SOLineNo: Integer);
+    var
+        Sheader: Record "Sales Header";
+        Sline: Record "Sales Line";
+    begin
+        Clear(Sline);
+        Clear(Sheader);
+        Sheader.SetRange("Document Type", Sheader."Document Type"::Order);
+        Sheader.SetRange("No.", SONo);
+        if Sheader.FindFirst() then begin
+            Sline.SetRange("Document Type", Sheader."Document Type");
+            Sline.SetRange("Document No.", Sheader."No.");
+            Sline.SetRange("Line No.", SOLineNo);
+            if Sline.FindFirst() then begin
+                Sline."PO No." := '';
+                Sline."PO Line No." := 0;
+                Sline.Modify();
+            end;
+        end;
+    end;
 
 }

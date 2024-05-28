@@ -4,7 +4,7 @@ page 50037 "Start Capacitors"
     Caption = 'Start Capacitors';
     PageType = List;
     SourceTable = "Start Capacitors";
-    
+
     layout
     {
         area(content)
@@ -51,6 +51,15 @@ page 50037 "Start Capacitors"
                 {
                     ToolTip = 'Specifies the value of the Voltage Rating field.';
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

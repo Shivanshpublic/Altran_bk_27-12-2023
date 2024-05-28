@@ -2,7 +2,7 @@ table 50021 XFMR
 {
     Caption = 'XFMR';
     DataClassification = ToBeClassified;
-    
+
     fields
     {
         field(1; "Primary/Secondary Voltage"; Code[20])
@@ -41,10 +41,21 @@ table 50021 XFMR
         {
             Caption = 'Special Requests';
         }
+        field(100; "Item Category Code"; code[20])
+        {
+            TableRelation = "Item Category";
+            Editable = false;
+        }
+        field(101; "Item No."; code[20])
+        {
+            TableRelation = "Item";
+            Editable = false;
+        }
+
     }
     keys
     {
-        key(PK; "Primary/Secondary Voltage")
+        key(Key1; "Item Category Code", "Item No.")
         {
             Clustered = true;
         }

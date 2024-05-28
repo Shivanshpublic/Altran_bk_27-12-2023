@@ -142,7 +142,7 @@ REPORT 50002 "Packing List"
                     COLUMN(BankName; CompanyInfo."Bank Name")
                     {
                     }
-                    COLUMN(HomePage; CompanyInfo."Home Page")
+                    COLUMN(HomePage; CompanyInfo."Home Page Custom")
                     {
                     }
 
@@ -175,6 +175,7 @@ REPORT 50002 "Packing List"
                     {
                         DataItemLinkReference = SalesShipmentHeader;
                         DataItemLink = "Document No." = FIELD("No.");
+                        DataItemTableView = SORTING("No.") WHERE("Parent Line No." = FILTER(= 0));
                         COLUMN(Type; Type)
                         {
                         }
@@ -239,6 +240,98 @@ REPORT 50002 "Packing List"
 
                         }
                         column(Total_CBM; "Total CBM")
+                        {
+
+                        }
+
+                        TRIGGER OnPreDataItem()
+                        BEGIN
+                            NoOfRecords := SalesShipmentLine.COUNT;
+                        END;
+
+                        trigger OnAfterGetRecord()
+                        begin
+                            // if (TotalCBM = 0) AND (Type <> Type::" ") then
+                            //     CurrReport.Skip();
+                            if Quantity = 0 then begin
+                                "No. of Packages" := 0;
+                                "Gross Weight" := 0;
+                                "Net Weight" := 0;
+                                "Total CBM" := 0;
+                                "HTS Code" := '';
+                                "Pallet Quantity" := 0;
+                            end;
+                        end;
+                    }
+                    DATAITEM(ParentSalesShipmentLine; "Sales Invoice Line")
+                    {
+                        DataItemLinkReference = SalesShipmentHeader;
+                        DataItemLink = "Document No." = FIELD("No.");
+                        DataItemTableView = SORTING("No.") WHERE("Parent Line No." = FILTER(<> 0));
+                        COLUMN(PType; Type)
+                        {
+                        }
+
+                        COLUMN(PItemNo; "No.")
+                        {
+                        }
+                        column(PItem; "Description 2")
+                        {
+                        }
+                        COLUMN(PDescription; Description)
+                        {
+                        }
+                        column(PItem_Reference_No_; "Item Reference No.")
+                        {
+
+                        }
+                        column(PVIA; VIA)
+                        {
+
+                        }
+                        COLUMN(PUnitofMeasureCode; "Unit of Measure Code")
+                        {
+                        }
+                        COLUMN(PHSCode; "HS Code")
+                        {
+                        }
+                        COLUMN(PHTSCode; "HTS Code")
+                        {
+                        }
+                        column(Parent_Line_No_ordered; '')
+                        {
+                        }
+                        COLUMN(PPalletQuantity; "Pallet Quantity")
+                        {
+                        }
+                        COLUMN(PNoOfPackages; "No. of Packages")
+                        {
+                        }
+                        COLUMN(PQuantity; Quantity)
+                        {
+                        }
+                        COLUMN(PShipMethod; VIA)
+                        {
+                        }
+                        column(PGross_Weight; "Total Gross (KG)")
+                        {
+
+                        }
+                        column(PNet_Weight; "Total Net (KG)")
+                        {
+
+                        }
+                        COLUMN(PUnitPrice; "Unit Price")
+                        {
+                        }
+                        COLUMN(PExtendedPrice; SalesShipmentLine."VAT Base Amount")
+                        {
+                        }
+                        column(PCountry_of_Origin; "Country of Origin")
+                        {
+
+                        }
+                        column(PTotal_CBM; "Total CBM")
                         {
 
                         }

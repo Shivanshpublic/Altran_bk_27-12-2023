@@ -60,6 +60,15 @@ page 50027 DC
                 field("Working - C"; Rec."Working - C")
                 {
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

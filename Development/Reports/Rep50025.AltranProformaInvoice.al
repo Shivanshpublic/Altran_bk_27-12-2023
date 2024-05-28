@@ -33,9 +33,6 @@ report 50026 "Altran Proforma_Invoice"
             {
             }
             COLUMN(CompanyPostCode; CompanyInfo."Post Code") { }
-            COLUMN(HomePage; CompanyInfo."Home Page")
-            {
-            }
             COLUMN(CompanyCountry; GetCountryDesc(CompanyInfo."Country/Region Code")) { }
             column(FooterText; StrSubstNo(FooterText, CompanyName))
             {
@@ -49,7 +46,7 @@ report 50026 "Altran Proforma_Invoice"
             {
 
             }
-            column(CompanyHomePage; CompanyInfo."Home Page")
+            column(CompanyHomePage; CompanyInfo."Home Page Custom")
             {
             }
             column(CompanyEMail; CompanyInfo."E-Mail")
@@ -58,6 +55,7 @@ report 50026 "Altran Proforma_Invoice"
             column(CompanyInfoLogo; CompanyInfo.Picture)
             {
             }
+            COLUMN(HomePage; CompanyInfo."Home Page Custom") { }
             column(CompanyPhoneNo_Lbl; CompanyInfoPhoneNoLbl)
             {
             }
@@ -118,12 +116,12 @@ report 50026 "Altran Proforma_Invoice"
             column(CompanyVATRegistrationNo_Lbl; CompanyInfo.GetVATRegistrationNumberLbl)
             {
             }
-            column(CompanyLegalOffice; CompanyInfo.GetLegalOffice)
-            {
-            }
-            column(CompanyLegalOffice_Lbl; CompanyInfo.GetLegalOfficeLbl)
-            {
-            }
+            // column(CompanyLegalOffice; CompanyInfo.GetLegalOffice)
+            // {
+            // }
+            // column(CompanyLegalOffice_Lbl; CompanyInfo.GetLegalOfficeLbl)
+            // {
+            // }
             column(CompanyCustomGiro; '')
             {
             }
@@ -439,7 +437,7 @@ report 50026 "Altran Proforma_Invoice"
             {
                 DataItemLink = "Document No." = FIELD("No.");
                 DataItemLinkReference = Header;
-                DataItemTableView = SORTING("Document No.", "Line No.");
+                DataItemTableView = SORTING("Document No.", "Line No.") WHERE("Parent Line No." = fILTER(= 0));
                 UseTemporary = true;
                 column(LineNo_Line; "Line No.")
                 {
@@ -588,6 +586,185 @@ report 50026 "Altran Proforma_Invoice"
                         SetRange("Document Type", AsmHeader."Document Type");
                         SetRange("Document No.", AsmHeader."No.");
                     end;
+                }
+
+                trigger OnAfterGetRecord()
+                begin
+                    if Type = Type::"G/L Account" then
+                        "No." := '';
+
+
+                    if (Quantity = 0) AND (Type <> Type::" ") then
+                        CurrReport.Skip();
+
+                    if "Line Discount %" = 0 then
+                        LineDiscountPctText := ''
+                    else
+                        LineDiscountPctText := StrSubstNo('%1%', -Round("Line Discount %", 0.1));
+
+                    if DisplayAssemblyInformation then
+                        AsmInfoExistsForLine := AsmToOrderExists(AsmHeader);
+
+                    TransHeaderAmount += PrevLineAmount;
+                    PrevLineAmount := "Line Amount";
+                    TotalSubTotal += "Line Amount";
+                    TotalInvDiscAmount -= "Inv. Discount Amount";
+                    TotalAmount += Amount;
+                    TotalAmountVAT += "Amount Including VAT" - Amount;
+                    TotalAmountInclVAT += "Amount Including VAT";
+                    TotalPaymentDiscOnVAT += -("Line Amount" - "Inv. Discount Amount" - "Amount Including VAT");
+                    OnLineOnAfterGetRecordOnAfterCalcTotals(Header, Line, TotalAmount, TotalAmountVAT, TotalAmountInclVAT);
+
+                    FormatDocument.SetSalesLine(Line, FormattedQuantity, FormattedUnitPrice, FormattedVATPct, FormattedLineAmount);
+
+                    if FirstLineHasBeenOutput then
+                        Clear(DummyCompanyInfo.Picture);
+                    FirstLineHasBeenOutput := true;
+                end;
+
+                trigger OnPreDataItem()
+                begin
+                    MoreLines := Find('+');
+                    while MoreLines and (Description = '') and ("No." = '') and (Quantity = 0) and (Amount = 0) do
+                        MoreLines := Next(-1) <> 0;
+                    if not MoreLines then
+                        CurrReport.Break();
+                    SetRange("Line No.", 0, "Line No.");
+                    TransHeaderAmount := 0;
+                    PrevLineAmount := 0;
+                    FirstLineHasBeenOutput := false;
+                    DummyCompanyInfo.Picture := CompanyInfo.Picture;
+                end;
+            }
+            dataitem(ParentLine; "Sales Line")
+            {
+                DataItemLink = "Document No." = FIELD("No.");
+                DataItemLinkReference = Header;
+                DataItemTableView = SORTING("Document No.", "Line No.") WHERE("Parent Line No." = fILTER(<> 0));
+                //PUseTemporary = true;
+                column(PLineNo_Line; "Line No.")
+                {
+                }
+                column(ParentLineNo_Line; "Parent Line No.")
+                {
+                }
+                column(PAmountExcludingVAT_Line; Amount)
+                {
+                    AutoFormatExpression = "Currency Code";
+                    // //AutoFormatType = 1;
+                }
+                column(PAmountExcludingVAT_Line_Lbl; FieldCaption(Amount))
+                {
+                }
+                column(PAmountIncludingVAT_Line; "Amount Including VAT")
+                {
+                    AutoFormatExpression = "Currency Code";
+                    //AutoFormatType = 1;
+                }
+                column(PAmountIncludingVAT_Line_Lbl; FieldCaption("Amount Including VAT"))
+                {
+                    AutoFormatExpression = "Currency Code";
+                    //AutoFormatType = 1;
+                }
+                column(PDescription; Description)
+                {
+                }
+                column(PDescription_Line_Lbl; FieldCaption(Description))
+                {
+                }
+                column(PLineDiscountPercent_Line; "Line Discount %")
+                {
+                }
+                column(PLineDiscountPercentText_Line; LineDiscountPctText)
+                {
+                }
+                column(PLineAmount_Line; "Line Amount")// FormattedLineAmount)
+                {
+                    //AutoFormatExpression = "Currency Code";
+                    //AutoFormatType = 1;
+                }
+                column(PLineAmount_Line_Lbl; 'Line Amount')
+                {
+                }
+                column(PDescription2; "Description 2")
+                {
+                }
+                column(PItemNo_Line_Lbl; 'Model No.')
+                {
+                }
+                column(PShipmentDate_Line; Format("Shipment Date"))
+                {
+                }
+                column(PShipmentDate_Line_Lbl; PostedShipmentDateLbl)
+                {
+                }
+                column(PPlannedShipmentDate_Line; Format("Planned Shipment Date"))
+                {
+                }
+                column(PPlanned_Delivery_Date; Format("Planned Delivery Date", 0, '<Month,2>/<Day,2>/<Year4>'))
+                {
+
+                }
+                column(PPlannedShipmentDate_Line_Lbl; FieldCaption("Planned Shipment Date"))
+                {
+                }
+                column(PQuantity; Quantity)// FormattedQuantity)
+                {
+                }
+                column(PQuantity_Line_Lbl; FieldCaption(Quantity))
+                {
+                }
+                column(PType_Line; Format(Type))
+                {
+                }
+                column(PNo; "No.")
+                {
+                }
+                column(PUnitPrice; "Unit Price")//FormattedUnitPrice)
+                {
+                    // AutoFormatExpression = "Currency Code";
+                    ////AutoFormatType = 2;
+                }
+                column(PUnitPrice_Lbl; 'Unit Price')
+                {
+                }
+                column(PUnitOfMeasure; "Unit of Measure")
+                {
+                }
+                column(PUnitOfMeasure_Lbl; FieldCaption("Unit of Measure"))
+                {
+                }
+                column(PUnit_Lbl; UnitLbl)
+                {
+                }
+                column(PVATIdentifier_Line; "VAT Identifier")
+                {
+                }
+                column(PVATIdentifier_Line_Lbl; FieldCaption("VAT Identifier"))
+                {
+                }
+                column(PVATPct_Line; '')
+                {
+                }
+                column(PVATPct_Line_Lbl; '')
+                {
+                }
+                column(PTransHeaderAmount; TransHeaderAmount)
+                {
+                    AutoFormatExpression = "Currency Code";
+                    //AutoFormatType = 1;
+                }
+                column(PItemReferenceNo; "Item Reference No.")
+                {
+                }
+                column(PItemReferenceNo_Lbl; FieldCaption("Item Reference No."))
+                {
+                }
+                column(PUnitPrice_Lbl2; UnitPriceLbl)
+                {
+                }
+                column(PLineAmount_Lbl; LineAmountLbl)
+                {
                 }
 
                 trigger OnAfterGetRecord()

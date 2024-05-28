@@ -59,7 +59,7 @@ REPORT 50006 "Purchase Order Report"
                     {
                     }
                     COLUMN(CompanyPostCode; CompanyInfo."Post Code") { }
-                    COLUMN(HomePage; CompanyInfo."Home Page")
+                    COLUMN(HomePage; CompanyInfo."Home Page Custom")
                     {
                     }
                     COLUMN(CompanyCountry; GetCountryDesc(CompanyInfo."Country/Region Code")) { }
@@ -80,7 +80,7 @@ REPORT 50006 "Purchase Order Report"
                     {
 
                     }
-                    column(CompanyHomePage; CompanyInfo."Home Page")
+                    column(CompanyHomePage; CompanyInfo."Home Page Custom")
                     {
                     }
                     COLUMN(ShiptoName; ShiptoName)

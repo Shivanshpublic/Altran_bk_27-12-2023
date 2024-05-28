@@ -158,7 +158,8 @@ pageextension 50042 ItemList extends "Item List"
             FileName := CopyStr(FileName, 1, StrPos(FileName, '-') - 1);
             FileExtension := CopyStr(FileMgt.GetExtension(EntryListKey), 1, MaxStrLen(FileExtension));
             TempBlob.CreateOutStream(EntryOutStream);
-            DataCompression.ExtractEntry(EntryListKey, EntryOutStream, Length);
+            //DataCompression.ExtractEntry(EntryListKey, EntryOutStream, Length);
+            DataCompression.ExtractEntry(EntryListKey, EntryOutStream);
             TempBlob.CreateInStream(EntryInStream);
             //Import each file where you want
             Item.SetRange("Description 2", FileName);
@@ -233,7 +234,8 @@ pageextension 50042 ItemList extends "Item List"
             FileName := CopyStr(FileName, 1, StrPos(FileName, ' ') - 1);
             FileExtension := CopyStr(FileMgt.GetExtension(EntryListKey), 1, MaxStrLen(FileExtension));
             TempBlob.CreateOutStream(EntryOutStream);
-            DataCompression.ExtractEntry(EntryListKey, EntryOutStream, Length);
+            //DataCompression.ExtractEntry(EntryListKey, EntryOutStream, Length);
+            DataCompression.ExtractEntry(EntryListKey, EntryOutStream);
             TempBlob.CreateInStream(EntryInStream);
             //Import each file where you want
             Item.SetRange("Description 2", UpperCase(FileName));

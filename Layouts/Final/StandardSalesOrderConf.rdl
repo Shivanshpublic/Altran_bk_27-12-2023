@@ -2045,6 +2045,268 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ItemNo2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!PDescription2.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>7pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ItemNo</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="CompanySWIFT2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!PItemReferenceNo.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>7pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>CompanySWIFT</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox81">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!PDescription.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>7pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox22</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="CompanySWIFT3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!PPlanned_Delivery_Date.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>CompanySWIFT1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox83">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!PQuantity.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>7pt</FontSize>
+                                    <Format>#,0;-#,0;''</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox18</rd:DefaultName>
+                          <Visibility>
+                            <Hidden>true</Hidden>
+                          </Visibility>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox109">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!PUnitPrice.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>7pt</FontSize>
+                                    <Format>'$'#,0.00;-'$'#,0.00;''</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox108</rd:DefaultName>
+                          <Visibility>
+                            <Hidden>true</Hidden>
+                          </Visibility>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                            <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ExtendedPrice2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!PLineAmount_Line.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>'$'#,0.00;-'$'#,0.00;''</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ExtendedPrice</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                            <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
                   <Height>0.5cm</Height>
                   <TablixCells>
                     <TablixCell>
@@ -2137,7 +2399,7 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Sum(Fields!LineAmount_Line.Value)</Value>
+                                  <Value>=Sum(Fields!LineAmount_Line.Value)+Sum(Fields!PLineAmount_Line.Value)</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2237,6 +2499,21 @@
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
+                  <Group Name="PNo">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!PNo.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!PNo.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <Visibility>
+                    <Hidden>=IIf(Fields!PDescription.Value="", True, False)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
                   <KeepWithGroup>Before</KeepWithGroup>
                 </TablixMember>
               </TablixMembers>
@@ -2244,7 +2521,7 @@
             <DataSetName>DataSet_Result</DataSetName>
             <Top>0cm</Top>
             <Left>0.00979cm</Left>
-            <Height>5.07708cm</Height>
+            <Height>5.67708cm</Height>
             <Width>19.70683cm</Width>
             <Style>
               <Border>
@@ -3639,7 +3916,7 @@ exchanged under any circumstances.</Value>
             <PageBreak>
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
-            <Top>2.05057in</Top>
+            <Top>2.30057in</Top>
             <Left>0.19698in</Left>
             <Height>9.39209cm</Height>
             <Width>18.74688cm</Width>
@@ -4986,7 +5263,7 @@ Altran Magnetics Customer Service to obtain an RMA number. Issuance of an RMA nu
             <PageBreak>
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
-            <Top>5.76546in</Top>
+            <Top>6.01546in</Top>
             <Left>0.16052in</Left>
             <Height>9.30583cm</Height>
             <Width>18.93209cm</Width>
@@ -5001,7 +5278,7 @@ Altran Magnetics Customer Service to obtain an RMA number. Issuance of an RMA nu
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>23.9501cm</Height>
+        <Height>26.1726cm</Height>
         <Style />
       </Body>
       <Width>19.74752cm</Width>
@@ -5338,6 +5615,9 @@ rpv96rFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
         <Field Name="CompanyAddress">
           <DataField>CompanyAddress</DataField>
         </Field>
+        <Field Name="HomePage">
+          <DataField>HomePage</DataField>
+        </Field>
         <Field Name="CompanyAddress2">
           <DataField>CompanyAddress2</DataField>
         </Field>
@@ -5352,9 +5632,6 @@ rpv96rFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
         </Field>
         <Field Name="CompanyPostCode">
           <DataField>CompanyPostCode</DataField>
-        </Field>
-        <Field Name="HomePage">
-          <DataField>HomePage</DataField>
         </Field>
         <Field Name="CompanyCountry">
           <DataField>CompanyCountry</DataField>
@@ -5436,12 +5713,6 @@ rpv96rFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
         </Field>
         <Field Name="CompanyVATRegistrationNo_Lbl">
           <DataField>CompanyVATRegistrationNo_Lbl</DataField>
-        </Field>
-        <Field Name="CompanyLegalOffice">
-          <DataField>CompanyLegalOffice</DataField>
-        </Field>
-        <Field Name="CompanyLegalOffice_Lbl">
-          <DataField>CompanyLegalOffice_Lbl</DataField>
         </Field>
         <Field Name="CompanyCustomGiro">
           <DataField>CompanyCustomGiro</DataField>
@@ -5919,6 +6190,135 @@ rpv96rFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
         </Field>
         <Field Name="VariantCode_AssemblyLine">
           <DataField>VariantCode_AssemblyLine</DataField>
+        </Field>
+        <Field Name="PLineNo_Line">
+          <DataField>PLineNo_Line</DataField>
+        </Field>
+        <Field Name="PAmountExcludingVAT_Line">
+          <DataField>PAmountExcludingVAT_Line</DataField>
+        </Field>
+        <Field Name="PAmountExcludingVAT_LineFormat">
+          <DataField>PAmountExcludingVAT_LineFormat</DataField>
+        </Field>
+        <Field Name="PAmountExcludingVAT_Line_Lbl">
+          <DataField>PAmountExcludingVAT_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PAmountIncludingVAT_Line">
+          <DataField>PAmountIncludingVAT_Line</DataField>
+        </Field>
+        <Field Name="PAmountIncludingVAT_LineFormat">
+          <DataField>PAmountIncludingVAT_LineFormat</DataField>
+        </Field>
+        <Field Name="PAmountIncludingVAT_Line_Lbl">
+          <DataField>PAmountIncludingVAT_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PDescription">
+          <DataField>PDescription</DataField>
+        </Field>
+        <Field Name="PDescription_Line_Lbl">
+          <DataField>PDescription_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PLineDiscountPercent_Line">
+          <DataField>PLineDiscountPercent_Line</DataField>
+        </Field>
+        <Field Name="PLineDiscountPercent_LineFormat">
+          <DataField>PLineDiscountPercent_LineFormat</DataField>
+        </Field>
+        <Field Name="PLineDiscountPercentText_Line">
+          <DataField>PLineDiscountPercentText_Line</DataField>
+        </Field>
+        <Field Name="PLineAmount_Line">
+          <DataField>PLineAmount_Line</DataField>
+        </Field>
+        <Field Name="PLineAmount_LineFormat">
+          <DataField>PLineAmount_LineFormat</DataField>
+        </Field>
+        <Field Name="PLineAmount_Line_Lbl">
+          <DataField>PLineAmount_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PDescription2">
+          <DataField>PDescription2</DataField>
+        </Field>
+        <Field Name="PItemNo_Line_Lbl">
+          <DataField>PItemNo_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PShipmentDate_Line">
+          <DataField>PShipmentDate_Line</DataField>
+        </Field>
+        <Field Name="PShipmentDate_Line_Lbl">
+          <DataField>PShipmentDate_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PPlannedShipmentDate_Line">
+          <DataField>PPlannedShipmentDate_Line</DataField>
+        </Field>
+        <Field Name="PPlanned_Delivery_Date">
+          <DataField>PPlanned_Delivery_Date</DataField>
+        </Field>
+        <Field Name="PPlannedShipmentDate_Line_Lbl">
+          <DataField>PPlannedShipmentDate_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PQuantity">
+          <DataField>PQuantity</DataField>
+        </Field>
+        <Field Name="PQuantityFormat">
+          <DataField>PQuantityFormat</DataField>
+        </Field>
+        <Field Name="PQuantity_Line_Lbl">
+          <DataField>PQuantity_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PType_Line">
+          <DataField>PType_Line</DataField>
+        </Field>
+        <Field Name="PNo">
+          <DataField>PNo</DataField>
+        </Field>
+        <Field Name="PUnitPrice">
+          <DataField>PUnitPrice</DataField>
+        </Field>
+        <Field Name="PUnitPriceFormat">
+          <DataField>PUnitPriceFormat</DataField>
+        </Field>
+        <Field Name="PUnitPrice_Lbl">
+          <DataField>PUnitPrice_Lbl</DataField>
+        </Field>
+        <Field Name="PUnitOfMeasure">
+          <DataField>PUnitOfMeasure</DataField>
+        </Field>
+        <Field Name="PUnitOfMeasure_Lbl">
+          <DataField>PUnitOfMeasure_Lbl</DataField>
+        </Field>
+        <Field Name="PUnit_Lbl">
+          <DataField>PUnit_Lbl</DataField>
+        </Field>
+        <Field Name="PVATIdentifier_Line">
+          <DataField>PVATIdentifier_Line</DataField>
+        </Field>
+        <Field Name="PVATIdentifier_Line_Lbl">
+          <DataField>PVATIdentifier_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PVATPct_Line">
+          <DataField>PVATPct_Line</DataField>
+        </Field>
+        <Field Name="PVATPct_Line_Lbl">
+          <DataField>PVATPct_Line_Lbl</DataField>
+        </Field>
+        <Field Name="PTransHeaderAmount">
+          <DataField>PTransHeaderAmount</DataField>
+        </Field>
+        <Field Name="PTransHeaderAmountFormat">
+          <DataField>PTransHeaderAmountFormat</DataField>
+        </Field>
+        <Field Name="PItemReferenceNo">
+          <DataField>PItemReferenceNo</DataField>
+        </Field>
+        <Field Name="PItemReferenceNo_Lbl">
+          <DataField>PItemReferenceNo_Lbl</DataField>
+        </Field>
+        <Field Name="PUnitPrice_Lbl2">
+          <DataField>PUnitPrice_Lbl2</DataField>
+        </Field>
+        <Field Name="PLineAmount_Lbl">
+          <DataField>PLineAmount_Lbl</DataField>
         </Field>
         <Field Name="WorkDescriptionLineNumber">
           <DataField>WorkDescriptionLineNumber</DataField>

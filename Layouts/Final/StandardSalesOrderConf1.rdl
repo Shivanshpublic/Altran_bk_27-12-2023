@@ -2924,12 +2924,6 @@ rpv96rFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
         <Field Name="CompanyVATRegistrationNo_Lbl">
           <DataField>CompanyVATRegistrationNo_Lbl</DataField>
         </Field>
-        <Field Name="CompanyLegalOffice">
-          <DataField>CompanyLegalOffice</DataField>
-        </Field>
-        <Field Name="CompanyLegalOffice_Lbl">
-          <DataField>CompanyLegalOffice_Lbl</DataField>
-        </Field>
         <Field Name="CompanyCustomGiro">
           <DataField>CompanyCustomGiro</DataField>
         </Field>

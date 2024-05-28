@@ -548,4 +548,72 @@ codeunit 50003 CustomEvents
         SalesHeader.Validate("Assigned User ID", Cust."Assigned User ID");
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Purchase Document", 'OnAfterReleasePurchaseDoc', '', false, false)]
+    local procedure OnAfterReleasePurchaseDoc(var PurchaseHeader: Record "Purchase Header"; PreviewMode: Boolean; var LinesWereModified: Boolean; SkipWhseRequestOperations: Boolean)
+    begin
+        UpdateSOLineFromPOLine(PurchaseHeader);
+    end;
+
+    local procedure UpdateSOLineFromPOLine(PurchOrderHeader: Record "Purchase Header");
+    var
+        Pline: Record "Purchase Line";
+        Sheader: Record "Sales Header";
+        Sline: Record "Sales Line";
+    begin
+        Clear(Pline);
+        Clear(Sline);
+        Clear(Sheader);
+
+        Pline.SetRange("Document Type", PurchOrderHeader."Document Type");
+        Pline.SetRange("Document No.", PurchOrderHeader."No.");
+        Pline.SetFilter("SO No.", '<>%1', '');
+        Pline.SetFilter("SO Line No.", '<>%1', 0);
+        if Pline.FindFirst() then
+            repeat
+                Sline.SetRange("Document Type", Sline."Document Type"::Order);
+                Sline.SetRange("Document No.", Pline."SO No.");
+                //Sline.SetRange(Type, Sline.Type::Item);
+                Sline.SetRange("Line No.", Pline."SO Line No.");
+                if Sline.FindFirst() then begin
+                    // if PurchOrderLine."HS Code" <> Sline."HS Code" then
+                    //     Sline."HS Code" := PurchOrderLine."HS Code";
+                    // if PurchOrderLine."HTS Code" <> Sline."HTS Code" then
+                    //     Sline."HTS Code" := PurchOrderLine."HTS Code";
+                    Sline."PO No." := Pline."Document No.";
+                    Sline."PO Line No." := Pline."Line No.";
+                    if Pline."No. of Packages" <> Sline."No. of Packages" then
+                        Sline."No. of Packages" := Pline."No. of Packages";
+                    if Pline."Total Gross (KG)" <> Sline."Total Gross (KG)" then
+                        Sline."Total Gross (KG)" := Pline."Total Gross (KG)";
+                    if Pline."Total CBM" <> Sline."Total CBM" then
+                        Sline."Total CBM" := Pline."Total CBM";
+                    if Pline."Total Net (KG)" <> Sline."Total Net (KG)" then
+                        Sline."Total Net (KG)" := Pline."Total Net (KG)";
+                    // if PurchOrderLine."Port of Load" <> '' then
+                    //     if PurchOrderLine."Port of Load" <> Sline."Port of Load" then
+                    //         Sline."Port of Load" := PurchOrderLine."Port of Load";
+                    // if PurchOrderLine."Port of Discharge" <> '' then
+                    //     if PurchOrderLine."Port of Discharge" <> Sline."Port of Discharge" then
+                    //         Sline."Port of Discharge" := PurchOrderLine."Port of Discharge";
+                    // if PurchOrderLine."Country of Origin" <> '' then
+                    //     if PurchOrderLine."Country of Origin" <> Sline."Country of Origin" then
+                    //         Sline."Country of Origin" := PurchOrderLine."Country of Origin";
+                    // if PurchOrderLine."Country of provenance" <> '' then
+                    //     if PurchOrderLine."Country of provenance" <> Sline."Country of provenance" then
+                    //         Sline."Country of provenance" := PurchOrderLine."Country of provenance";
+                    // if PurchOrderLine."Country of Acquisition" <> '' then
+                    //     if PurchOrderLine."Country of Acquisition" <> Sline."Country of Acquisition" then
+                    //         Sline."Country of Acquisition" := PurchOrderLine."Country of Acquisition";
+                    // if PurchOrderLine.VIA <> '' then
+                    //     if PurchOrderLine.VIA <> Sline.VIA then
+                    //         Sline."VIA" := PurchOrderLine."VIA";
+                    // if PurchOrderLine."Milestone Status" <> '' then
+                    //     if PurchOrderLine."Milestone Status" <> Sline."Milestone Status" then
+                    //         Sline."Milestone Status" := PurchOrderLine."Milestone Status";
+                    //if PurchOrderLine."Pallet Quantity" <> Sline."Pallet Quantity" then
+                    //    Sline."Pallet Quantity" := PurchOrderLine."Pallet Quantity";
+                    Sline.Modify();
+                end;
+            until Pline.Next() = 0;
+    end;
 }

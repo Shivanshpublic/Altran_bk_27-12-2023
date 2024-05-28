@@ -31,7 +31,7 @@ report 50038 "Altran Sales - Order Conf.1"
             {
             }
             COLUMN(CompanyPostCode; CompanyInfo."Post Code") { }
-            COLUMN(HomePage; CompanyInfo."Home Page")
+            COLUMN(HomePage; CompanyInfo."Home Page Custom")
             {
             }
             COLUMN(CompanyCountry; GetCountryDesc(CompanyInfo."Country/Region Code")) { }
@@ -47,7 +47,7 @@ report 50038 "Altran Sales - Order Conf.1"
             {
 
             }
-            column(CompanyHomePage; CompanyInfo."Home Page")
+            column(CompanyHomePage; CompanyInfo."Home Page Custom")
             {
             }
             column(CompanyEMail; CompanyInfo."E-Mail")
@@ -116,12 +116,12 @@ report 50038 "Altran Sales - Order Conf.1"
             column(CompanyVATRegistrationNo_Lbl; CompanyInfo.GetVATRegistrationNumberLbl)
             {
             }
-            column(CompanyLegalOffice; CompanyInfo.GetLegalOffice)
-            {
-            }
-            column(CompanyLegalOffice_Lbl; CompanyInfo.GetLegalOfficeLbl)
-            {
-            }
+            // column(CompanyLegalOffice; CompanyInfo.GetLegalOffice)
+            // {
+            // }
+            // column(CompanyLegalOffice_Lbl; CompanyInfo.GetLegalOfficeLbl)
+            // {
+            // }
             column(CompanyCustomGiro; '')
             {
             }

@@ -8,6 +8,11 @@ pageextension 50058 CompanyInformationExt extends "Company Information"
             {
                 ApplicationArea = All;
             }
+            field("Home Page Custom"; Rec."Home Page Custom")
+            {
+                ApplicationArea = All;
+                Visible = false;
+            }
         }
     }
 

@@ -111,11 +111,14 @@ pageextension 50012 ItemCard extends "Item Card"
             Visible = EnableCost;
             Editable = EnableCost;
         }
-        addafter(Planning)
+        addlast(content)
         {
-            group(Details)
+            part(ItemSpecLines; "Item Specification Subpage")
             {
-                Caption = 'Details';
+                ApplicationArea = Suite;
+                SubPageLink = "Item No." = FIELD("No.");
+                SubPageView = SORTING("Item No.", Specification);
+                UpdatePropagation = Both;
             }
         }
     }
@@ -137,6 +140,15 @@ pageextension 50012 ItemCard extends "Item Card"
                 begin
 
                 end;
+            }
+            action("Item Specifications")
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = page "Item Specification";
+                RunPageLink = "Item No." = field("No.");
             }
             action("Update UL Certificate")
             {

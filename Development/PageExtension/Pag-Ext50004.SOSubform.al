@@ -49,11 +49,13 @@ pageextension 50004 SOSubform extends "Sales Order Subform"
             {
                 ApplicationArea = All;
                 Caption = 'Purchase Order No.';
+                Editable = EnablePOChange;
             }
             field("PO Line No."; Rec."PO Line No.")
             {
                 ApplicationArea = All;
                 Caption = 'Purchase Order Line No.';
+                Editable = EnablePOChange;
             }
             field("No. of Packages"; Rec."No. of Packages")
             {
@@ -183,4 +185,17 @@ pageextension 50004 SOSubform extends "Sales Order Subform"
             }
         }
     }
+    trigger OnOpenPage()
+    var
+        UserSetup: Record "User Setup";
+    begin
+        EnablePOChange := false;
+        if Usersetup.Get(UserId) then begin
+            if UserSetup."Modify PO on SO" then
+                EnablePOChange := true;
+        end;
+    end;
+
+    var
+        EnablePOChange: Boolean;
 }

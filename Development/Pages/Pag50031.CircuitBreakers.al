@@ -4,7 +4,7 @@ page 50031 "Circuit Breakers"
     Caption = 'Circuit Breakers';
     PageType = List;
     SourceTable = "Circuit Breakers";
-    
+
     layout
     {
         area(content)
@@ -51,6 +51,15 @@ page 50031 "Circuit Breakers"
                 {
                     ToolTip = 'Specifies the value of the Voltage field.';
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

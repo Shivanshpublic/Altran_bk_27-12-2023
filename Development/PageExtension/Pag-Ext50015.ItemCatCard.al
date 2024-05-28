@@ -50,5 +50,14 @@ pageextension 50015 ItemCatCard extends "Item Category Card"
                 ApplicationArea = All;
             }
         }
+        addlast(content)
+        {
+            part(ItemCatSpecLines; "Item Category Spec Subpage")
+            {
+                ApplicationArea = Suite;
+                SubPageLink = ItemCategory = FIELD(Code);
+                SubPageView = SORTING(ItemCategory, Specification);
+            }
+        }
     }
 }

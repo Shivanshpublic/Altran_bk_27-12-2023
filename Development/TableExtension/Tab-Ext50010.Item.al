@@ -78,16 +78,28 @@ tableextension 50010 Item extends Item
             trigger OnAfterValidate()
             var
                 ItemCategory: Record "Item Category";
+                ItemCatSpec: Record "Item Category Specification";
+                ItemSpec: Record "Item Specification";
             begin
-                if (Type = Type::Inventory) AND (Blocked = false) AND ("Item Category Code" = '') then begin
+                if (Type = Type::Inventory) AND ("Item Category Code" <> '') then begin
                     if ItemCategory.Get("Item Category Code") then begin
                         "HS Code" := ItemCategory."HS Code";
                         "HTS Code" := ItemCategory."HTS Code";
-                        Validate("Item Tracking Code", ItemCategory.Code);
+                        Validate("Item Tracking Code", ItemCategory."Item Tracking Code");
                         Validate("Lot Nos.", ItemCategory."Lot Nos.");
                         Validate("Expiration Calculation", ItemCategory."Expiration Calculation");
                     end;
                 end;
+
+                ItemCatSpec.Reset();
+                ItemCatSpec.SetRange(ItemCategory, "Item Category Code");
+                if ItemCatSpec.FindFirst() then
+                    repeat
+                        ItemSpec.Init();
+                        ItemSpec."Item No." := "No.";
+                        ItemSpec.Specification := ItemCatSpec.Specification;
+                        if ItemSpec.Insert() then;
+                    until ItemCatSpec.Next() = 0;
             end;
         }
         modify("Vendor No.")

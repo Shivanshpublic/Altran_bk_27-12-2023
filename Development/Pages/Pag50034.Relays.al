@@ -4,7 +4,7 @@ page 50034 Relays
     Caption = 'Relays';
     PageType = List;
     SourceTable = Relays;
-    
+
     layout
     {
         area(content)
@@ -79,6 +79,15 @@ page 50034 Relays
                 {
                     ToolTip = 'Specifies the value of the Termination field.';
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

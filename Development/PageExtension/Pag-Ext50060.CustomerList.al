@@ -95,7 +95,8 @@ pageextension 50060 CustomerListExt extends "Customer List"
             FileName := CopyStr(FileName, 1, StrPos(FileName, '-') - 1);
             FileExtension := CopyStr(FileMgt.GetExtension(EntryListKey), 1, MaxStrLen(FileExtension));
             TempBlob.CreateOutStream(EntryOutStream);
-            DataCompression.ExtractEntry(EntryListKey, EntryOutStream, Length);
+            //DataCompression.ExtractEntry(EntryListKey, EntryOutStream, Length);
+            DataCompression.ExtractEntry(EntryListKey, EntryOutStream);
             TempBlob.CreateInStream(EntryInStream);
             //Import each file where you want
             if not Cust.Get(FileName) then
@@ -164,7 +165,8 @@ pageextension 50060 CustomerListExt extends "Customer List"
             FileName := CopyStr(FileName, 1, StrPos(FileName, '-') - 1);
             FileExtension := CopyStr(FileMgt.GetExtension(EntryListKey), 1, MaxStrLen(FileExtension));
             TempBlob.CreateOutStream(EntryOutStream);
-            DataCompression.ExtractEntry(EntryListKey, EntryOutStream, Length);
+            //DataCompression.ExtractEntry(EntryListKey, EntryOutStream, Length);
+            DataCompression.ExtractEntry(EntryListKey, EntryOutStream);
             TempBlob.CreateInStream(EntryInStream);
             //Import each file where you want
             if not Cust.Get(FileName) then

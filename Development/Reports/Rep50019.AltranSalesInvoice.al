@@ -22,6 +22,7 @@ report 50019 "Altran Sales - Invoice"
             column(CompanyAddress1; CompanyAddr[1])
             {
             }
+            COLUMN(HomePage; CompanyInfo."Home Page Custom") { }
             column(CompanyAddress2; CompanyAddr[2])
             {
             }
@@ -43,7 +44,7 @@ report 50019 "Altran Sales - Invoice"
             column(CompanyAddress8; CompanyAddr[8])
             {
             }
-            column(CompanyHomePage; CompanyInfo."Home Page")
+            column(CompanyHomePage; CompanyInfo."Home Page Custom")
             {
             }
             column(CompanyEMail; CompanyInfo."E-Mail")
@@ -115,12 +116,12 @@ report 50019 "Altran Sales - Invoice"
             column(CompanyVATRegistrationNo_Lbl; CompanyInfo.GetVATRegistrationNumberLbl)
             {
             }
-            column(CompanyLegalOffice; CompanyInfo.GetLegalOffice)
-            {
-            }
-            column(CompanyLegalOffice_Lbl; CompanyInfo.GetLegalOfficeLbl)
-            {
-            }
+            // column(CompanyLegalOffice; CompanyInfo.GetLegalOffice)
+            // {
+            // }
+            // column(CompanyLegalOffice_Lbl; CompanyInfo.GetLegalOfficeLbl)
+            // {
+            // }
             column(CompanyCustomGiro; '')
             {
             }
@@ -991,26 +992,26 @@ report 50019 "Altran Sales - Invoice"
                             CurrReport.Break();
                 end;
             }
-            dataitem(PaymentReportingArgument; "Payment Reporting Argument")
-            {
-                DataItemTableView = SORTING(Key);
-                UseTemporary = true;
-                column(PaymentServiceLogo; Logo)
-                {
-                }
-                column(PaymentServiceLogo_UrlText; "URL Caption")
-                {
-                }
-                column(PaymentServiceLogo_Url; GetTargetURL)
-                {
-                }
-                column(PaymentServiceText_UrlText; "URL Caption")
-                {
-                }
-                column(PaymentServiceText_Url; GetTargetURL)
-                {
-                }
-            }
+            // dataitem(PaymentReportingArgument; "Payment Reporting Argument")
+            // {
+            //     DataItemTableView = SORTING(Key);
+            //     UseTemporary = true;
+            //     column(PaymentServiceLogo; Logo)
+            //     {
+            //     }
+            //     column(PaymentServiceLogo_UrlText; "URL Caption")
+            //     {
+            //     }
+            //     column(PaymentServiceLogo_Url; GetTargetURL)
+            //     {
+            //     }
+            //     column(PaymentServiceText_UrlText; "URL Caption")
+            //     {
+            //     }
+            //     column(PaymentServiceText_Url; GetTargetURL)
+            //     {
+            //     }
+            // }
             dataitem(LeftHeader; "Name/Value Buffer")
             {
                 DataItemTableView = SORTING(ID);
@@ -1182,7 +1183,7 @@ report 50019 "Altran Sales - Invoice"
 
                 GetLineFeeNoteOnReportHist("No.");
 
-                PaymentServiceSetup.CreateReportingArgs(PaymentReportingArgument, Header);
+                //PaymentServiceSetup.CreateReportingArgs(PaymentReportingArgument, Header);
 
                 CalcFields("Amount Including VAT");
                 RemainingAmount := GetRemainingAmount;
@@ -1621,7 +1622,7 @@ report 50019 "Altran Sales - Invoice"
         RightHeader.DeleteAll();
 
         FillNameValueTable(RightHeader, EMailLbl, CompanyInfo."E-Mail");
-        FillNameValueTable(RightHeader, HomePageLbl, CompanyInfo."Home Page");
+        FillNameValueTable(RightHeader, HomePageLbl, CompanyInfo."Home Page Custom");
         FillNameValueTable(RightHeader, CompanyInfoPhoneNoLbl, CompanyInfo."Phone No.");
         //FillNameValueTable(RightHeader, CompanyInfo.GetRegistrationNumberLbl, CompanyInfo.GetRegistrationNumber);
         //FillNameValueTable(RightHeader, CompanyInfo.GetVATRegistrationNumberLbl, CompanyInfo.GetVATRegistrationNumber);

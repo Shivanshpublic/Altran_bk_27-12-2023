@@ -45,7 +45,7 @@ REPORT 50010 "Account Statement"
             COLUMN(CompanyFax; 'Fax: ' + CompanyInfo."Fax No.")
             {
             }
-            COLUMN(HomePage; CompanyInfo."Home Page")
+            COLUMN(HomePage; CompanyInfo."Home Page Custom")
             {
             }
             column(YellowColor; YellowColor)

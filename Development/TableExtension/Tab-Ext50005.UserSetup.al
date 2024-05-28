@@ -17,5 +17,10 @@ tableextension 50005 UserSetup extends "User Setup"
             Caption = 'View Cost';
             DataClassification = ToBeClassified;
         }
+        field(50003; "Modify PO on SO"; Boolean)
+        {
+            Caption = 'Modify PO on SO';
+            DataClassification = ToBeClassified;
+        }
     }
 }

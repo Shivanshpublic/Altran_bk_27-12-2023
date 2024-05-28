@@ -11,7 +11,7 @@ REPORT 50029 "Remittance Advice"
         {
             DataItemTableView = SORTING("Entry No.");// order(ascending) where("Document Type" = const(Payment));
             RequestFilterFields = "Vendor No.";
-
+            CalcFields = Amount;
             COLUMN(No_; "Document No.")
             {
             }
@@ -52,7 +52,7 @@ REPORT 50029 "Remittance Advice"
                     {
                     }
                     COLUMN(CompanyPostCode; CompanyInfo."Post Code") { }
-                    COLUMN(HomePage; CompanyInfo."Home Page")
+                    COLUMN(HomePage; CompanyInfo."Home Page Custom")
                     {
                     }
                     COLUMN(CompanyCountry; GetCountryDesc(CompanyInfo."Country/Region Code")) { }
@@ -73,7 +73,7 @@ REPORT 50029 "Remittance Advice"
                     {
 
                     }
-                    column(CompanyHomePage; CompanyInfo."Home Page")
+                    column(CompanyHomePage; CompanyInfo."Home Page Custom")
                     {
                     }
 
@@ -133,18 +133,21 @@ REPORT 50029 "Remittance Advice"
                     COLUMN(TotalNetKG; TotalNetKG)
                     {
                     }
-                    DATAITEM("DetailedVendorLedgEntry"; "Vendor Ledger Entry")
+                    COLUMN(TotPaidAmount; VendorLedgerEntry.Amount)
+                    {
+                    }
+                    DATAITEM("DetailedVendorLedgEntry"; "Detailed Vendor Ledg. Entry")
                     {
                         DataItemLinkReference = VendorLedgerEntry;
-                        DataItemLink = "Closed By Entry No." = FIELD("Entry No.");
-                        DataItemTableView = sorting("Entry No.") order(ascending);// where("Document Type" = const(Invoice));
-                        CalcFields = Amount;
-                        column(PaidInvoiceNo;
-                        "Document No.")
+                        DataItemLink = "Applied Vend. Ledger Entry No." = FIELD("Entry No.");
+                        //DataItemTableView = sorting("Vendor Ledger Entry No.", "Posting Date") order(ascending) where("Initial Document Type" = filter(Invoice), "Entry Type" = filter(Application), "Unapplied" = filter(false));
+                        DataItemTableView = sorting("Vendor Ledger Entry No.", "Posting Date") order(ascending) where("Initial Document Type" = filter(<> Payment), "Entry Type" = filter(Application), "Unapplied" = filter(false));
+
+                        column(PaidInvoiceNo; PaidInvoiceNo)
                         {
 
                         }
-                        column(External_Document_No; "External Document No.")
+                        column(External_Document_No; ExtDocNo)
                         {
 
                         }
@@ -152,11 +155,11 @@ REPORT 50029 "Remittance Advice"
                         {
 
                         }
-                        column(Document_Type; "Document Type")
+                        column(Document_Type; "Initial Document Type")
                         {
 
                         }
-                        column(VLEDescription; Description)
+                        column(VLEDescription; VLEDesc)
                         {
 
                         }
@@ -164,11 +167,15 @@ REPORT 50029 "Remittance Advice"
                         {
 
                         }
+                        column(PaidAmount; PaidAmount)
+                        {
+
+                        }
 
                         DATAITEM(PurchaseLine; "Purch. Inv. Line")
                         {
                             DataItemLinkReference = DetailedVendorLedgEntry;
-                            DataItemLink = "Document No." = FIELD("Document No.");
+                            //DataItemLink = "Document No." = FIELD("Document No.");
                             COLUMN(ItemNo; "No.")
                             {
                             }
@@ -213,11 +220,24 @@ REPORT 50029 "Remittance Advice"
                             }
                             TRIGGER OnPreDataItem()
                             BEGIN
+                                SetRange("Document No.", PaidInvoiceNo);
+                                SetFilter(Type, '<>%1', PurchaseLine.Type::" ");
+                                SetFilter(Quantity, '<>%1', 0);
                                 NoOfRecords := PurchaseLine.COUNT;
+
                             END;
 
                             trigger OnAfterGetRecord()
                             begin
+                                //message('Purchase Invoice');
+                                if (PrevPaidInvoiceNo = PaidInvoiceNo) then
+                                    PaidAmount := 0
+                                else Begin
+                                    // if DetailedVendorLedgEntry."Initial Document Type" = DetailedVendorLedgEntry."Initial Document Type"::Invoice then
+                                    //     TotPaidAmount := PaidAmount;
+                                End;
+                                PrevPaidInvoiceNo := PaidInvoiceNo;
+
                                 if (Quantity = 0) AND (Type <> Type::" ") then
                                     CurrReport.Skip();
                             end;
@@ -226,10 +246,26 @@ REPORT 50029 "Remittance Advice"
                         var
                             PurchInvHeader: Record "Purch. Inv. Header";
                         BEGIN
+                            //message('Child VLE');
+                            //message('Payment Amount %1', DetailedVendorLedgEntry.Amount);
                             Clear(VendorInvoiceNo);
+                            Clear(ExtDocNo);
+                            Clear(VLEDesc);
+                            Clear(PaidInvoiceNo);
+                            Clear(PrevPaidInvoiceNo);
+                            Clear(PaidAmount);
+                            PaidAmount := DetailedVendorLedgEntry.Amount;
+
+                            TotPaidAmount += PaidAmount;
+                            if VLE.Get(DetailedVendorLedgEntry."Vendor Ledger Entry No.") then begin
+                                ExtDocNo := VLE."External Document No.";
+                                VLEDesc := VLE.Description;
+                                PaidInvoiceNo := VLE."Document No.";
+                            end;
                             PurchInvHeader.Reset();
-                            If PurchInvHeader.Get(DetailedVendorLedgEntry."Document No.") then
+                            If PurchInvHeader.Get(PaidInvoiceNo) then begin
                                 VendorInvoiceNo := PurchInvHeader."Vendor Invoice No.";
+                            end;
                         END;
 
                     }
@@ -273,6 +309,7 @@ REPORT 50029 "Remittance Advice"
                 var
                     UserSetup: Record "User Setup";
                 BEGIN
+                    //message('Parent VLE');
                     OutPutNo += 1;
                     Clear(RecVendor);
                     if RecVendor.GET(VendorLedgerEntry."Vendor No.") then;
@@ -402,5 +439,12 @@ REPORT 50029 "Remittance Advice"
         ShipmentMethod: Record "Shipment Method";
         RecVendor: Record Vendor;
         VendorInvoiceNo: Code[35];
+        ExtDocNo: Code[35];
+        VLE: Record "Vendor Ledger Entry";
+        VLEDesc: Text[100];
+        PaidInvoiceNo: code[20];
+        PrevPaidInvoiceNo: Code[20];
+        PaidAmount: Decimal;
+        TotPaidAmount: Decimal;
 
 }

@@ -4,7 +4,7 @@ page 50033 "Voltage Monitors"
     Caption = 'Voltage Monitors';
     PageType = List;
     SourceTable = "Voltage Monitors";
-    
+
     layout
     {
         area(content)
@@ -63,6 +63,15 @@ page 50033 "Voltage Monitors"
                 {
                     ToolTip = 'Specifies the value of the Under Voltage field.';
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

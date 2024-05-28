@@ -308,12 +308,15 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
 
     TRIGGER OnInsert()
     var
-        recNoSeriesMgt: Codeunit NoSeriesManagement;
+        recNoSeriesMgt: Codeunit "No. Series";
+        //recNoSeriesMgt1: Codeunit NoSeriesManagement;
+        //recNoSeriesMgt11: Codeunit "No. Series - Batch";
         GenLedSetup: Record "General Ledger Setup";
     BEGIN
         GenLedSetup.GET;
         GenLedSetup.TestField("Shipment Tracking Nos.");
         if Code = '' then begin
+            //Code := recNoSeriesMgt.GetNextNo(GenLedSetup."Shipment Tracking Nos.", Today, true);
             Code := recNoSeriesMgt.GetNextNo(GenLedSetup."Shipment Tracking Nos.", Today, true);
         end;
 

@@ -4,7 +4,7 @@ page 50030 "EMI Filters"
     Caption = 'EMI Filters';
     PageType = List;
     SourceTable = "EMI Filters";
-    
+
     layout
     {
         area(content)
@@ -67,6 +67,15 @@ page 50030 "EMI Filters"
                 {
                     ToolTip = 'Specifies the value of the Voltage field.';
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

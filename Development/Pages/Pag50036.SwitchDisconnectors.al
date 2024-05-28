@@ -4,7 +4,7 @@ page 50036 "Switch Disconnectors"
     Caption = 'Switch Disconnectors';
     PageType = List;
     SourceTable = "Switch Disconnectors";
-    
+
     layout
     {
         area(content)
@@ -55,6 +55,15 @@ page 50036 "Switch Disconnectors"
                 {
                     ToolTip = 'Specifies the value of the SystemModifiedBy field.';
                 }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }

@@ -64,6 +64,26 @@ tableextension 50013 "Item Categories" extends "Item Category"
         {
             Caption = 'Expiration Calculation';
         }
+
+        modify("Parent Category")
+        {
+            trigger OnAfterValidate()
+            var
+
+                ItemCatSpec: Record "Item Category Specification";
+                ItemCatSpec1: Record "Item Category Specification";
+            begin
+                ItemCatSpec.SetRange(ItemCategory, "Parent Category");
+                if ItemCatSpec.FindFirst() then
+                    repeat
+                        ItemCatSpec1.Init();
+                        ItemCatSpec1.ItemCategory := Rec.Code;
+                        ItemCatSpec1.Specification := ItemCatSpec.Specification;
+                        if ItemCatSpec1.Insert() then;
+
+                    until ItemCatSpec.Next() = 0;
+            end;
+        }
     }
     local procedure CalcTotalDuties()
     begin

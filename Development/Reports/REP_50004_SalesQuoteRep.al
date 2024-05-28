@@ -141,7 +141,7 @@ REPORT 50004 "Sales Quote Report"
                     COLUMN(BankName; CompanyInfo."Bank Name")
                     {
                     }
-                    COLUMN(HomePage; CompanyInfo."Home Page")
+                    COLUMN(HomePage; CompanyInfo."Home Page Custom")
                     {
                     }
                     COLUMN(BankBranchNo; CompanyInfo."Bank Branch No.")

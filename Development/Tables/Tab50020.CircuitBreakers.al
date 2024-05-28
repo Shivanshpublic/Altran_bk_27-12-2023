@@ -25,11 +25,23 @@ table 50020 "Circuit Breakers"
         {
             Caption = 'Rated Breaking Capacity';
         }
+        field(100; "Item Category Code"; code[20])
+        {
+            TableRelation = "Item Category";
+            Editable = false;
+        }
+        field(101; "Item No."; code[20])
+        {
+            TableRelation = "Item";
+            Editable = false;
+        }
+
+
 
     }
     keys
     {
-        key(PK; "Rated current")
+        key(Key1; "Item Category Code", "Item No.")
         {
             Clustered = true;
         }

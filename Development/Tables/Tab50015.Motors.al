@@ -33,6 +33,17 @@ table 50015 Motors
         field(28; "Torque (Nm)"; Decimal) { }
         field(29; "IP"; Enum IP_Option) { }
         field(30; "Shaft Di X Length (mm)"; Decimal) { }
+        field(100; "Item Category Code"; code[20])
+        {
+            TableRelation = "Item Category";
+            Editable = false;
+        }
+        field(101; "Item No."; code[20])
+        {
+            TableRelation = "Item";
+            Editable = false;
+        }
+
 
 
 
@@ -52,7 +63,7 @@ table 50015 Motors
 
     keys
     {
-        key(Key1; "Size(mm)")
+        key(Key1; "Item Category Code", "Item No.")
         {
             Clustered = true;
         }

@@ -4,7 +4,7 @@ page 50039 "PULLOUT-DSCN-SWITCH "
     Caption = 'PULLOUT-DSCN-SWITCH ';
     PageType = List;
     SourceTable = "PULLOUT-DSCN-SWITCH ";
-    
+
     layout
     {
         area(content)
@@ -42,6 +42,14 @@ page 50039 "PULLOUT-DSCN-SWITCH "
                 field(SystemModifiedBy; Rec.SystemModifiedBy)
                 {
                     ToolTip = 'Specifies the value of the SystemModifiedBy field.';
+                }
+                field("Item Category Code"; Rec."Item Category Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Item No."; Rec."Item No.")
+                {
+                    ApplicationArea = All;
                 }
             }
         }

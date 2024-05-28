@@ -51,9 +51,7 @@ REPORT 50000 "Sales Invoice"
                     {
                     }
                     COLUMN(CompanyPostCode; CompanyInfo."Post Code") { }
-                    COLUMN(HomePage; CompanyInfo."Home Page")
-                    {
-                    }
+                    COLUMN(HomePage; CompanyInfo."Home Page Custom") { }
                     COLUMN(CompanyCountry; GetCountryDesc(CompanyInfo."Country/Region Code")) { }
                     COLUMN(ShiptoName; SalesInvoiceHeader."Ship-to Name") { }
                     COLUMN(ShiptoAddress; SalesInvoiceHeader."Ship-to Address") { }
@@ -103,6 +101,7 @@ REPORT 50000 "Sales Invoice"
                     DATAITEM(SalesInvoiceLine; "Sales Invoice Line")
                     {
                         DataItemLinkReference = SalesInvoiceHeader;
+                        DataItemTableView = SORTING("No.") WHERE("Parent Line No." = FILTER(= 0));
                         DataItemLink = "Document No." = FIELD("No.");
                         COLUMN(ItemNo; "No.") { }
                         COLUMN(ItemReferenceNo; "Item Reference No.") { }
@@ -125,6 +124,44 @@ REPORT 50000 "Sales Invoice"
 
                         }
                         COLUMN(TotalGrossKG; "Total Gross (KG)") { }
+
+                        TRIGGER OnPreDataItem()
+                        BEGIN
+                            NoOfRecords := SalesInvoiceLine.COUNT;
+                        END;
+
+                        trigger OnAfterGetRecord()
+                        begin
+                            if (Quantity = 0) AND (Type <> Type::" ") then
+                                CurrReport.Skip();
+                        end;
+                    }
+                    DATAITEM(ParentSalesInvoiceLine; "Sales Invoice Line")
+                    {
+                        DataItemLinkReference = SalesInvoiceHeader;
+                        DataItemTableView = SORTING("No.") WHERE("Parent Line No." = FILTER(<> 0));
+                        DataItemLink = "Document No." = FIELD("No.");
+                        COLUMN(PItemNo; "No.") { }
+                        COLUMN(PItemReferenceNo; "Item Reference No.") { }
+                        COLUMN(PDescription; Description) { }
+                        COLUMN(PDescription2; "Description 2") { }
+                        COLUMN(PUnitofMeasureCode; "Unit of Measure Code") { }
+                        COLUMN(PHSCode; "HS Code") { }
+                        COLUMN(PHTSCode; "HTS Code") { }
+                        COLUMN(PQuantity; Quantity) { }
+                        COLUMN(PUnitPrice; "Unit Price") { }
+                        COLUMN(PExtendedPrice; Amount) { }
+                        COLUMN(PLine_Amount; "Line Amount") { }
+                        COLUMN(PLine_Discount_Amount; "Line Discount Amount") { }
+                        COLUMN(PLineAmountAfterDisc; "Line Discount Amount" - "Line Amount") { }
+                        COLUMN(PAmountIncVAT; "Amount Including VAT") { }
+                        COLUMN(PNoOfPackages; "No. of Packages") { }
+                        COLUMN(PTotalCBM; "Total CBM") { }
+                        column(PShipment_Date; Format("Shipment Date", 0, '<Month,2>/<Day,2>/<Year4>'))
+                        {
+
+                        }
+                        COLUMN(PTotalGrossKG; "Total Gross (KG)") { }
 
                         TRIGGER OnPreDataItem()
                         BEGIN

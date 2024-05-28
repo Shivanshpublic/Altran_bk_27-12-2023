@@ -53,11 +53,21 @@ table 50023 Relays
         {
             Caption = 'Special Requests';
         }
+        field(100; "Item Category Code"; code[20])
+        {
+            TableRelation = "Item Category";
+            Editable = false;
+        }
+        field(101; "Item No."; code[20])
+        {
+            TableRelation = "Item";
+            Editable = false;
+        }
 
     }
     keys
     {
-        key(PK; Series)
+        key(Key1; "Item Category Code", "Item No.")
         {
             Clustered = true;
         }

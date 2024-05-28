@@ -45,135 +45,60 @@ pageextension 50014 ItemCatg extends "Item Categories"
             {
                 ApplicationArea = All;
             }
+
         }
     }
     actions
     {
         addfirst(processing)
         {
-            action("Motors")
+            action("Specifications")
             {
                 ApplicationArea = All;
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedOnly = true;
-                RunObject = page Motors;
+                RunObject = page "Specification List";
             }
-            action("Blowers")
+            action("Item Category Specifications")
             {
                 ApplicationArea = All;
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedOnly = true;
-                RunObject = page Blowers;
+                RunObject = page "Item Category Specification";
+                RunPageLink = ItemCategory = field(Code);
             }
-            action("DC")
+            action("Apply Item Category Specifications")
             {
                 ApplicationArea = All;
+                ToolTip = 'Apply Item Category Specification to linked Items';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedOnly = true;
-                RunObject = page DC;
+                trigger OnAction()
+                var
+                    ItemCategory: Record "Item Category";
+                    ItemCatSpec: Record "Item Category Specification";
+                    ItemSpec: Record "Item Specification";
+                    Item: Record Item;
+                begin
+                    Item.Reset();
+                    Item.SetRange("Item Category Code", Rec.Code);
+                    if Item.FindFirst() then
+                        repeat
+                            ItemCatSpec.Reset();
+                            ItemCatSpec.SetRange(ItemCategory, Item."Item Category Code");
+                            if ItemCatSpec.FindFirst() then
+                                repeat
+                                    ItemSpec.Init();
+                                    ItemSpec."Item No." := Item."No.";
+                                    ItemSpec.Specification := ItemCatSpec.Specification;
+                                    if ItemSpec.Insert() then;
+                                until ItemCatSpec.Next() = 0;
+                        until Item.Next() = 0;
+                end;
             }
-            action("SSR")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page SSR;
-            }
-            action("DP")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page DP;
-            }
-            action("EMI Filters")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "EMI Filters";
-            }
-            action("Circuit Breakers")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "Circuit Breakers";
-            }
-            action("XFMR")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "XFMR";
-            }
-            action("Voltage Monitors")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "Voltage Monitors";
-            }
-            action("Relays")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "Relays";
-            }
-            action("IEC Contactors")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "IEC Contactors";
-            }
-            action("Switch Disconnectors")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "Switch Disconnectors";
-            }
-            action("Start Capacitors")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "Start Capacitors";
-            }
-            action("Run Caps")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "Run Caps";
-            }
-            action("PULLOUT-DSCN-SWITCH ")
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-                RunObject = page "PULLOUT-DSCN-SWITCH ";
-            }
-
-
-
         }
     }
 

@@ -3524,6 +3524,9 @@ End Function
         <Field Name="CompanyAddress1">
           <DataField>CompanyAddress1</DataField>
         </Field>
+        <Field Name="HomePage">
+          <DataField>HomePage</DataField>
+        </Field>
         <Field Name="CompanyAddress2">
           <DataField>CompanyAddress2</DataField>
         </Field>
@@ -3616,12 +3619,6 @@ End Function
         </Field>
         <Field Name="CompanyVATRegistrationNo_Lbl">
           <DataField>CompanyVATRegistrationNo_Lbl</DataField>
-        </Field>
-        <Field Name="CompanyLegalOffice">
-          <DataField>CompanyLegalOffice</DataField>
-        </Field>
-        <Field Name="CompanyLegalOffice_Lbl">
-          <DataField>CompanyLegalOffice_Lbl</DataField>
         </Field>
         <Field Name="CompanyCustomGiro">
           <DataField>CompanyCustomGiro</DataField>
@@ -4288,21 +4285,6 @@ End Function
         </Field>
         <Field Name="LineFeeCaptionText">
           <DataField>LineFeeCaptionText</DataField>
-        </Field>
-        <Field Name="PaymentServiceLogo">
-          <DataField>PaymentServiceLogo</DataField>
-        </Field>
-        <Field Name="PaymentServiceLogo_UrlText">
-          <DataField>PaymentServiceLogo_UrlText</DataField>
-        </Field>
-        <Field Name="PaymentServiceLogo_Url">
-          <DataField>PaymentServiceLogo_Url</DataField>
-        </Field>
-        <Field Name="PaymentServiceText_UrlText">
-          <DataField>PaymentServiceText_UrlText</DataField>
-        </Field>
-        <Field Name="PaymentServiceText_Url">
-          <DataField>PaymentServiceText_Url</DataField>
         </Field>
         <Field Name="LeftHeaderName">
           <DataField>LeftHeaderName</DataField>
