@@ -297,6 +297,8 @@ TABLE 50001 "Tracking Shipment Line"
         Clear(RecHdr);
         RecHdr.GET(Rec."Tracking Code");
         RecHdr.TestField(Status, RecHdr.Status::Open);
+        Validate("Date of Arrival", RecHdr."Date of Arrival");
+        Validate("Date of Dispatch", RecHdr."Date of Dispatch");
         if "PO Line No." <> 0 then
             UpdatePOLine("PO No.", "PO Line No.");
         if "Receipt Line No." <> 0 then

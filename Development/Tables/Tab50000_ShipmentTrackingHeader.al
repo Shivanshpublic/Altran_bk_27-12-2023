@@ -89,7 +89,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         field(15; "Surcharge Limit"; Decimal)
         {
             DataClassification = ToBeClassified;
-            Editable = false;
+            //Editable = false;
         }
         field(16; "Additional Revenue"; Decimal)
         {
@@ -394,9 +394,11 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         else
             ConfirmSOAlloc := false;
 
-        Validate("Surcharge Limit", SalesSetup."Surcharge Limit");
+        //Validate("Surcharge Limit", SalesSetup."Surcharge Limit");
         //Validate("Additional Revenue", ("Total Shipment Cost" - SalesSetup."Surcharge Limit") * "Surcharge Factor");
-        Validate("Additional Revenue", ("Total Shipment Cost" - SalesSetup."Surcharge Limit") * "Surcharge Factor");
+        //Validate("Additional Revenue", ("Total Shipment Cost" - SalesSetup."Surcharge Limit") * "Surcharge Factor");
+        CalcFields("Total CBM");
+        Validate("Additional Revenue", (("Total Shipment Cost" - "Surcharge Limit")) * "Surcharge Factor");
 
         ShipmentTrackingLine.Reset;
         ShipmentTrackingLine.SetRange("Tracking Code", Rec.Code);
@@ -407,7 +409,8 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
             repeat
                 ShipmentTrackingLine.CheckPOPosted(ShipmentTrackingLine."PO No.", ShipmentTrackingLine."PO Line No.");
                 if TotPalletQty > 0 then begin
-                    ShipmentTrackingLine."Shipment Cost" := (ShipmentTrackingLine."Pallet Quantity" / TotPalletQty) * Rec."Additional Revenue";
+                    //ShipmentTrackingLine."Shipment Cost" := (ShipmentTrackingLine."Pallet Quantity" / TotPalletQty) * Rec."Additional Revenue";
+                    ShipmentTrackingLine."Shipment Cost" := (("Total Shipment Cost" - "Surcharge Limit") / "Total CBM") * ShipmentTrackingLine."Total CBM" * "Surcharge Factor";
                 end else begin
                     ShipmentTrackingLine."Shipment Cost" := 0;
                 end;

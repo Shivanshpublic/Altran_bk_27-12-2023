@@ -123,12 +123,13 @@ PAGE 50001 "Shipment Tracking Card"
                     ApplicationArea = All;
                     //Enabled = SurchargeCalculated;
                 }
-                field("Surcharge Factor"; Rec."Surcharge Factor")
+                field("Surcharge Limit"; Rec."Surcharge Limit")
                 {
                     ApplicationArea = All;
                     //Enabled = SurchargeCalculated;
                 }
-                field("Surcharge Limit"; Rec."Surcharge Limit")
+
+                field("Surcharge Factor"; Rec."Surcharge Factor")
                 {
                     ApplicationArea = All;
                     //Enabled = SurchargeCalculated;
