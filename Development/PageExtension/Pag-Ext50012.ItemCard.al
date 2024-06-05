@@ -13,6 +13,10 @@ pageextension 50012 ItemCard extends "Item Card"
             {
                 ApplicationArea = All;
             }
+            field("Item Status"; Rec."Item Status")
+            {
+                ApplicationArea = All;
+            }
         }
         addafter("Vendor No.")
         {

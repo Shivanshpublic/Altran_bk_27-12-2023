@@ -13,6 +13,10 @@ pageextension 50042 ItemList extends "Item List"
             {
                 ApplicationArea = All;
             }
+            field("Item Status"; Rec."Item Status")
+            {
+                ApplicationArea = All;
+            }
         }
         addlast(Control1)
         {

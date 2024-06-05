@@ -176,6 +176,12 @@ tableextension 50010 Item extends Item
             Caption = 'Preferred Vendor Name';
             Editable = false;
         }
+        field(50023; "Item Status"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Item Status';
+            TableRelation = "Item Status";
+        }
     }
     fieldgroups
     {

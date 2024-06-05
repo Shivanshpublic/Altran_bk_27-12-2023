@@ -81,7 +81,13 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         {
             DataClassification = ToBeClassified;
             trigger OnValidate()
+            var
+                SalesSetup: Record "Sales & Receivables Setup";
             begin
+                if "Surcharge Limit" = 0 then begin
+                    SalesSetup.Get();
+                    "Surcharge Limit" := SalesSetup."Surcharge Limit";
+                end;
                 SurchargeLineExists();
                 //CalculateSurcharge();
             end;
