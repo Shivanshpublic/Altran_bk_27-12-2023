@@ -2,7 +2,11 @@
   "id": "c1aea910-0615-45ab-b6dd-efe5b715c40b",
   "name": "ALTranDevelopment",
   "publisher": "SCO",
+<<<<<<< HEAD
   "version": "1.0.0.184",
+=======
+  "version": "1.0.0.114",
+>>>>>>> a7a9d6bc218421cfbae918870beedfa93f501e1b
   "brief": "",
   "description": "",
   "privacyStatement": "",
