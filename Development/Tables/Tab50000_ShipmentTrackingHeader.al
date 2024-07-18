@@ -413,8 +413,8 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         TotPalletQty := ShipmentTrackingLine."Pallet Quantity";
         if ShipmentTrackingLine.FindFirst() then
             repeat
-                ShipmentTrackingLine.CheckPOPosted(ShipmentTrackingLine."PO No.", ShipmentTrackingLine."PO Line No.");
-                if TotPalletQty > 0 then begin
+                //ShipmentTrackingLine.CheckPOPosted(ShipmentTrackingLine."PO No.", ShipmentTrackingLine."PO Line No.");
+                if "Total CBM" > 0 then begin
                     //ShipmentTrackingLine."Shipment Cost" := (ShipmentTrackingLine."Pallet Quantity" / TotPalletQty) * Rec."Additional Revenue";
                     ShipmentTrackingLine."Shipment Cost" := (("Total Shipment Cost" - "Surcharge Limit") / "Total CBM") * ShipmentTrackingLine."Total CBM" * "Surcharge Factor";
                 end else begin
@@ -422,7 +422,8 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                 end;
                 ShipmentTrackingLine.Modify();
                 if ConfirmSOAlloc then
-                    InsertSalesSurcharge(ShipmentTrackingLine);
+                    if ShipmentTrackingLine."Shipment Cost" <> 0 then
+                        InsertSalesSurcharge(ShipmentTrackingLine);
             until ShipmentTrackingLine.Next() = 0;
         if ConfirmSOAlloc then begin
             Rec."Sub Status" := Rec."Sub Status"::"Surcharge Calculated";
@@ -540,12 +541,14 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         SalesShipLine.SetRange("Shipment Tracking Code", Rec.Code);
         SalesShipLine.SetRange(Type, SalesShipLine.Type::Item);
         SalesShipLine.SetFilter("Quantity", '<>%1', 0);
+        SalesShipLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
         if SalesShipLine.FindFirst() then
             Error(ErrShipLineExist, SalesShipLine."Document No.");
 
         SalesInvLine.SetRange("Shipment Tracking Code", Rec.Code);
         SalesInvLine.SetRange(Type, SalesInvLine.Type::Item);
         SalesInvLine.SetFilter("Quantity", '<>%1', 0);
+        SalesInvLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
         if SalesInvLine.FindFirst() then
             Error(ErrInvLineExist, SalesInvLine."Document No.");
 
@@ -567,6 +570,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         SalesShipLine.SetRange("Order No.", SalesLine."Document No.");
         SalesShipLine.SetRange(Type, SalesShipLine.Type::Item);
         SalesShipLine.SetFilter("Quantity", '<>%1', 0);
+        SalesShipLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
         if SalesShipLine.FindFirst() then
             Error(ErrShipLineExist, SalesShipLine."Document No.");
     end;
@@ -579,6 +583,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         SalesInvLine.SetRange("Order No.", SalesLine."Document No.");
         SalesInvLine.SetRange(Type, SalesInvLine.Type::Item);
         SalesInvLine.SetFilter("Quantity", '<>%1', 0);
+        SalesInvLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
         if SalesInvLine.FindFirst() then
             Error(ErrInvLineExist, SalesInvLine."Document No.");
     end;

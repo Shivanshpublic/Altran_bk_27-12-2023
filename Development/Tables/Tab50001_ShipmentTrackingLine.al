@@ -159,9 +159,11 @@ TABLE 50001 "Tracking Shipment Line"
                         CheckPOPosted(Rec."PO No.", xRec."PO Line No.");
                         ResetPOLine("PO No.", xRec."PO Line No.");
                     end;
+
                 SelectedPOLineExists(Rec."PO No.", Rec."PO Line No.");
                 if "PO Line No." <> 0 then
-                    UpdatePOLine("PO No.", "PO Line No.");
+                    if xRec."PO Line No." <> Rec."PO Line No." then
+                        UpdatePOLine("PO No.", "PO Line No.");
             end;
         }
         field(10; "Item No."; code[20])
@@ -202,7 +204,8 @@ TABLE 50001 "Tracking Shipment Line"
             begin
                 TestStatusOpen();
                 if "Receipt Line No." <> 0 then
-                    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
+                    if xRec."Pallet Quantity" <> Rec."Pallet Quantity" then
+                        UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
 
             end;
         }
@@ -229,7 +232,8 @@ TABLE 50001 "Tracking Shipment Line"
                 TestStatusOpen();
                 SelectedRcptLineExists("Receipt No.", "Receipt Line No.", Rec."PO No.", Rec."PO Line No.");
                 if "Receipt Line No." <> 0 then
-                    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
+                    if xRec."Receipt Line No." <> Rec."Receipt Line No." then
+                        UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
             end;
         }
         field(23; "Receipt No."; Code[20])
@@ -448,6 +452,7 @@ TABLE 50001 "Tracking Shipment Line"
                     "Total CBM" := PurchaseLine."Total CBM";
                     "Total Gross (KG)" := PurchaseLine."Total Gross (KG)";
                     "Total Net (KG)" := PurchaseLine."Total Net (KG)";
+                    "Pallet Quantity" := PurchaseLine."Pallet Quantity";
                     //Validate("Date of Arrival", PurchaseLine."Expected Receipt Date1");                    
                 end;
             until PurchaseLine.Next() = 0;
@@ -471,8 +476,8 @@ TABLE 50001 "Tracking Shipment Line"
             Description := PurchRcptLine.Description;
             "Total CBM" := PurchRcptLine."Total CBM";
             "Total Gross (KG)" := PurchRcptLine."Total Gross (KG)";
-            "Pallet Quantity" := PurchRcptLine."Gross Weight";
-            //"Pallet Quantity" := PurchRcptLine."Pallet Quantity";
+            //"Pallet Quantity" := PurchRcptLine."Gross Weight";
+            "Pallet Quantity" := PurchRcptLine."Pallet Quantity";
             "Total Net (KG)" := PurchRcptLine."Total Net (KG)";
             "Buy From Vendor No." := PurchRcptLine."Buy-from Vendor No.";
             "Buy From Vendor Name" := PurchRcptLine."Buy-from Vendor Name";
@@ -481,7 +486,7 @@ TABLE 50001 "Tracking Shipment Line"
             end;
 
             if PurchRcptLine.Quantity <> 0 then
-                PurchRcptLine."Unit Volume" := rec."Pallet Quantity" / PurchRcptLine.Quantity;
+                PurchRcptLine."Unit Volume" := PurchRcptLine."Gross Weight" / PurchRcptLine.Quantity;
             PurchRcptLine.Modify();
             if RcptLineNo <> 0 then begin
                 "PO Quantity" := PurchRcptLine.Quantity;

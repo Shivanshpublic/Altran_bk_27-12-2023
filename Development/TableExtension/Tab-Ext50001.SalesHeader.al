@@ -92,11 +92,11 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
                 SalesLine.SetRange("Document No.", "No.");
                 if SalesLine.FindFirst() then
                     repeat
-                        SalesLine.Validate("External Rep", "External Rep");
-                        // if Salesperson.Get("Internal Team") then
-                        //     SalesLine."Internal Team Name" := Salesperson.Name
-                        // else
-                        //     SalesLine."Internal Team Name" := '';
+                        SalesLine."External Rep" := "External Rep";
+                        if Salesperson.Get("External Rep") then
+                            SalesLine."External Team Name" := Salesperson.Name
+                        else
+                            SalesLine."External Team Name" := '';
                         SalesLine.Modify();
                     until SalesLine.Next() = 0;
 
