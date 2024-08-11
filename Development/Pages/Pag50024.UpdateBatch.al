@@ -31,36 +31,48 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                 action("Update Shipment Tracking Line")
                 {
                     ApplicationArea = All;
-                    Caption = 'Update Vendor No. & Name';
-                    ToolTip = 'Update Vendor No. & Name on shipment tracking line from PO or receipt';
-                    Visible = false;
+                    Caption = 'Update Shipment Tracking Linee';
+                    //ToolTip = 'Update Vendor No. & Name on shipment tracking line from PO or receipt';
+                    //Visible = false;
                     trigger OnAction()
                     var
                         i: Integer;
                         PurchLine: Record "Purchase Line";
                         PurchHead: Record "Purchase Header";
                         PurchRcptHead: Record "Purch. Rcpt. Header";
+                        PurchRcptLine: Record "Purch. Rcpt. Line";
                         ShipmentTrackingLine: Record "Tracking Shipment Line";
                     begin
                         ShipmentTrackingLine.SetFilter("PO No.", '<>%1', '');
                         if ShipmentTrackingLine.FindFirst() then
                             repeat
-                                if PurchHead.Get(PurchLine."Document Type"::Order, ShipmentTrackingLine."PO No.") then begin
-                                    if ShipmentTrackingLine."Buy From Vendor No." = '' then begin
-                                        ShipmentTrackingLine."Buy From Vendor No." := PurchHead."Buy-from Vendor No.";
-                                        ShipmentTrackingLine."Buy From Vendor Name" := PurchHead."Buy-from Vendor Name";
+                                if PurchRcptLine.Get(ShipmentTrackingLine."Receipt No.", ShipmentTrackingLine."Receipt Line No.") then begin
+                                    ShipmentTrackingLine."SO No." := PurchRcptLine."SO No.";
+                                    ShipmentTrackingLine."SO Line No." := PurchRcptLine."SO Line No.";
+                                    ShipmentTrackingLine.Modify();
+                                end else begin
+                                    if PurchLine.Get(PurchLine."Document Type"::Order, ShipmentTrackingLine."PO No.", ShipmentTrackingLine."PO Line No.") then begin
+                                        ShipmentTrackingLine."SO No." := PurchLine."SO No.";
+                                        ShipmentTrackingLine."SO Line No." := PurchLine."SO Line No.";
                                         ShipmentTrackingLine.Modify();
-                                        i += 1;
                                     end;
-                                end else
-                                    if PurchRcptHead.Get(ShipmentTrackingLine."Receipt No.") then begin
-                                        if ShipmentTrackingLine."Buy From Vendor No." = '' then begin
-                                            ShipmentTrackingLine."Buy From Vendor No." := PurchRcptHead."Buy-from Vendor No.";
-                                            ShipmentTrackingLine."Buy From Vendor Name" := PurchRcptHead."Buy-from Vendor Name";
-                                            ShipmentTrackingLine.Modify();
-                                            i += 1;
-                                        end;
-                                    end;
+                                end;
+                            // if PurchHead.Get(PurchLine."Document Type"::Order, ShipmentTrackingLine."PO No.") then begin
+                            //     if ShipmentTrackingLine."Buy From Vendor No." = '' then begin
+                            //         ShipmentTrackingLine."Buy From Vendor No." := PurchHead."Buy-from Vendor No.";
+                            //         ShipmentTrackingLine."Buy From Vendor Name" := PurchHead."Buy-from Vendor Name";
+                            //         ShipmentTrackingLine.Modify();
+                            //         i += 1;
+                            //     end;
+                            // end else
+                            //     if PurchRcptHead.Get(ShipmentTrackingLine."Receipt No.") then begin
+                            //         if ShipmentTrackingLine."Buy From Vendor No." = '' then begin
+                            //             ShipmentTrackingLine."Buy From Vendor No." := PurchRcptHead."Buy-from Vendor No.";
+                            //             ShipmentTrackingLine."Buy From Vendor Name" := PurchRcptHead."Buy-from Vendor Name";
+                            //             ShipmentTrackingLine.Modify();
+                            //             i += 1;
+                            //         end;
+                            //     end;
                             until ShipmentTrackingLine.Next() = 0;
                         if i > 0 then
                             Message('%1 recordes updated.', i);

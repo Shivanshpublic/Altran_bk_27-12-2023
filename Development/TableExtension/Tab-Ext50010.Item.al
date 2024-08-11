@@ -182,6 +182,12 @@ tableextension 50010 Item extends Item
             Caption = 'Item Status';
             TableRelation = "Item Status";
         }
+        field(50080; "Bin Content Exist"; Boolean)
+        {
+            CalcFormula = Exist("Bin Content" WHERE("Item No." = FIELD("No.")));
+            Editable = false;
+            FieldClass = FlowField;
+        }
     }
     fieldgroups
     {

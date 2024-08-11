@@ -52,6 +52,10 @@ pageextension 50020 "Purchase Lines Ext" extends "Purchase Lines"
             {
                 ApplicationArea = All;
             }
+            field("Prepmt. Posting Description"; Rec."Prepmt. Posting Description")
+            {
+                ApplicationArea = All;
+            }
             field("UL Certificate Available"; Rec."UL Certificate Available")
             {
                 ApplicationArea = All;

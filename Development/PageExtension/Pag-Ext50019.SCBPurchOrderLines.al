@@ -16,6 +16,10 @@ pageextension 50063 SCBPurchOrderLines extends "SCB Purchase Order Lines"
             {
                 ApplicationArea = All;
             }
+            field("Prepmt. Posting Description"; Rec."Prepmt. Posting Description")
+            {
+                ApplicationArea = All;
+            }
         }
     }
 }

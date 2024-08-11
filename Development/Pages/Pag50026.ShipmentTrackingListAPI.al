@@ -1,11 +1,13 @@
-PAGE 50000 "Shipment Tracking List"
+PAGE 50026 "Shipment Tracking List API"
 {
     PageType = List;
     ApplicationArea = All;
     UsageCategory = Lists;
-    Editable = false;
     SourceTable = "Tracking Shipment Header";
     CardPageId = "Shipment Tracking Card";
+    InsertAllowed = false;
+    ModifyAllowed = false;
+    DeleteAllowed = false;
 
     LAYOUT
     {
@@ -90,22 +92,6 @@ PAGE 50000 "Shipment Tracking List"
                 {
                     ApplicationArea = All;
                 }
-            }
-        }
-    }
-
-    ACTIONS
-    {
-        AREA(Processing)
-        {
-            ACTION("Shipment Tracking Log")
-            {
-                Image = Log;
-                Promoted = TRUE;
-                PromotedCategory = Process;
-                ApplicationArea = All;
-                RunObject = PAGE "Shipment Tracking Log";
-                RunPageLink = "Tracking Code" = FIELD(Code);
             }
         }
     }

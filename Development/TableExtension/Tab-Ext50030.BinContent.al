@@ -11,7 +11,15 @@ tableextension 50030 BinContent extends "Bin Content"
             Editable = false;
             FieldClass = FlowField;
         }
+
     }
+    keys
+    {
+        key(Key50000; "Bin Code")
+        {
+        }
+    }
+
     fieldgroups
     {
         addlast(DropDown; "Bin Description") { }

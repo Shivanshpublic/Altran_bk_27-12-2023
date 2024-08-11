@@ -250,6 +250,20 @@ TABLE 50001 "Tracking Shipment Line"
                     end;
             end;
         }
+        field(24; "SO No."; code[20])
+        {
+            DataClassification = ToBeClassified;
+            TableRelation = "Sales Header"."No." where("Document Type" = const(Order));
+            ValidateTableRelation = false;
+            Editable = false;
+        }
+        field(25; "SO Line No."; Integer)
+        {
+            DataClassification = ToBeClassified;
+            TableRelation = "Sales Line"."Line No." where("Document Type" = const(Order), "Document No." = field("SO No."));
+            ValidateTableRelation = false;
+            Editable = false;
+        }
         field(31; "Total CBM"; Decimal)
         {
             DataClassification = ToBeClassified;
@@ -282,6 +296,13 @@ TABLE 50001 "Tracking Shipment Line"
                 //if "Receipt Line No." <> 0 then
                 //    UpdateRcptLine("Receipt No.", "Receipt Line No.", "PO No.", "PO Line No.");
             end;
+        }
+        field(40; "Shipment Cost (Posted)"; Decimal)
+        {
+            DecimalPlaces = 0 : 5;
+            CalcFormula = Sum("Sales Invoice Line"."Line Amount" WHERE("Shipment Tracking Code" = FIELD("Tracking Code"), "Shipment Tracking Line No." = FIELD("Line No."), Surcharge = filter(true)));
+            Editable = false;
+            FieldClass = FlowField;
         }
     }
 
@@ -355,7 +376,7 @@ TABLE 50001 "Tracking Shipment Line"
         ShipmentTrackingLine.SetRange("Receipt No.", RcptNo);
         ShipmentTrackingLine.SetRange("Receipt Line No.", RcptLineNo);
         if ShipmentTrackingLine.FindFirst() then
-            Error(PurchaseRcptLineExists, PONo, POLineNo, ShipmentTrackingLine."Tracking Code");
+            Error(PurchaseRcptLineExists, RcptNo, RcptLineNo, ShipmentTrackingLine."Tracking Code");
     end;
 
     local procedure ResetPOLine(PONo: Code[20]; POLineNo: Integer)
@@ -453,7 +474,9 @@ TABLE 50001 "Tracking Shipment Line"
                     "Total Gross (KG)" := PurchaseLine."Total Gross (KG)";
                     "Total Net (KG)" := PurchaseLine."Total Net (KG)";
                     "Pallet Quantity" := PurchaseLine."Pallet Quantity";
-                    //Validate("Date of Arrival", PurchaseLine."Expected Receipt Date1");                    
+                    //Validate("Date of Arrival", PurchaseLine."Expected Receipt Date1"); 
+                    "SO No." := PurchaseLine."SO No.";
+                    "SO Line No." := PurchaseLine."SO Line No.";
                 end;
             until PurchaseLine.Next() = 0;
     end;
@@ -481,6 +504,8 @@ TABLE 50001 "Tracking Shipment Line"
             "Total Net (KG)" := PurchRcptLine."Total Net (KG)";
             "Buy From Vendor No." := PurchRcptLine."Buy-from Vendor No.";
             "Buy From Vendor Name" := PurchRcptLine."Buy-from Vendor Name";
+            "SO No." := PurchRcptLine."SO No.";
+            "SO Line No." := PurchRcptLine."SO Line No.";
             if TrackShptHeader.Get(Rec."Tracking Code") then begin
                 PurchRcptLine."Milestone Status" := TrackShptHeader."Milestone Status";
             end;

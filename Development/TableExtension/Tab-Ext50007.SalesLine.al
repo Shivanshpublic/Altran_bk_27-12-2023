@@ -229,6 +229,11 @@ tableextension 50007 SalesLine extends "Sales Line"
             end;
 
         }
+        field(50040; "Surcharge"; Boolean)
+        {
+            Caption = 'Surcharge';
+            Editable = false;
+        }
         field(50111; "UL Certificate Available"; Boolean)
         {
             DataClassification = ToBeClassified;

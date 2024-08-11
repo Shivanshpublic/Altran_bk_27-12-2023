@@ -391,6 +391,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         TotPalletQty: Decimal;
         ConfirmSOAllocation: Label 'Do you wish calculated surcharge value to be allocated on the sales order ?';
         ConfirmSOAlloc: Boolean;
+        ShipmentCost: Decimal;
     BEGIN
         TestField("Status", "Status"::Released);
         SalesSetup.Get();
@@ -413,6 +414,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         TotPalletQty := ShipmentTrackingLine."Pallet Quantity";
         if ShipmentTrackingLine.FindFirst() then
             repeat
+                ShipmentTrackingLine.CalcFields("Shipment Cost (Posted)");
                 //ShipmentTrackingLine.CheckPOPosted(ShipmentTrackingLine."PO No.", ShipmentTrackingLine."PO Line No.");
                 if "Total CBM" > 0 then begin
                     //ShipmentTrackingLine."Shipment Cost" := (ShipmentTrackingLine."Pallet Quantity" / TotPalletQty) * Rec."Additional Revenue";
@@ -421,9 +423,16 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                     ShipmentTrackingLine."Shipment Cost" := 0;
                 end;
                 ShipmentTrackingLine.Modify();
-                if ConfirmSOAlloc then
-                    if ShipmentTrackingLine."Shipment Cost" <> 0 then
+
+                if ConfirmSOAlloc then begin
+                    if ShipmentTrackingLine."Shipment Cost (Posted)" <> 0 then
+                        ShipmentCost := ShipmentTrackingLine."Shipment Cost" - ShipmentTrackingLine."Shipment Cost (Posted)"
+                    else
+                        ShipmentCost := ShipmentTrackingLine."Shipment Cost";
+
+                    if ShipmentCost <> 0 then
                         InsertSalesSurcharge(ShipmentTrackingLine);
+                end;
             until ShipmentTrackingLine.Next() = 0;
         if ConfirmSOAlloc then begin
             Rec."Sub Status" := Rec."Sub Status"::"Surcharge Calculated";
@@ -436,48 +445,134 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
     VAR
         PurchaseLine: Record "Purchase Line";
         PurchaseHead: Record "Purchase Header";
+        PurchaseInvLine: Record "Purch. Inv. Line";
+        PurchaseInvHead: Record "Purch. Inv. Header";
         SalesLine: Record "Sales Line";
         SalesHead: Record "Sales Header";
         SalesLine1: Record "Sales Line";
         SalesSetup: Record "Sales & Receivables Setup";
+        PurchaseOrderExists: boolean;
+        SalesShipmentExists: boolean;
+        SalesInvoiceExists: boolean;
+        ShipmentCost: Decimal;
     BEGIN
         SalesSetup.Get();
         SalesSetup.TestField("Un earned surcharge account");
+        ShipmentTrackingLine.CalcFields("Shipment Cost (Posted)");
+        PurchaseOrderExists := false;
+        SalesInvoiceExists := false;
+        SalesShipmentExists := false;
+        if ShipmentTrackingLine."Shipment Cost (Posted)" <> 0 then
+            ShipmentCost := ShipmentTrackingLine."Shipment Cost" - ShipmentTrackingLine."Shipment Cost (Posted)"
+        else
+            ShipmentCost := ShipmentTrackingLine."Shipment Cost";
 
-        PurchaseLine.Reset();
-        PurchaseLine.SetRange("Document No.", ShipmentTrackingLine."PO No.");
-        PurchaseLine.SetRange("Line No.", ShipmentTrackingLine."PO Line No.");
-        if PurchaseLine.FindFirst() then begin
-            PurchaseHead.Get(PurchaseLine."Document Type", PurchaseLine."Document No.");
-            PurchaseHead.TestField(Status, PurchaseHead.Status::Released);
-            if SalesLine1.Get(PurchaseLine."Document Type"::Order, PurchaseLine."SO No.", PurchaseLine."SO Line No.") then begin
-                SalesHead.Get(SalesLine1."Document Type", SalesLine1."Document No.");
-                SalesHead.TestField(Status, SalesHead.Status::Released);
-                SalesLine1.TestField("Quantity Shipped", 0);
-                ShipmentLineExists(SalesLine1);
-                InvoiceLineExists(SalesLine1);
-                SalesLine.SuspendStatusCheck(true);
-                SalesLine.Init();
-                SalesLine.Validate("Document Type", SalesLine1."Document Type");
-                SalesLine.Validate("Document No.", SalesLine1."Document No.");
-                SalesLine.Validate("Line No.", SalesLine1."Line No." + 5);
-                SalesLine.Validate(Type, SalesLine.Type::"G/L Account");
-                SalesLine.Validate("No.", SalesSetup."Un earned surcharge account");
-                SalesLine.Validate("Location Code", SalesLine1."Location Code");
-                SalesLine.Validate(Quantity, SalesLine1.Quantity);
-                if SalesLine.Quantity <> 0 then
-                    SalesLine1."Surcharge Per Qty." := (ShipmentTrackingLine."Shipment Cost" / SalesLine.Quantity);
-                SalesLine.Validate("Unit Price", SalesLine1."Surcharge Per Qty.");
-                SalesLine.Validate("Surcharge Per Qty.", SalesLine1."Surcharge Per Qty.");
-                SalesLine.Validate("Tax Group Code", SalesLine1."Tax Group Code");
-                SalesLine."Shipment Tracking Code" := ShipmentTrackingLine."Tracking Code";
-                SalesLine."Shipment Tracking Line No." := ShipmentTrackingLine."Line No.";
-                SalesLine.Insert(true);
-                SalesLine1."Shipment Tracking Code" := ShipmentTrackingLine."Tracking Code";
-                SalesLine1."Shipment Tracking Line No." := ShipmentTrackingLine."Line No.";
-                SalesLine1.Modify();
-            end;
+        if SalesLine1.Get(PurchaseLine."Document Type"::Order, ShipmentTrackingLine."SO No.", ShipmentTrackingLine."SO Line No.") then begin
+            SalesHead.Get(SalesLine1."Document Type", SalesLine1."Document No.");
+            SalesHead.TestField(Status, SalesHead.Status::Released);
+            //SalesLine1.TestField("Quantity Shipped", 0);
+            SalesShipmentExists := ShipmentLineExists(SalesLine1);
+            SalesInvoiceExists := InvoiceLineExists(SalesLine1);
+            SalesLine.SuspendStatusCheck(true);
+            //if (SalesShipmentExists = false) And (SalesInvoiceExists = false) then begin
+            SalesLine.Init();
+            SalesLine.Validate("Document Type", SalesLine1."Document Type");
+            SalesLine.Validate("Document No.", SalesLine1."Document No.");
+            SalesLine.Validate("Line No.", SalesLine1."Line No." + 5);
+            SalesLine.Validate(Type, SalesLine.Type::"G/L Account");
+            SalesLine.Validate("No.", SalesSetup."Un earned surcharge account");
+            SalesLine.Validate("Location Code", SalesLine1."Location Code");
+            SalesLine.Validate(Quantity, SalesLine1.Quantity);
+            if SalesLine.Quantity <> 0 then
+                SalesLine1."Surcharge Per Qty." := (ShipmentCost / SalesLine.Quantity);
+            SalesLine.Validate("Unit Price", SalesLine1."Surcharge Per Qty.");
+            SalesLine.Validate("Surcharge Per Qty.", SalesLine1."Surcharge Per Qty.");
+            SalesLine.Validate("Tax Group Code", SalesLine1."Tax Group Code");
+            SalesLine."Shipment Tracking Code" := ShipmentTrackingLine."Tracking Code";
+            SalesLine."Shipment Tracking Line No." := ShipmentTrackingLine."Line No.";
+            SalesLine.Surcharge := true;
+            SalesLine.Insert(true);
+            SalesLine1."Shipment Tracking Code" := ShipmentTrackingLine."Tracking Code";
+            SalesLine1."Shipment Tracking Line No." := ShipmentTrackingLine."Line No.";
+            SalesLine1.Modify();
+            //end
         end;
+
+        // PurchaseLine.Reset();
+        // PurchaseLine.SetRange("Document No.", ShipmentTrackingLine."PO No.");
+        // PurchaseLine.SetRange("Line No.", ShipmentTrackingLine."PO Line No.");
+        // if PurchaseLine.FindFirst() then begin
+        //     PurchaseHead.Get(PurchaseLine."Document Type", PurchaseLine."Document No.");
+        //     PurchaseHead.TestField(Status, PurchaseHead.Status::Released);
+        //     PurchaseOrderExists := true;
+        //     if SalesLine1.Get(PurchaseLine."Document Type"::Order, PurchaseLine."SO No.", PurchaseLine."SO Line No.") then begin
+        //         SalesHead.Get(SalesLine1."Document Type", SalesLine1."Document No.");
+        //         SalesHead.TestField(Status, SalesHead.Status::Released);
+        //         //SalesLine1.TestField("Quantity Shipped", 0);
+        //         SalesShipmentExists := ShipmentLineExists(SalesLine1);
+        //         SalesInvoiceExists := InvoiceLineExists(SalesLine1);
+        //         SalesLine.SuspendStatusCheck(true);
+        //         if (SalesShipmentExists = false) And (SalesInvoiceExists = false) then begin
+        //             SalesLine.Init();
+        //             SalesLine.Validate("Document Type", SalesLine1."Document Type");
+        //             SalesLine.Validate("Document No.", SalesLine1."Document No.");
+        //             SalesLine.Validate("Line No.", SalesLine1."Line No." + 5);
+        //             SalesLine.Validate(Type, SalesLine.Type::"G/L Account");
+        //             SalesLine.Validate("No.", SalesSetup."Un earned surcharge account");
+        //             SalesLine.Validate("Location Code", SalesLine1."Location Code");
+        //             SalesLine.Validate(Quantity, SalesLine1.Quantity);
+        //             if SalesLine.Quantity <> 0 then
+        //                 SalesLine1."Surcharge Per Qty." := (ShipmentTrackingLine."Shipment Cost" / SalesLine.Quantity);
+        //             SalesLine.Validate("Unit Price", SalesLine1."Surcharge Per Qty.");
+        //             SalesLine.Validate("Surcharge Per Qty.", SalesLine1."Surcharge Per Qty.");
+        //             SalesLine.Validate("Tax Group Code", SalesLine1."Tax Group Code");
+        //             SalesLine."Shipment Tracking Code" := ShipmentTrackingLine."Tracking Code";
+        //             SalesLine."Shipment Tracking Line No." := ShipmentTrackingLine."Line No.";
+        //             SalesLine.Insert(true);
+        //             SalesLine1."Shipment Tracking Code" := ShipmentTrackingLine."Tracking Code";
+        //             SalesLine1."Shipment Tracking Line No." := ShipmentTrackingLine."Line No.";
+        //             SalesLine1.Modify();
+        //         end
+        //     end;
+        // end;
+
+        // if PurchaseOrderExists = false then begin
+        //     PurchaseInvLine.Reset();
+        //     PurchaseInvLine.SetRange("Order No.", ShipmentTrackingLine."PO No.");
+        //     PurchaseInvLine.SetRange("Order Line No.", ShipmentTrackingLine."PO Line No.");
+        //     if PurchaseInvLine.FindFirst() then begin
+        //         PurchaseInvHead.Get(PurchaseInvLine."Document No.");
+        //         if SalesLine1.Get(SalesLine1."Document Type"::Order, PurchaseInvLine."SO No.", PurchaseInvLine."SO Line No.") then begin
+        //             SalesHead.Get(SalesLine1."Document Type", SalesLine1."Document No.");
+        //             SalesHead.TestField(Status, SalesHead.Status::Released);
+        //             //SalesLine1.TestField("Quantity Shipped", 0);
+        //             SalesShipmentExists := ShipmentLineExists(SalesLine1);
+        //             SalesInvoiceExists := InvoiceLineExists(SalesLine1);
+        //             SalesLine.SuspendStatusCheck(true);
+        //             if (SalesShipmentExists = false) And (SalesInvoiceExists = false) then begin
+        //                 SalesLine.Init();
+        //                 SalesLine.Validate("Document Type", SalesLine1."Document Type");
+        //                 SalesLine.Validate("Document No.", SalesLine1."Document No.");
+        //                 SalesLine.Validate("Line No.", SalesLine1."Line No." + 5);
+        //                 SalesLine.Validate(Type, SalesLine.Type::"G/L Account");
+        //                 SalesLine.Validate("No.", SalesSetup."Un earned surcharge account");
+        //                 SalesLine.Validate("Location Code", SalesLine1."Location Code");
+        //                 SalesLine.Validate(Quantity, SalesLine1.Quantity);
+        //                 if SalesLine.Quantity <> 0 then
+        //                     SalesLine1."Surcharge Per Qty." := (ShipmentTrackingLine."Shipment Cost" / SalesLine.Quantity);
+        //                 SalesLine.Validate("Unit Price", SalesLine1."Surcharge Per Qty.");
+        //                 SalesLine.Validate("Surcharge Per Qty.", SalesLine1."Surcharge Per Qty.");
+        //                 SalesLine.Validate("Tax Group Code", SalesLine1."Tax Group Code");
+        //                 SalesLine."Shipment Tracking Code" := ShipmentTrackingLine."Tracking Code";
+        //                 SalesLine."Shipment Tracking Line No." := ShipmentTrackingLine."Line No.";
+        //                 SalesLine.Insert(true);
+        //                 SalesLine1."Shipment Tracking Code" := ShipmentTrackingLine."Tracking Code";
+        //                 SalesLine1."Shipment Tracking Line No." := ShipmentTrackingLine."Line No.";
+        //                 SalesLine1.Modify();
+        //             end;
+        //         end;
+        //     end;
+        // end
     end;
 
     procedure ResetSurcharge()
@@ -538,19 +633,19 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
     BEGIN
         SalesSetup.Get();
         TestField("Sub Status", "Sub Status"::" ");
-        SalesShipLine.SetRange("Shipment Tracking Code", Rec.Code);
-        SalesShipLine.SetRange(Type, SalesShipLine.Type::Item);
-        SalesShipLine.SetFilter("Quantity", '<>%1', 0);
-        SalesShipLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
-        if SalesShipLine.FindFirst() then
-            Error(ErrShipLineExist, SalesShipLine."Document No.");
+        // SalesShipLine.SetRange("Shipment Tracking Code", Rec.Code);
+        // SalesShipLine.SetRange(Type, SalesShipLine.Type::Item);
+        // SalesShipLine.SetFilter("Quantity", '<>%1', 0);
+        // SalesShipLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
+        // if SalesShipLine.FindFirst() then
+        //     Error(ErrShipLineExist, SalesShipLine."Document No.");
 
-        SalesInvLine.SetRange("Shipment Tracking Code", Rec.Code);
-        SalesInvLine.SetRange(Type, SalesInvLine.Type::Item);
-        SalesInvLine.SetFilter("Quantity", '<>%1', 0);
-        SalesInvLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
-        if SalesInvLine.FindFirst() then
-            Error(ErrInvLineExist, SalesInvLine."Document No.");
+        // SalesInvLine.SetRange("Shipment Tracking Code", Rec.Code);
+        // SalesInvLine.SetRange(Type, SalesInvLine.Type::Item);
+        // SalesInvLine.SetFilter("Quantity", '<>%1', 0);
+        // SalesInvLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
+        // if SalesInvLine.FindFirst() then
+        //     Error(ErrInvLineExist, SalesInvLine."Document No.");
 
         ResetSurcharge();
 
@@ -562,7 +657,7 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
 
     end;
 
-    procedure ShipmentLineExists(SalesLine: Record "Sales Line")
+    procedure ShipmentLineExists(SalesLine: Record "Sales Line"): boolean
     VAR
         SalesShipLine: Record "Sales Shipment Line";
         ErrShipLineExist: TextConst ENU = 'Shipment Sales Line already exists linked to Sales Order %1.';
@@ -572,10 +667,11 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         SalesShipLine.SetFilter("Quantity", '<>%1', 0);
         SalesShipLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
         if SalesShipLine.FindFirst() then
-            Error(ErrShipLineExist, SalesShipLine."Document No.");
+            Exit(true);
+        //Error(ErrShipLineExist, SalesShipLine."Document No.");
     end;
 
-    procedure InvoiceLineExists(SalesLine: Record "Sales Line")
+    procedure InvoiceLineExists(SalesLine: Record "Sales Line"): boolean
     VAR
         SalesInvLine: Record "Sales Invoice Line";
         ErrInvLineExist: TextConst ENU = 'Invoice Sales Line already exists linked to Sales Order %1.';
@@ -585,7 +681,8 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
         SalesInvLine.SetFilter("Quantity", '<>%1', 0);
         SalesInvLine.SetFilter("Surcharge Per Qty.", '<>%1', 0);
         if SalesInvLine.FindFirst() then
-            Error(ErrInvLineExist, SalesInvLine."Document No.");
+            Exit(true);
+        //Error(ErrInvLineExist, SalesInvLine."Document No.");
     end;
 
     procedure UpdatePOLine()

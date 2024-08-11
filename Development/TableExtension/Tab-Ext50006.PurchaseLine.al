@@ -118,12 +118,13 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
         {
             FieldClass = FlowField;
             CalcFormula = lookup("Purchase Header"."Posting Description" where("Document Type" = field("Document Type"), "No." = field("Document No.")));
+            Editable = false;
         }
         field(50020; "Vendor Name"; Text[100])
         {
             FieldClass = FlowField;
             CalcFormula = lookup("Purchase Header"."Buy-from Vendor Name" where("Document Type" = field("Document Type"), "No." = field("Document No.")));
-
+            Editable = false;
         }
         field(50220; "Creation Date"; Date)
         {
@@ -234,6 +235,13 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
         field(50113; "Order Note"; Text[250])
         {
             Caption = 'Order Note';
+        }
+        field(50139; "Prepmt. Posting Description"; Text[100])
+        {
+            Caption = 'Prepmt. Posting Description';
+            FieldClass = FlowField;
+            CalcFormula = lookup("Purchase Header"."Prepmt. Posting Description" where("Document Type" = field("Document Type"), "No." = field("Document No.")));
+            Editable = false;
         }
 
         field(55400; "Lot No."; Code[50])

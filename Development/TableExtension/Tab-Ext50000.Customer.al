@@ -52,6 +52,18 @@ TABLEEXTENSION 50000 "Ext Customer" EXTENDS Customer
                       RespCenter.TableCaption(), UserSetupMgt.GetSalesFilter("Assigned User ID"));
             end;
         }
+        field(50080; "Bin Content Exist"; Boolean)
+        {
+            CalcFormula = Exist("Bin Content" WHERE("Bin Code" = FIELD("No.")));
+            Editable = false;
+            FieldClass = FlowField;
+        }
+        field(50081; "Bin Exist"; Boolean)
+        {
+            CalcFormula = Exist("Bin Content" WHERE("Bin Code" = FIELD("No.")));
+            Editable = false;
+            FieldClass = FlowField;
+        }
     }
 
     PROCEDURE LookupOnExternalRep()

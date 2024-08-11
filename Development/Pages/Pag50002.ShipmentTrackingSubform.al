@@ -109,6 +109,21 @@ PAGE 50002 "Shipment Tracking Subform"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("SO No."; Rec."SO No.")
+                {
+                    ApplicationArea = All;
+                    Visible = false;
+                }
+                FIELD("SO Line No."; Rec."SO Line No.")
+                {
+                    ApplicationArea = All;
+                    Visible = false;
+                }
+                FIELD("Shipment Cost (Posted)"; Rec."Shipment Cost (Posted)")
+                {
+                    ApplicationArea = All;
+                    Visible = false;
+                }
             }
         }
     }

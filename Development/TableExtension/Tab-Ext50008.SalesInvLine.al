@@ -184,6 +184,10 @@ tableextension 50008 SalesInvLine extends "Sales Invoice Line"
             Caption = 'Sales Director';
             TableRelation = "Salesperson/Purchaser";
         }
+        field(50040; "Surcharge"; Boolean)
+        {
+            Caption = 'Surcharge';
+        }
         field(50111; "UL Certificate Available"; Boolean)
         {
             DataClassification = ToBeClassified;
