@@ -697,9 +697,9 @@ report 50085 "Aged Accounts Payable NA1"
                                   + ' - '
                                   + Format(PeriodEndingDate[1] - PeriodEndingDate[4])
                                   + ' ' + DaysLbl;
-                    ColumnHead[4] := Format(PeriodEndingDate[2] - PeriodEndingDate[4] + 1)
+                    ColumnHead[4] := Format(PeriodEndingDate[1] - PeriodEndingDate[4] + 1)
                                 + ' - '
-                                + Format(PeriodEndingDate[2] - PeriodEndingDate[5])
+                                + Format(PeriodEndingDate[1] - PeriodEndingDate[5])
                                 + ' ' + DaysLbl;
                     //ColumnHead[4] := 'Over '
                     //              + Format(PeriodEndingDate[1] - PeriodEndingDate[4])

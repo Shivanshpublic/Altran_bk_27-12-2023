@@ -238,10 +238,8 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
         }
         field(50139; "Prepmt. Posting Description"; Text[100])
         {
-            Caption = 'Prepmt. Posting Description';
-            FieldClass = FlowField;
-            CalcFormula = lookup("Purchase Header"."Prepmt. Posting Description" where("Document Type" = field("Document Type"), "No." = field("Document No.")));
-            Editable = false;
+            Caption = 'Shipment Description';
+
         }
 
         field(55400; "Lot No."; Code[50])
@@ -269,6 +267,7 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
     begin
         "Creation Date" := Today;
         RecHdr := GetPurchHeader();
+        "Prepmt. Posting Description" := RecHdr."Prepmt. Posting Description";
         /*
         if "Country of Origin" = '' then
             "Country of Origin" := RecHdr."Country of Origin";

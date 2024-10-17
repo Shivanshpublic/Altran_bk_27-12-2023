@@ -109,9 +109,15 @@ tableextension 50012 PurchaseInvLine extends "Purch. Inv. Line"
         field(50112; "Assigned By"; Enum ItemChargeAssnOption)
         {
         }
+
         field(50113; "Order Note"; Text[250])
         {
             Caption = 'Order Note';
+        }
+        field(50139; "Prepmt. Posting Description"; Text[100])
+        {
+            Caption = 'Shipment Description';
+            Editable = false;
         }
         modify("Expected Receipt Date")
         {

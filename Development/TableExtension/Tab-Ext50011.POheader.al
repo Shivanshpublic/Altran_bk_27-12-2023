@@ -61,6 +61,24 @@ tableextension 50011 POheader extends "Purchase Header"
         {
             Caption = 'Expected To Arrive';
         }
+        modify("Prepmt. Posting Description")
+        {
+            trigger OnAfterValidate()
+            var
+                PurchLine: Record "Purchase Line";
+            begin
+                PurchLine.Reset();
+                PurchLine.Setrange("Document Type", Rec."Document Type");
+                PurchLine.Setrange("Document No.", Rec."No.");
+                PurchLine.SetFilter(Type, '<>%1', PurchLine.Type::" ");
+                PurchLine.SetFilter("Prepmt. Posting Description", '=%1', '');
+                if PurchLine.FindFirst() then
+                    repeat
+                        PurchLine."Prepmt. Posting Description" := Rec."Prepmt. Posting Description";
+                        PurchLine.Modify();
+                    until PurchLine.Next() = 0;
+            end;
+        }
     }
     trigger OnInsert()
     begin

@@ -893,7 +893,7 @@ report 50084 "Aged Accounts Receivable NA1"
         ExcelBuf.AddColumn(ColumnHead[3], false, '', true, false, true, '', ExcelBuf."Cell Type"::Text);
         ExcelBuf.AddColumn(ColumnHead[4], false, '', true, false, true, '', ExcelBuf."Cell Type"::Text);
         ExcelBuf.AddColumn(ColumnHead[5], false, '', true, false, true, '', ExcelBuf."Cell Type"::Text);
-        ExcelBuf.AddColumn('Balance Due', false, '', true, false, true, '', ExcelBuf."Cell Type"::Text);
+        ExcelBuf.AddColumn('Remaining Balance Due', false, '', true, false, true, '', ExcelBuf."Cell Type"::Text);
         if PrintAmountsInLocal then
             if PrintDetail then
                 ExcelBuf.AddColumn(Format(DocumentCurrencyLbl), false, '', true, false, true, '', ExcelBuf."Cell Type"::Text)
@@ -924,7 +924,7 @@ report 50084 "Aged Accounts Receivable NA1"
         ExcelBuf.AddColumn(AmountDue[3], false, '', false, false, false, '#,##0.00', ExcelBuf."Cell Type"::Number);
         ExcelBuf.AddColumn(AmountDue[4], false, '', false, false, false, '#,##0.00', ExcelBuf."Cell Type"::Number);
         ExcelBuf.AddColumn(AmountDue[5], false, '', false, false, false, '#,##0.00', ExcelBuf."Cell Type"::Number);
-        ExcelBuf.AddColumn(AmountDueToPrint, false, '', false, false, false, '#,##0.00', ExcelBuf."Cell Type"::Number);
+        ExcelBuf.AddColumn(AmountDue[1] + AmountDue[2] + AmountDue[3] + AmountDue[4] + AmountDue[5], false, '', false, false, false, '#,##0.00', ExcelBuf."Cell Type"::Number);
         if PrintAmountsInLocal then begin
             if PrintDetail then
                 CurrencyCodeToPrint := "Cust. Ledger Entry"."Currency Code"

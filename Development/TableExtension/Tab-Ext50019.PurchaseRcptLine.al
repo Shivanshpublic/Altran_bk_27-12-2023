@@ -114,6 +114,11 @@ tableextension 50019 PurchaseRcptLine extends "Purch. Rcpt. Line"
         {
             Caption = 'Order Note';
         }
+        field(50139; "Prepmt. Posting Description"; Text[100])
+        {
+            Caption = 'Shipment Description';
+            Editable = false;
+        }
         modify("Promised Receipt Date")
         {
             Caption = 'Factory Ready Date';

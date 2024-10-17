@@ -84,6 +84,10 @@ pageextension 50003 "PurchaseOrderSubform" extends "Purchase Order Subform"
         }
         addafter(Description)
         {
+            field("Prepmt. Posting Description"; Rec."Prepmt. Posting Description")
+            {
+                ApplicationArea = All;
+            }
             field("HS Code"; Rec."HS Code")
             {
                 ApplicationArea = All;

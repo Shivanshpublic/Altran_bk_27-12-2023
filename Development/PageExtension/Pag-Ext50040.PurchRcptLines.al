@@ -46,6 +46,10 @@ pageextension 50040 PurchRcptLines extends "Purch. Receipt Lines"
                 ApplicationArea = Basic, Suite;
                 ToolTip = 'Specifies the VIA.';
             }
+            field("Prepmt. Posting Description"; Rec."Prepmt. Posting Description")
+            {
+
+            }
         }
         addafter("No.")
         {
