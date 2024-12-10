@@ -27,6 +27,10 @@ tableextension 50015 PurchInvHdr extends "Purch. Inv. Header"
         {
             DataClassification = ToBeClassified;
         }
+        field(50016; "Sample Order"; Enum SampleOrder_Option)
+        {
+            DataClassification = ToBeClassified;
+        }
         field(50139; "Prepmt. Posting Description"; Text[100])
         {
             Caption = 'Prepmt. Posting Description';

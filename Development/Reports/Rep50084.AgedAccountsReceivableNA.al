@@ -751,7 +751,7 @@ report 50084 "Aged Accounts Receivable NA1"
         Aged_Accounts_ReceivableCaptionLbl: Label 'Aged Accounts Receivable';
         CurrReport_PAGENOCaptionLbl: Label 'Page';
         Aged_byCaptionLbl: Label 'Aged by';
-        AmountDueToPrint_Control74CaptionLbl: Label 'Balance Due';
+        AmountDueToPrint_Control74CaptionLbl: Label 'Open Due';
         Credit_LimitCaptionLbl: Label 'Credit Limit';
         NameCaptionLbl: Label 'Name';
         Cust__Ledger_Entry___Document_No__CaptionLbl: Label 'Number';

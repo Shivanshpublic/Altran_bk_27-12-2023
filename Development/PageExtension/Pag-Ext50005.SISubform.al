@@ -158,5 +158,6 @@ pageextension 50005 SISubform extends "Sales Invoice Subform"
         {
             Visible = true;
         }
+
     }
 }

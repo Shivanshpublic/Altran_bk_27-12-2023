@@ -114,6 +114,20 @@ tableextension 50012 PurchaseInvLine extends "Purch. Inv. Line"
         {
             Caption = 'Order Note';
         }
+        field(50115; "FAI Receipt"; Date)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            begin
+            end;
+        }
+        field(50116; "FAI Approval"; Date)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            begin
+            end;
+        }
         field(50139; "Prepmt. Posting Description"; Text[100])
         {
             Caption = 'Shipment Description';

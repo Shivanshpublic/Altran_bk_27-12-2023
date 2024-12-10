@@ -492,7 +492,7 @@ report 50038 "Altran Sales - Order Conf.1"
                 column(ShipmentDate_Line_Lbl; PostedShipmentDateLbl)
                 {
                 }
-                column(PlannedShipmentDate_Line; Format("Planned Shipment Date"))
+                column(PlannedShipmentDate_Line; Format("Planned Shipment Date", 0, '<Month,2>/<Day,2>/<Year4>'))
                 {
                 }
                 column(Planned_Delivery_Date; Format("Planned Delivery Date", 0, '<Month,2>/<Day,2>/<Year4>'))

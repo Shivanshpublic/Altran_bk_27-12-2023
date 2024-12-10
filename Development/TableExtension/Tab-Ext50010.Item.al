@@ -188,16 +188,35 @@ tableextension 50010 Item extends Item
             Editable = false;
             FieldClass = FlowField;
         }
+        field(50081; "Assigned By"; Code[50])
+        {
+            Caption = 'Assigned By';
+            DataClassification = EndUserIdentifiableInformation;
+            TableRelation = "User Setup";
+
+            trigger OnValidate()
+            begin
+            end;
+        }
     }
     fieldgroups
     {
         addlast(DropDown; "Description 2") { }
         addlast(Brick; "Description 2") { }
     }
-    trigger OnAfterInsert()
+    trigger OnInsert()
     begin
         Blocked := true;
+        "Assigned By" := UserId;
     end;
 
-
+    trigger OnModify()
+    var
+        UserSetup: Record "User Setup";
+    begin
+        UserSetup.Get(UserId);
+        if (UserSetup."Item Administrator" = true) or ("Assigned By" = UserId) then begin
+        end else
+            Error('You are not authorized to modify Item No. %1', "No.");
+    end;
 }

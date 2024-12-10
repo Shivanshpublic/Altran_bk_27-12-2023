@@ -241,7 +241,20 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
             Caption = 'Shipment Description';
 
         }
-
+        field(50115; "FAI Receipt"; Date)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            begin
+            end;
+        }
+        field(50116; "FAI Approval"; Date)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            begin
+            end;
+        }
         field(55400; "Lot No."; Code[50])
         {
             Caption = 'Lot No.';
@@ -258,6 +271,7 @@ tableextension 50006 PurchaseLine extends "Purchase Line"
                 end;
             end;
         }
+
 
     }
 

@@ -11,6 +11,7 @@ page 50024 "Update Batch"
     Permissions = TableData "Purch. Cr. Memo Line" = rm, TableData "Purch. Inv. Line" = rm,
 TableData "Return Shipment Line" = rm, TableData "Purch. Rcpt. Line" = rm,
 TableData "Sales Cr.Memo Line" = rm, TableData "Sales Shipment Line" = rm,
+TableData "Sales invoice header" = rm, TableData "Sales Shipment header" = rm, TableData "Sales header Archive" = rm,
 TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
 
     layout
@@ -28,6 +29,83 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
             {
                 Caption = '&Line';
                 Image = Line;
+                action("Update Sample on Sales")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Update Sample on Sales';
+
+                    trigger OnAction()
+                    var
+                        i: Integer;
+                        SalesHead: Record "Sales Header";
+                        SalesShipHeader: Record "Sales Shipment Header";
+                        SalesInvHeader: Record "Sales Invoice Header";
+                        SalesArchHeader: Record "Sales Header Archive";
+                    begin
+
+                        SalesHead.SetRange("Sample Order", true);
+                        if SalesHead.FindFirst() then
+                            repeat
+                                SalesHead."Sample Order (New)" := SalesHead."Sample Order (New)"::Sample;
+                                SalesHead.Modify();
+                                i += 1;
+                            until SalesHead.Next() = 0;
+
+                        SalesShipHeader.SetRange("Sample Order", true);
+                        if SalesShipHeader.FindFirst() then
+                            repeat
+                                SalesShipHeader."Sample Order (New)" := SalesShipHeader."Sample Order (New)"::Sample;
+                                SalesShipHeader.Modify();
+                                i += 1;
+                            until SalesShipHeader.Next() = 0;
+
+                        SalesInvHeader.SetRange("Sample Order", true);
+                        if SalesInvHeader.FindFirst() then
+                            repeat
+                                SalesInvHeader."Sample Order (New)" := SalesInvHeader."Sample Order (New)"::Sample;
+                                SalesInvHeader.Modify();
+                                i += 1;
+                            until SalesInvHeader.Next() = 0;
+
+                        SalesArchHeader.SetRange("Sample Order", true);
+                        if SalesArchHeader.FindFirst() then
+                            repeat
+                                SalesArchHeader."Sample Order (New)" := SalesArchHeader."Sample Order (New)"::Sample;
+                                SalesArchHeader.Modify();
+                                i += 1;
+                            until SalesArchHeader.Next() = 0;
+                        if i > 0 then
+                            Message('%1 recordes updated.', i);
+                    end;
+                }
+                action("Update Assigned User on Item")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Update Assigned User on Item';
+
+                    trigger OnAction()
+                    var
+                        i: Integer;
+                        ItemCategory: Record "Item Category";
+                        Item: Record Item;
+                    begin
+
+                        ItemCategory.SetFilter("Assigned User ID", '<>%1', '');
+                        if ItemCategory.FindFirst() then
+                            repeat
+                                Item.Setrange("Item Category Code", ItemCategory.Code);
+                                if Item.FindFirst() then
+                                    repeat
+                                        Item."Assigned By" := ItemCategory."Assigned User ID";
+                                        Item.Modify();
+                                    until Item.Next() = 0;
+                                i += 1;
+                            until ItemCategory.Next() = 0;
+
+                        if i > 0 then
+                            Message('%1 recordes updated.', i);
+                    end;
+                }
                 action("Update Shipment Tracking Line")
                 {
                     ApplicationArea = All;
@@ -96,6 +174,31 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
                                 if Vendor.Get(Item."Vendor No.") then begin
                                     Item."Vendor Name" := Vendor.Name;
                                     Item."Country of Origin" := Vendor."Country/Region Code";
+                                    Item.Modify();
+                                    i += 1;
+                                end;
+                            until Item.Next() = 0;
+                        if i > 0 then
+                            Message('%1 recordes updated.', i);
+                    end;
+                }
+                action("Update Item Assigned By")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Update Assigned By for Item';
+                    ToolTip = 'Update Assigned By for Item.';
+                    //Visible = false;
+                    trigger OnAction()
+                    var
+                        i: Integer;
+                        Vendor: Record Vendor;
+                        Item: Record Item;
+                    begin
+
+                        if Item.FindFirst() then
+                            repeat
+                                if Item."Assigned By" = '' then begin
+                                    Item."Assigned By" := Item.SystemCreatedBy;
                                     Item.Modify();
                                     i += 1;
                                 end;

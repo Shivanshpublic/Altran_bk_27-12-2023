@@ -19,6 +19,9 @@ codeunit 50003 CustomEvents
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purch. Doc. From Sales Doc.", 'OnCopySalesLinesToPurchaseLinesOnBeforeInsert', '', false, false)]
     local procedure OnCopySalesLinesToPurchaseLinesOnBeforeInsert(var PurchaseLine: Record "Purchase Line"; SalesLine: Record "Sales Line");
+    var
+        PurchaseHeader: Record "Purchase Header";
+        SalesHeader: Record "Sales Header";
     begin
         PurchaseLine."SO No." := SalesLine."Document No.";
         PurchaseLine."SO Line No." := SalesLine."Line No.";
@@ -42,6 +45,14 @@ codeunit 50003 CustomEvents
         SalesLine."PO Line No." := PurchaseLine."Line No.";
 
         SalesLine.Modify();
+        if SalesHeader.Get(SalesLine."Document Type", SalesLine."Document No.") then begin
+            if SalesHeader."Sample Order (New)" <> SalesHeader."Sample Order (New)"::" " then begin
+                If PurchaseHeader.Get(PurchaseLine."Document Type", PurchaseLine."Document No.") then begin
+                    PurchaseHeader."Sample Order" := SalesHeader."Sample Order (New)";
+                    PurchaseHeader.Modify();
+                end;
+            end;
+        end;
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Req. Wksh.-Make Order", OnBeforePurchOrderLineInsert, '', false, false)]
@@ -49,6 +60,7 @@ codeunit 50003 CustomEvents
     var
         Sheader: Record "Sales Header";
         Sline: Record "Sales Line";
+        PurchaseHeader: Record "Purchase Header";
     begin
         Clear(Sline);
         Clear(Sheader);
@@ -78,6 +90,14 @@ codeunit 50003 CustomEvents
 
                 PurchOrderLine."Pallet Quantity" := Sline."Pallet Quantity";
                 //PurchOrderLine."Rev." := Sline."Rev.";
+
+
+                if Sheader."Sample Order (New)" <> Sheader."Sample Order (New)"::" " then begin
+                    If PurchaseHeader.Get(PurchOrderLine."Document Type", PurchOrderLine."Document No.") then begin
+                        PurchaseHeader."Sample Order" := Sheader."Sample Order (New)";
+                        PurchaseHeader.Modify();
+                    end;
+                end;
             end;
         end;
     end;
@@ -172,6 +192,13 @@ codeunit 50003 CustomEvents
     begin
         PurchaseLine.TestStatusOpen();
         InHandled := true;
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Purchase Line", 'OnBeforeUpdatePlannedReceiptDateFromOrderDate', '', false, false)]
+    local procedure OnBeforeUpdatePlannedReceiptDateFromOrderDate(var PurchaseLine: Record "Purchase Line"; CustomCalendarChange: array[2] of Record "Customized Calendar Change"; var IsHandled: Boolean)
+    begin
+        PurchaseLine.TestStatusOpen();
+        IsHandled := true;
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Purchase Line", 'OnBeforeValidatePromisedReceiptDate', '', false, false)]
@@ -616,4 +643,72 @@ codeunit 50003 CustomEvents
                 end;
             until Pline.Next() = 0;
     end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Sales Header", 'OnBeforeValidateShipmentDate', '', false, false)]
+
+    local procedure OnBeforeValidateShipmentDateH(var SalesHeader: Record "Sales Header"; CurrentFieldNo: Integer; var IsHandled: Boolean)
+    begin
+        SalesHeader.TestStatusOpen();
+        IsHandled := true;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnPostSalesLineOnBeforeTestUnitOfMeasureCode', '', false, false)]
+    local procedure OnPostSalesLineOnBeforeTestUnitOfMeasureCode(var SalesHeader: Record "Sales Header"; var SalesLine: Record "Sales Line"; var TempSalesLineGlobal: Record "Sales Line" temporary; var IsHandled: Boolean)
+    begin
+        if (SalesLine.Type = SalesLine.Type::Item) and ((SalesLine."Qty. to Ship" <> 0) or (SalesLine."Qty. to Invoice" <> 0)) then
+            SalesLine.TestField("Shipment Date");
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnBeforePostLines', '', false, false)]
+    local procedure OnBeforePostLines(var SalesLine: Record "Sales Line"; SalesHeader: Record "Sales Header"; CommitIsSuppressed: Boolean; PreviewMode: Boolean; var TempWhseShptHeader: Record "Warehouse Shipment Header" temporary; var ItemJnlPostLine: Codeunit "Item Jnl.-Post Line")
+    begin
+        if SalesHeader."Document Type" = SalesHeader."Document Type"::Order then begin
+            SalesHeader.TestField("Order Signed", True);
+        end;
+        if SalesHeader."Document Type" = SalesHeader."Document Type"::"Return Order" then begin
+            SalesHeader.TestField("Reason Code");
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purch.-Post", 'OnBeforePostLines', '', false, false)]
+    local procedure OnBeforePostLines1(var PurchLine: Record "Purchase Line"; PurchHeader: Record "Purchase Header"; PreviewMode: Boolean; CommitIsSupressed: Boolean; var TempPurchLineGlobal: Record "Purchase Line" temporary)
+    begin
+        if PurchHeader."Document Type" = PurchHeader."Document Type"::"Return Order" then begin
+            PurchHeader.TestField("Reason Code");
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnAfterPostSalesDoc', '', false, false)]
+    local procedure OnAfterPostSalesDoc(var SalesHeader: Record "Sales Header"; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line"; SalesShptHdrNo: Code[20]; RetRcpHdrNo: Code[20]; SalesInvHdrNo: Code[20]; SalesCrMemoHdrNo: Code[20]; CommitIsSuppressed: Boolean; InvtPickPutaway: Boolean; var CustLedgerEntry: Record "Cust. Ledger Entry"; WhseShip: Boolean; WhseReceiv: Boolean; PreviewMode: Boolean)
+    var
+        SignLog: Record "Sign Log";
+        SalesLine: Record "Sales Line";
+    begin
+        if (SalesHeader."Document Type" = SalesHeader."Document Type"::Order) and (SalesHeader."No." <> '') then begin
+            SalesLine.SetRange("Document Type", SalesHeader."Document Type");
+            SalesLine.SetRange("Document No.", SalesHeader."No.");
+            SalesLine.SetFilter(SalesLine."Outstanding Amount (LCY)", '<>%1', 0);
+            if SalesLine.FindFirst() then begin
+                SalesHeader."Order Signed" := false;
+                SalesHeader.Modify();
+            end;
+            SignLog.InsertSignLog(SalesHeader."No.", SalesInvHdrNo, false, SalesHeader.Status::Released);
+
+        end;
+
+
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Sales Document", 'OnReopenOnBeforeSalesHeaderModify', '', false, false)]
+    local procedure OnReopenOnBeforeSalesHeaderModify(var SalesHeader: Record "Sales Header")
+    var
+        SignLog: Record "Sign Log";
+    begin
+        if (SalesHeader."Document Type" = SalesHeader."Document Type"::Order) and (SalesHeader."No." <> '') then begin
+            SalesHeader."Order Signed" := false;
+            SignLog.InsertSignLog(SalesHeader."No.", '', SalesHeader."Order Signed", SalesHeader.Status);
+        end;
+    end;
+
+
 }

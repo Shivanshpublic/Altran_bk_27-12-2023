@@ -128,10 +128,20 @@ TABLEEXTENSION 50002 "Ext Sales Inv. Header" EXTENDS "Sales Invoice Header"
         field(50016; "Sample Order"; Boolean)
         {
             DataClassification = ToBeClassified;
+            Caption = 'Sample Order (Old)';
+        }
+        field(50017; "Order Signed"; Boolean)
+        {
+            DataClassification = ToBeClassified;
         }
         field(50019; "VIA"; Code[20])
         {
             DataClassification = ToBeClassified;
+        }
+        field(50020; "Sample Order (New)"; Enum SampleOrder_Option)
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Sample Order';
         }
     }
 }

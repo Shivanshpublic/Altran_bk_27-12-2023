@@ -54,6 +54,10 @@ PAGE 50000 "Shipment Tracking List"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("ETA (Sterling)"; Rec."ETA (Sterling)")
+                {
+                    ApplicationArea = All;
+                }
                 FIELD("Freight Details"; Rec."Freight Details")
                 {
                     ApplicationArea = All;

@@ -86,5 +86,10 @@ pageextension 50007 PSSSubform extends "Posted Sales Shpt. Subform"
         {
             Visible = true;
         }
+        modify("Shipment Date")
+        {
+            Visible = true;
+            Caption = 'Confirmed Shipment Date';
+        }
     }
 }

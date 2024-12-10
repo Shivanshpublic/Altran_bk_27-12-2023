@@ -293,4 +293,6 @@ tableextension 50007 SalesLine extends "Sales Line"
         IF SalesPersonList.RUNMODAL = ACTION::LookupOK THEN
             VALIDATE("External Rep", SalesPersonList.GetSelectionFilter);
     END;
+
+
 }

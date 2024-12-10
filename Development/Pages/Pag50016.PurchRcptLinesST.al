@@ -6,6 +6,8 @@ page 50016 "Purch. Receipt Lines ST"
     PromotedActionCategories = 'New,Process,Report,Line';
     SourceTable = "Purch. Rcpt. Line";
     Permissions = TableData "Purch. Rcpt. Line" = rm;
+    ApplicationArea = All;
+    UsageCategory = Lists;
     layout
     {
         area(content)
@@ -178,6 +180,16 @@ page 50016 "Purch. Receipt Lines ST"
                 {
                     ApplicationArea = Basic, Suite;
                     ToolTip = 'Specifies the VIA.';
+                }
+                field("FAI Receipt"; Rec."FAI Receipt")
+                {
+                    ApplicationArea = Basic, Suite;
+                    ToolTip = 'Specifies the FAI Receipt.';
+                }
+                field("FAI Approval"; Rec."FAI Approval")
+                {
+                    ApplicationArea = Basic, Suite;
+                    ToolTip = 'Specifies the FAI Approval.';
                 }
             }
         }

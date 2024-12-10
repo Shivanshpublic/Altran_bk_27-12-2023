@@ -45,7 +45,10 @@ pageextension 50014 ItemCatg extends "Item Categories"
             {
                 ApplicationArea = All;
             }
-
+            field("Assigned User ID"; Rec."Assigned User ID")
+            {
+                ApplicationArea = All;
+            }
         }
     }
     actions
@@ -98,6 +101,15 @@ pageextension 50014 ItemCatg extends "Item Categories"
                                 until ItemCatSpec.Next() = 0;
                         until Item.Next() = 0;
                 end;
+            }
+            action("Update Assigned User on Item")
+            {
+                ApplicationArea = All;
+                Caption = 'Update Assigned User on Item';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                RunObject = report "Update Assigned By";
             }
         }
     }

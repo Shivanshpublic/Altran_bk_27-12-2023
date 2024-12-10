@@ -73,7 +73,16 @@ pageextension 50013 PPISubform extends "Posted Purch. Invoice Subform"
             {
                 ApplicationArea = All;
             }
-
+            field("FAI Receipt"; Rec."FAI Receipt")
+            {
+                ApplicationArea = Basic, Suite;
+                ToolTip = 'Specifies the FAI Receipt.';
+            }
+            field("FAI Approval"; Rec."FAI Approval")
+            {
+                ApplicationArea = Basic, Suite;
+                ToolTip = 'Specifies the FAI Approval.';
+            }
         }
         addlast(Control1)
         {

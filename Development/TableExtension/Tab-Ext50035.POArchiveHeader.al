@@ -31,6 +31,11 @@ tableextension 50035 POArchiveHeader extends "Purchase Header Archive"
         {
             DataClassification = ToBeClassified;
         }
+        field(50021; "Sample Order"; Enum SampleOrder_Option)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
+        }
         field(61120; "PO Exists"; Boolean)
         {
             CalcFormula = exist("Purchase Header" WHERE("No." = FIELD("No.")));
@@ -49,5 +54,5 @@ tableextension 50035 POArchiveHeader extends "Purchase Header Archive"
             DataClassification = ToBeClassified;
         }
     }
- 
+
 }

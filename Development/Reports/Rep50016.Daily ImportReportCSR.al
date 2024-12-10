@@ -3,7 +3,7 @@ report 50016 "Daily Import Report CSR"
     ProcessingOnly = true;
     Caption = 'Daily Import Report CSR';
     UsageCategory = ReportsAndAnalysis;
-    ApplicationArea = all;
+    //ApplicationArea = all;
     dataset
     {
         dataitem("Purchase Header"; "Purchase Header")
@@ -132,6 +132,10 @@ report 50016 "Daily Import Report CSR"
         lTotalSell: Decimal;
         lPOShipTo: Text[100];
         lSOShipTo: Text[100];
+        lSOShipToState: Text[100];
+        lSOShipToCity: Text[100];
+        lSOShipToZipCode: Text[100];
+        lSOShipToCountry: Text[100];
         lItemCategory: Code[20];
         lSOLLocationCode: Code[10];
         lPOLLocationCode: Code[10];
@@ -141,7 +145,7 @@ report 50016 "Daily Import Report CSR"
         lForwarder: Code[20];
         lForwarderName: Text[100];
         lETD: Date;
-        SampleOrder: Boolean;
+        SampleOrder: Enum SampleOrder_Option;
         lATD: Date;
         ATAPort: Date;
         ATASterling: Date;
@@ -153,6 +157,7 @@ report 50016 "Daily Import Report CSR"
         RegionalManager: Text[50];
         ExternalRep: Text[50];
         lETA: Date;
+        SETA: Date;
         lCBM: Decimal;
         lCTNS: Decimal;
         lKG: Decimal;
@@ -216,8 +221,9 @@ report 50016 "Daily Import Report CSR"
         ExcelBuffer.AddColumn('Factory Ready Date', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Booked Date', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('ETD', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
-        ExcelBuffer.AddColumn('(Actual Time to Departcher) ATD', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn('(Actual Time to Departure) ATD', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Origin Ship Date (Calendar Week)', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+
         ExcelBuffer.AddColumn('ETA (Port)', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('ATA (Port)', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('ATA (Sterling)', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -229,7 +235,7 @@ report 50016 "Daily Import Report CSR"
         ExcelBuffer.AddColumn('Receipt Qty', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         //ExcelBuffer.AddColumn('Receipt Cost', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Receipt Total Cost', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
-        ExcelBuffer.AddColumn('Expected to Arrive at FG/DropShip', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn('WH/Customer Location', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('PO Lines Location Code', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Ship-To', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('VIA', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -250,6 +256,10 @@ report 50016 "Daily Import Report CSR"
         ExcelBuffer.AddColumn('Planned Shipment Date', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Actual Shipment Date (ASD)', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('SO Ship-To', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn('SO Ship-To State', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn('SO Ship-To City', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn('SO Ship-To Zip Code', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn('SO Ship-To Country', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Customer Incoterms', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Forwarder Name', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn('Container #', FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -323,13 +333,17 @@ report 50016 "Daily Import Report CSR"
             lAssignedCSR := SalesLine."Assigned CSR";
             lSOLLocationCode := SalesLine."Location Code";
             lSOShipTo := SalesHeader."Ship-to Name";
+            lSOShipToState := SalesHeader."Ship-to County";
+            lSOShipToCity := SalesHeader."Ship-to City";
+            lSOShipToZipCode := SalesHeader."Ship-to Post Code";
+            lSOShipToCountry := SalesHeader."Ship-to Country/Region Code";
             if ShipmentMethod.Get(SalesHeader."Shipment Method Code") then
                 CustomerIncoterms := ShipmentMethod.Description;
             SalesDirector := SalesLine."Salesperson Name";
             RegionalManager := SalesLine."Internal Team Name";
             if Salesperson.Get(SalesLine."External Rep") then
                 ExternalRep := Salesperson.Name;
-            SampleOrder := SalesHeader."Sample Order";
+            SampleOrder := SalesHeader."Sample Order (New)";
             SalesInvLine.SetRange("Order No.", SalesLine."Document No.");
             SalesInvLine.SetRange("Order Line No.", SalesLine."Line No.");
             SalesInvLine.SetRange("PO No.", SalesLine."PO No.");
@@ -451,6 +465,7 @@ report 50016 "Daily Import Report CSR"
             TotalNetKG := ShipmentTrackingLine."Total Net (KG)";
             PalletQty := ShipmentTrackingLine."Pallet Quantity";
             lETA := ShipmentTrackingLine."Date of Arrival";
+            SETA := ShipmentTrackingHeader."ETA (Sterling)";
             lForwarder := ShipmentTrackingHeader."Supplier No.";
             if Vendor.Get(ShipmentTrackingHeader."Supplier No.") then
                 lForwarderName := Vendor.Name;
@@ -520,6 +535,7 @@ report 50016 "Daily Import Report CSR"
         else
             ExcelBuffer.AddColumn(Date2DWY(lATD, 2), FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Number);
         ExcelBuffer.AddColumn(lETA, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn(SETA, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(ATAPort, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(ATASterling, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lPartNumber, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
@@ -551,6 +567,11 @@ report 50016 "Daily Import Report CSR"
         ExcelBuffer.AddColumn(lPlanShipDate, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Date);
         ExcelBuffer.AddColumn(lShipmentDate, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Date);
         ExcelBuffer.AddColumn(lSOShipTo, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn(lSOShipToState, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn(lSOShipToCity, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn(lSOShipToZipCode, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn(lSOShipToCountry, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
+
         ExcelBuffer.AddColumn(CustomerIncoterms, FALSE, '', TRUE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lForwarderName, FALSE, '', FALSE, FALSE, FALSE, '', ExcelBuffer."Cell Type"::Text);
         ExcelBuffer.AddColumn(lContainer, FALSE, '', FALSE, FALSE, FALSE, '#,##0.00', ExcelBuffer."Cell Type"::Number);
@@ -594,6 +615,10 @@ report 50016 "Daily Import Report CSR"
         Clear(lTotalSell);
         Clear(lPOShipTo);
         Clear(lSOShipTo);
+        Clear(lSOShipToState);
+        Clear(lSOShipToCity);
+        Clear(lSOShipToZipCode);
+        Clear(lSOShipToCountry);
         Clear(lSOLLocationCode);
         Clear(lPOLLocationCode);
         Clear(lItemCategory);
@@ -614,6 +639,7 @@ report 50016 "Daily Import Report CSR"
         Clear(RegionalManager);
         Clear(ExternalRep);
         Clear(lETA);
+        Clear(SETA);
         Clear(lCBM);
         Clear(lCTNS);
         Clear(lKG);

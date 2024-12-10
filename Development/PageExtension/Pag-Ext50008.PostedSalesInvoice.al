@@ -32,7 +32,7 @@ pageextension 50008 PostedSalesInvoice extends "Posted Sales Invoice"
                 ApplicationArea = All;
                 ToolTip = 'Specifies the value of the Earned Surcharge Posted field.';
             }
-            field("Sample Order"; Rec."Sample Order")
+            field("Sample Order"; Rec."Sample Order (New)")
             {
                 ApplicationArea = All;
             }

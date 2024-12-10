@@ -171,6 +171,7 @@ pageextension 50006 PSISubform extends "Posted Sales Invoice Subform"
         {
             Visible = true;
         }
+
     }
     actions
     {

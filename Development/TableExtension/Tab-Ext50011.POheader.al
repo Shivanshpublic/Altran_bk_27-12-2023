@@ -53,6 +53,11 @@ tableextension 50011 POheader extends "Purchase Header"
         {
             DataClassification = ToBeClassified;
         }
+        field(50021; "Sample Order"; Enum SampleOrder_Option)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
+        }
         modify("Promised Receipt Date")
         {
             Caption = 'Factory Ready Date';

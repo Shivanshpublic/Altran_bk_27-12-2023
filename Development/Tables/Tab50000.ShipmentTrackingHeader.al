@@ -301,6 +301,11 @@ TableData "Return Receipt Line" = rm, TableData "Sales Invoice Line" = rm;
             ExtendedDatatype = URL;
             DataClassification = CustomerContent;
         }
+        FIELD(44; "ETA (Sterling)"; Date)
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'ETA (Sterling)';
+        }
     }
 
     KEYS

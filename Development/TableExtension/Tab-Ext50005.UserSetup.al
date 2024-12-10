@@ -22,5 +22,10 @@ tableextension 50005 UserSetup extends "User Setup"
             Caption = 'Modify PO on SO';
             DataClassification = ToBeClassified;
         }
+        field(50004; "Item Administrator"; Boolean)
+        {
+            Caption = 'Item Administrator';
+            DataClassification = ToBeClassified;
+        }
     }
 }

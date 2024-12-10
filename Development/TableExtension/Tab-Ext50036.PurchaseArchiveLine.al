@@ -149,7 +149,20 @@ tableextension 50036 PurchaseArchiveLine extends "Purchase Line Archive"
         {
             Caption = 'Order Note';
         }
-
+        field(50115; "FAI Receipt"; Date)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            begin
+            end;
+        }
+        field(50116; "FAI Approval"; Date)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnValidate()
+            begin
+            end;
+        }
         field(55400; "Lot No."; Code[50])
         {
             Caption = 'Lot No.';

@@ -20,6 +20,10 @@ pageextension 50002 UserSetup extends "User Setup"
             {
                 ApplicationArea = All;
             }
+            field("Item Administrator"; Rec."Item Administrator")
+            {
+                ApplicationArea = All;
+            }
         }
     }
 }

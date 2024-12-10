@@ -48,6 +48,7 @@ pageextension 50040 PurchRcptLines extends "Purch. Receipt Lines"
             }
             field("Prepmt. Posting Description"; Rec."Prepmt. Posting Description")
             {
+                ApplicationArea = Basic, Suite;
 
             }
         }
@@ -61,7 +62,16 @@ pageextension 50040 PurchRcptLines extends "Purch. Receipt Lines"
             {
                 ApplicationArea = All;
             }
-
+            field("FAI Receipt"; Rec."FAI Receipt")
+            {
+                ApplicationArea = Basic, Suite;
+                ToolTip = 'Specifies the FAI Receipt.';
+            }
+            field("FAI Approval"; Rec."FAI Approval")
+            {
+                ApplicationArea = Basic, Suite;
+                ToolTip = 'Specifies the FAI Approval.';
+            }
         }
         addlast(Control1)
         {

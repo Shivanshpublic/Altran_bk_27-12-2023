@@ -491,7 +491,7 @@ report 50018 "Altran Sales - Order Conf."
                 column(ShipmentDate_Line_Lbl; PostedShipmentDateLbl)
                 {
                 }
-                column(PlannedShipmentDate_Line; Format("Planned Shipment Date"))
+                column(PlannedShipmentDate_Line; Format("Planned Shipment Date", 0, '<Month,2>/<Day,2>/<Year4>'))
                 {
                 }
                 column(Planned_Delivery_Date; Format("Planned Delivery Date", 0, '<Month,2>/<Day,2>/<Year4>'))
@@ -693,7 +693,7 @@ report 50018 "Altran Sales - Order Conf."
                 column(PShipmentDate_Line_Lbl; PostedShipmentDateLbl)
                 {
                 }
-                column(PPlannedShipmentDate_Line; Format("Planned Shipment Date"))
+                column(PPlannedShipmentDate_Line; Format("Planned Shipment Date", 0, '<Month,2>/<Day,2>/<Year4>'))
                 {
                 }
                 column(PPlanned_Delivery_Date; Format("Planned Delivery Date", 0, '<Month,2>/<Day,2>/<Year4>'))

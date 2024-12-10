@@ -34,7 +34,7 @@ report 50021 "Populate Bin Code"
                                     BinRec."Location Code" := LocationRec.Code;
                                     BinRec.Code := CustomerRec."No.";
                                     BinRec.Description := CustomerRec.Name;
-                                    BinRec.Insert()
+                                    if BinRec.Insert() then;
                                 end;
                             until LocationRec.Next() = 0;
                     until CustomerRec.Next() = 0;
@@ -52,6 +52,7 @@ report 50021 "Populate Bin Code"
                 ItemRec: Record Item;
                 CustomerRec: Record Customer;
                 LocationRec: Record Location;
+                BinRec: Record Bin;
             begin
                 Clear(BinContent);
                 BinContent.SetCurrentKey("Bin Code");
@@ -66,6 +67,8 @@ report 50021 "Populate Bin Code"
                             repeat
                                 BinContent.SetRange("Location Code", LocationRec.Code);
                                 if not BinContent.FindFirst() then begin
+                                    if not BinRec.Get(BinContent."Bin Code") then
+                                        InsertBin(BinContent."Location Code", BinContent."Bin Code");
                                     BinContent.Init();
                                     BinContent.Validate("Location Code", LocationRec.Code);
                                     BinContent.Validate("Item No.", ItemRec."No.");
@@ -113,7 +116,7 @@ report 50021 "Populate Bin Code"
                                     BinContent.Validate("Item No.", Item."No.");
                                     BinContent.Validate("Bin Code", CustomerRec."No.");
                                     BinContent.Validate(Fixed, true);
-                                    BinContent.Insert();
+                                    if BinContent.Insert() then;
                                 end;
                                 RecCount += 1;
                                 if GuiAllowed then begin
@@ -156,7 +159,7 @@ report 50021 "Populate Bin Code"
                                     BinContent.Validate("Item No.", ItemRec."No.");
                                     BinContent.Validate("Bin Code", CustomerRec."No.");
                                     BinContent.Validate(Fixed, true);
-                                    BinContent.Insert();
+                                    if BinContent.Insert() then;
                                 end;
                                 RecCount += 1;
                                 if GuiAllowed then begin
@@ -194,4 +197,17 @@ report 50021 "Populate Bin Code"
         DialogBox: Dialog;
         RecCount: Integer;
         tcProgress: Label 'Updating Records #1';
+
+    local procedure InsertBin(LocCode: Code[10]; BinCode: Code[20])
+    var
+        BinRec: Record Bin;
+        CustomerRec: Record Customer;
+    begin
+        BinRec.Init();
+        BinRec."Location Code" := LocCode;
+        BinRec.Code := BinCode;
+        if CustomerRec.Get(BinRec.Code) then
+            BinRec.Description := CustomerRec.Name;
+        if BinRec.Insert() then;
+    end;
 }

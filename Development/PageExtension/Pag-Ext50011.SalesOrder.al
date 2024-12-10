@@ -34,7 +34,7 @@ PAGEEXTENSION 50011 "Ext. Sales Order" EXTENDS "Sales Order"
             {
                 ApplicationArea = All;
             }
-            field("Sample Order"; Rec."Sample Order")
+            field("Sample Order"; Rec."Sample Order (New)")
             {
                 ApplicationArea = All;
             }
@@ -87,7 +87,12 @@ PAGEEXTENSION 50011 "Ext. Sales Order" EXTENDS "Sales Order"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Consignee Country/Region code field.';
                 }
-
+                field("Order Signed"; Rec."Order Signed")
+                {
+                    ApplicationArea = All;
+                    ShowMandatory = true;
+                    ToolTip = 'Specifies the value of the Order Signed field.';
+                }
             }
         }
     }
@@ -129,6 +134,56 @@ PAGEEXTENSION 50011 "Ext. Sales Order" EXTENDS "Sales Order"
                         Page.Run(0, POLine);
                 end;
             }
+
+            action("Assign Lot No.")
+            {
+                ApplicationArea = ItemTracking;
+                Caption = 'Assign &Lot No.';
+                Image = Lot;
+                ToolTip = 'Automatically assign the required lot numbers.';
+
+                trigger OnAction()
+                var
+                    ItemTracking: Codeunit ItemTracking;
+                begin
+                    //if InsertIsBlocked then
+                    //    exit;
+                    ItemTracking.AssignLotNo(Rec);
+                end;
+            }
+            action("Unassign Lot No.")
+            {
+                ApplicationArea = ItemTracking;
+                Caption = 'Unassign &Lot No.';
+                Image = Lot;
+                ToolTip = 'Automatically unassign the required lot numbers.';
+
+                trigger OnAction()
+                var
+                    ItemTracking: Codeunit ItemTracking;
+                begin
+                    //if InsertIsBlocked then
+                    //    exit;
+                    ItemTracking.DeleteReservationEntry(Rec);
+                end;
+            }
+        }
+        addafter(Post)
+        {
+            action(SignOrder)
+            {
+                Caption = 'Sign Order';
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                trigger OnAction()
+                var
+                    SignLog: Record "Sign Log";
+                begin
+                    SignLog.SignOrderDocument(Rec);
+                end;
+            }
         }
         addafter("Print Confirmation")
         {
@@ -156,6 +211,30 @@ PAGEEXTENSION 50011 "Ext. Sales Order" EXTENDS "Sales Order"
                     FileManagement.BLOBExport(TempBlob, 'Order Confirmation-' + Rec."No." + '-Customer ' + Rec."Sell-to Customer No." + '.pdf', true);
                 end;
             }
+            action(SendEmailNotification)
+            {
+                Caption = 'Send Email to Customer';
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                trigger OnAction()
+                var
+                    Mailmgt: Codeunit "Mail Management Altran";
+                begin
+                    Rec.TestField(Status, Rec.Status::Released);
+                    CLEAR(Mailmgt);
+                    Mailmgt.SendMailSalesOrder(Rec);
+                end;
+            }
+        }
+        modify(Release)
+        {
+            trigger OnBeforeAction()
+            begin
+                if Rec."Sample Order (New)" = Rec."Sample Order (New)"::" " then
+                    Error('Sample Order Value must not be blank.');
+            end;
         }
     }
 }

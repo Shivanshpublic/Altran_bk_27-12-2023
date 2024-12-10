@@ -116,5 +116,12 @@ PERMISSIONSET 50000 AltranPermissionSet
         page SpecifiValuesSubform = X,
         tabledata "Item Status" = RIMD,
         table "Item Status" = X,
-        page "Item Status" = X;
+        page "Item Status" = X,
+        tabledata "Sign Log" = RIMD,
+        table "Sign Log" = X,
+        codeunit ItemTracking = X,
+        codeunit "Mail Management Altran" = X,
+        page "Shipment Tracking List API" = X,
+        page "Sign Log" = X,
+        report "Update Assigned By" = X;
 }

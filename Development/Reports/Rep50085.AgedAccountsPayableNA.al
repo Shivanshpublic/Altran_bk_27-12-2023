@@ -935,7 +935,7 @@ report 50085 "Aged Accounts Payable NA1"
         AsindicatedinDataLbl: Label 'As indicated in Data';
         AgedAsOf2Lbl: Label 'Aged as of';
         AgingDateLbl: Label 'Aging Date (%1)', Comment = '%1=date';
-        BalanceDueLbl: Label 'Balance Due';
+        BalanceDueLbl: Label 'Open Due';
         DocumentCurrencyLbl: Label 'Document Currency';
         VendorCurrency2Lbl: Label 'Vendor Currency';
         ShowAllForOverdue: Boolean;
@@ -948,11 +948,11 @@ report 50085 "Aged Accounts Payable NA1"
         CurrReport_PAGENOCaptionLbl: Label 'Page';
         Aged_byCaptionLbl: Label 'Aged by';
         NameCaptionLbl: Label 'Name';
-        AmountDueToPrint_Control74CaptionLbl: Label 'Balance Due';
+        AmountDueToPrint_Control74CaptionLbl: Label 'Open Due';
         DocNoCaptionLbl: Label 'Number';
         DescriptionCaptionLbl: Label 'Description';
         TypeCaptionLbl: Label 'Type';
-        AmountDueToPrint_Control63CaptionLbl: Label 'Balance Due';
+        AmountDueToPrint_Control63CaptionLbl: Label 'Open Due';
         DocumentCaptionLbl: Label 'Document';
         Vendor_Ledger_Entry___Currency_Code_CaptionLbl: Label 'Doc. Curr.';
         Phone_CaptionLbl: Label 'Phone:';

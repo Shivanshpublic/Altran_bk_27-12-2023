@@ -165,6 +165,11 @@ pageextension 50004 SOSubform extends "Sales Order Subform"
         {
             Visible = true;
         }
+        modify("Shipment Date")
+        {
+            Visible = true;
+            Caption = 'Confirmed Shipment Date';
+        }
     }
     actions
     {

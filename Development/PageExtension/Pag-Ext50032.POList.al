@@ -13,6 +13,10 @@ pageextension 50032 "POList" extends "Purchase Order List"
             {
                 ApplicationArea = All;
             }
+            field("Sample Order"; Rec."Sample Order")
+            {
+                ApplicationArea = All;
+            }
         }
     }
 }

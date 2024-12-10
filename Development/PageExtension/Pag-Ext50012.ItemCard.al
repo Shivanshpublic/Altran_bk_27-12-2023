@@ -1,5 +1,6 @@
 pageextension 50012 ItemCard extends "Item Card"
 {
+
     layout
     {
         addafter(Description)
@@ -8,6 +9,7 @@ pageextension 50012 ItemCard extends "Item Card"
             {
                 ApplicationArea = All;
                 Caption = 'Model No.';
+                Editable = ModelEntryExists;
             }
             field("UL Certificate Available"; Rec."UL Certificate Available")
             {
@@ -16,6 +18,11 @@ pageextension 50012 ItemCard extends "Item Card"
             field("Item Status"; Rec."Item Status")
             {
                 ApplicationArea = All;
+            }
+            field("Assigned By"; Rec."Assigned By")
+            {
+                ApplicationArea = All;
+                Editable = EnableAssigned;
             }
         }
         addafter("Vendor No.")
@@ -104,6 +111,7 @@ pageextension 50012 ItemCard extends "Item Card"
             {
                 ApplicationArea = All;
             }
+
         }
         modify("Unit Cost")
         {
@@ -186,12 +194,55 @@ pageextension 50012 ItemCard extends "Item Card"
         UserSetup: Record "User Setup";
     begin
         EnableCost := false;
+        EnableAssigned := false;
+        ModelEntryExists := false;
         if Usersetup.Get(UserId) then begin
             if UserSetup."View Cost" then
                 EnableCost := true;
+            if (UserSetup."Item Administrator" = true) then
+                EnableAssigned := true;
         end;
+        if ItemEntryExists() then
+            ModelEntryExists := true
+        else
+            ModelEntryExists := false;
     end;
+
+    trigger OnAfterGetRecord()
+    var
+        UserSetup: Record "User Setup";
+
+    begin
+        EnableAssigned := false;
+        ModelEntryExists := false;
+        if Usersetup.Get(UserId) then begin
+            if (UserSetup."Item Administrator" = true) then
+                EnableAssigned := true;
+        end;
+
+        if ItemEntryExists() then
+            ModelEntryExists := true
+        else
+            ModelEntryExists := false;
+    end;
+
 
     var
         EnableCost: Boolean;
+        EnableAssigned: Boolean;
+        ModelEntryExists: Boolean;
+
+    [TryFunction]
+    procedure ItemEntryExists()
+    var
+        MoveEntries: Codeunit MoveEntries;
+        Item: Record Item;
+    begin
+        if Item.Get(Rec."No.") then begin
+            Item.CheckJournalsAndWorksheets(0);
+            Item.CheckDocuments(0);
+            MoveEntries.MoveItemEntries(Item);
+        end;
+
+    end;
 }

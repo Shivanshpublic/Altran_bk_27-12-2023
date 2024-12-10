@@ -34,7 +34,7 @@ PAGEEXTENSION 50036 "Ext. Sales Invoice" EXTENDS "Sales Invoice"
             {
                 ApplicationArea = All;
             }
-            field("Sample Order"; Rec."Sample Order")
+            field("Sample Order"; Rec."Sample Order (New)")
             {
                 ApplicationArea = All;
             }

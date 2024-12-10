@@ -64,7 +64,13 @@ tableextension 50013 "Item Categories" extends "Item Category"
         {
             Caption = 'Expiration Calculation';
         }
-
+        field(50010; "Assigned User ID"; Code[50])
+        {
+            Caption = 'Assigned User ID';
+            DataClassification = EndUserIdentifiableInformation;
+            TableRelation = "User Setup";
+            Editable = false;
+        }
         modify("Parent Category")
         {
             trigger OnAfterValidate()
@@ -84,6 +90,7 @@ tableextension 50013 "Item Categories" extends "Item Category"
                     until ItemCatSpec.Next() = 0;
             end;
         }
+
     }
     local procedure CalcTotalDuties()
     begin

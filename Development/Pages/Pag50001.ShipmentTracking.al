@@ -70,6 +70,10 @@ PAGE 50001 "Shipment Tracking Card"
                 {
                     ApplicationArea = All;
                 }
+                FIELD("ETA (Sterling)"; Rec."ETA (Sterling)")
+                {
+                    ApplicationArea = All;
+                }
                 FIELD(Remarks; Rec.Remarks)
                 {
                     ApplicationArea = All;

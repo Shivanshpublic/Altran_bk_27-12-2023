@@ -31,6 +31,10 @@ pageextension 50009 POCard extends "Purchase Order"
             {
                 ApplicationArea = All;
             }
+            field("Sample Order"; Rec."Sample Order")
+            {
+                ApplicationArea = All;
+            }
             field("Prepmt. Posting Description"; Rec."Prepmt. Posting Description")
             {
                 ApplicationArea = all;

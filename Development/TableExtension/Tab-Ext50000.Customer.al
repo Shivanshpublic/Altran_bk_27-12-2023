@@ -64,7 +64,19 @@ TABLEEXTENSION 50000 "Ext Customer" EXTENDS Customer
             Editable = false;
             FieldClass = FlowField;
         }
+
     }
+    trigger OnInsert()
+    begin
+        Blocked := Blocked::All;
+    end;
+
+    trigger OnModify()
+    begin
+        if xRec.Blocked <> Rec.Blocked then
+            if Blocked <> Blocked::All then
+                CheckMandatoryFields();
+    end;
 
     PROCEDURE LookupOnExternalRep()
     VAR
@@ -73,5 +85,20 @@ TABLEEXTENSION 50000 "Ext Customer" EXTENDS Customer
         SalesPersonList.LOOKUPMODE(TRUE);
         IF SalesPersonList.RUNMODAL = ACTION::LookupOK THEN
             VALIDATE("External Rep", SalesPersonList.GetSelectionFilter);
+    END;
+
+    procedure CheckMandatoryFields()
+
+    BEGIN
+        Rec.TestField("Salesperson Code");
+        Rec.TestField("Internal Team");
+        //Rec.TestField("External Rep");
+        Rec.TestField("Address");
+        Rec.TestField("City");
+        Rec.TestField("Post Code");
+        if Rec."Country/Region Code" = 'US' then
+            Rec.TestField(Rec.County);
+        Rec.TestField(Rec."Country/Region Code");
+        Rec.TestField(Rec."Phone No.");
     END;
 }

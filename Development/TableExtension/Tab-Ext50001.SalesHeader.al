@@ -221,10 +221,21 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
         field(50016; "Sample Order"; Boolean)
         {
             DataClassification = ToBeClassified;
+            Caption = 'Sample Order Old';
+        }
+        field(50017; "Order Signed"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
         }
         field(50019; "VIA"; Code[20])
         {
             DataClassification = ToBeClassified;
+        }
+        field(50020; "Sample Order (New)"; Enum SampleOrder_Option)
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Sample Order';
         }
     }
 
@@ -250,4 +261,6 @@ TABLEEXTENSION 50001 "Ext Sales Header" EXTENDS "Sales Header"
         IF SalesPersonList.RUNMODAL = ACTION::LookupOK THEN
             VALIDATE("External Rep", SalesPersonList.GetSelectionFilter);
     END;
+
+
 }

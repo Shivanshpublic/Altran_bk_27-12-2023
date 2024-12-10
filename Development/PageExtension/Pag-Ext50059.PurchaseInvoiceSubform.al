@@ -39,6 +39,16 @@ pageextension 50059 "PurchaseInvoiceSubform" extends "Purch. Invoice Subform"
                 ApplicationArea = All;
                 ToolTip = 'Specifies the value based on which gross weight will be assigned, if its blank it will consider gross weight field .';
             }
+            field("FAI Receipt"; Rec."FAI Receipt")
+            {
+                ApplicationArea = Basic, Suite;
+                ToolTip = 'Specifies the FAI Receipt.';
+            }
+            field("FAI Approval"; Rec."FAI Approval")
+            {
+                ApplicationArea = Basic, Suite;
+                ToolTip = 'Specifies the FAI Approval.';
+            }
         }
     }
 }
